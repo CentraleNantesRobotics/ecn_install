@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Qt Creator
+Comment=
+Exec=bash -i -c qtcreator
+Icon=/opt/qtcreator-4/qt-creator.png
+Path=
+Terminal=false
+StartupNotify=true
+X-XFCE-Source=file:///home/ecn/Desktop/Qt%20Creator.desktop
