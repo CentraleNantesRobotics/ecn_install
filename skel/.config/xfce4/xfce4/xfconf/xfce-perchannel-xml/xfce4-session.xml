@@ -32,7 +32,7 @@
     <property name="LaunchGNOME" type="empty"/>
   </property>
   <property name="shutdown" type="empty">
-    <property name="LockScreen" type="empty"/>
+    <property name="LockScreen" type="bool" value="false"/>
   </property>
   <property name="startup" type="empty">
     <property name="screensaver" type="empty">

@@ -116,7 +116,35 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# QtCreator configure shortcut
+alias gqt=/opt/local_ws/qtcreator_gen_config/qtcreator_gen_config.py
+
+rosdl() {
+ros1ws
+mkdir -p ~/ros/src
+cd ~/ros/src
+echo "https://github.com/oKermorgant/$1.git"
+git clone "https://github.com/oKermorgant/$1.git"
+catkin build
+cd $1
+gqt
+}
+
+ros2dl() {
+ros2ws
+mkdir -p ~/ros2/src
+cd ~/ros2/src
+echo "https://github.com/oKermorgant/$1.git"
+git clone "https://github.com/oKermorgant/$1.git"
+colbuild
+cd $1
+gqt
+}
+
+
 ros1_workspaces="/opt/ros/noetic /opt/local_ws/ros1 ~/ros"
 ros2_workspaces="/opt/ros/foxy /opt/local_ws/ros2 ~/ros2"
 source /opt/local_ws/ros_management.bash
 ros1ws
+
+

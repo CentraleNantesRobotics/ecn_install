@@ -3,7 +3,7 @@
 <channel name="xfce4-power-manager" version="1.0">
   <property name="xfce4-power-manager" type="empty">
     <property name="power-button-action" type="empty"/>
-    <property name="lock-screen-suspend-hibernate" type="empty"/>
+    <property name="lock-screen-suspend-hibernate" type="bool" value="false"/>
     <property name="logind-handle-lid-switch" type="empty"/>
     <property name="blank-on-ac" type="empty"/>
     <property name="blank-on-battery" type="empty"/>
