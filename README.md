@@ -1,4 +1,4 @@
-Some scripts to easily setup new Ubuntu compters at Centrale Nantes
+Some scripts to easily setup Ubuntu Focal / ROS Noetic / ROS 2 Foxy at Centrale Nantes
 
 ## ROS 1 / ROS 2 management
 
