@@ -33,8 +33,11 @@ ros_src_install $base_dir
 sudo cp -r $base_dir/skel /etc/
 # install wallpaper
 sudo cp $base_dir/images/noetic-foxy.jpg $LIBS_EXT_PATH
+# change monitor reference to display wallpaper
+this_monitor=$(xrandr --query | grep " connected" | cut -d' ' -f 1)
+sudo sed -i "s/monitorVirtual1/monitor${this_monitor}/" /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 
-# make sure local workspace is read/exec able
+# make sure local workspace is {read,exec}-able
 sudo chmod a+rX $LIBS_EXT_PATH -R
 
 # Coppelia Sim

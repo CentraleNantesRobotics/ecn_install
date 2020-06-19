@@ -9,8 +9,10 @@
 # Takes a path string separated with colons and a list of sub-paths
 # Removes path elements containing sub-paths
 
+# replace tilde by home dir in paths
 export ros1_workspaces="${ros1_workspaces//'~'/$HOME}"
 export ros2_workspaces="${ros2_workspaces//'~'/$HOME}"
+export PS1_ori=$PS1
 
 remove_paths()
 {
@@ -34,7 +36,7 @@ echo $THISPATH | cut -c2-
 }
 
 # Takes a list of sub-paths
-# Updates system paths by removing all elements containing sub-paths
+# Updates ROS-related system paths by removing all elements containing sub-paths
 remove_all_paths()
 {
     export PYTHONPATH=$(remove_paths "$PYTHONPATH" $@)
@@ -42,6 +44,7 @@ remove_all_paths()
     export PATH=$(remove_paths "$PATH" $@)
 }
 
+# Register a single ROS 1 / 2 workspace, try to source in order : ws > ws/install > ws/devel
 register_ros_workspace()
 {
 local setup_file="local_setup.bash"
@@ -59,6 +62,7 @@ do
 done
 }
 
+# Equivalent of roscd but jumps to the source (also, no completion)
 ros2cd()
 {
 local ws=$ros2_workspaces
@@ -86,6 +90,7 @@ done
 echo "Could not find package $1"
 }
 
+# Activate ROS 1 ws
 ros1ws()
 {
 # Clean ROS 2 paths
@@ -97,8 +102,12 @@ for ws in $ros1_workspaces
 do
     register_ros_workspace $ws
 done
+# change prompt
+local ROS1_COLOR="29"   # noetic green
+export PS1="\e[38;5;${ROS1_COLOR}m[$ROS_DISTRO] $PS1_ori"
 }
 
+# Activate ROS 2 ws
 ros2ws()
 {
 # Clean ROS 1 paths
@@ -110,6 +119,9 @@ for ws in $ros2_workspaces
 do
     register_ros_workspace $ws
 done
+# change prompt
+local ROS2_COLOR="166"  # foxy orange
+export PS1="\e[38;5;${ROS2_COLOR}m[$ROS_DISTRO] $PS1_ori"
 #export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 #export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/dashing/share/turtlebot3_gazebo/models
 }
@@ -123,6 +135,8 @@ if [ -d "src/ros1_bridge" ]; then
 fi
 eval $cmd
 }
+
+# shortcut to be sure where we are
 alias rosd='echo $ROS_DISTRO'
 
 # shortcut to build ros1_bridge without messing system paths
