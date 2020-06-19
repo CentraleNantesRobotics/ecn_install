@@ -7,7 +7,7 @@ The script `ros_management.bash` has a set of tools to handle ROS 1 / ROS 2 work
 ```bash
 ros1_workspaces="/opt/ros/noetic ~/a_first_ros1_workspace ~/main_ros1_overlay"
 ros2_workspaces="/opt/ros/foxy ~/some_ros2_workspace ~/main_ros2_overlay"
-source /path/ros_management.bash
+source /path/to/ros_management.bash
 ros1ws  # activate ROS 1 / disable ROS 2
 ros2ws  # activate ROS 2 / disable ROS 1
 ```
