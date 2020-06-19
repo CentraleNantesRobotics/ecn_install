@@ -125,8 +125,9 @@ mkdir -p ~/ros/src
 cd ~/ros/src
 echo "https://github.com/oKermorgant/$1.git"
 git clone "https://github.com/oKermorgant/$1.git"
+cd ..
 catkin build
-cd $1
+cd src/$1
 gqt
 }
 
@@ -136,8 +137,9 @@ mkdir -p ~/ros2/src
 cd ~/ros2/src
 echo "https://github.com/oKermorgant/$1.git"
 git clone "https://github.com/oKermorgant/$1.git"
+cd ..
 colbuild
-cd $1
+cd src/$1
 gqt
 }
 
