@@ -6,7 +6,7 @@
 cSim_version="4_0_0"
 
 ubuntu_version=`lsb_release -sr | sed 's/\./_/g'`
-cSim_file=CoppeliaSim_Edu_V${cSim_version}_Ubuntu${ubuntu_version}.tar.xz
+cSim_file=CoppeliaSim_Edu_V${cSim_version}_Ubuntu18_04.tar.xz
 
 base_dir=$('pwd')
 
@@ -35,7 +35,7 @@ sudo tar -xf $cSim_file -C ${dest} --strip 1
 
 sudo ln -s ${dest}/compiledRosPlugins/* ${dest}
 
-sudo chmod -R a+rwX ${dest}
+sudo chmod -R a+rX ${dest}
 
 export COPPELIASIM_ROOT_DIR=${dest}
 
@@ -50,5 +50,7 @@ else
     echo " - git clone https://github.com/oKermorgant/coppeliasim_ros_launcher.git"
     echo " - catkin build"
 fi
+
+rm  $cSim_file 
 
 cd $base_dir

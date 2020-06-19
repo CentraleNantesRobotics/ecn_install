@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # List of apt-installed packages
-ROS1_PKG="desktop robot-localization vision-opencv" #gazebo-ros-pkgs image-view compressed-image-transport amcl"
+ROS1_PKG="desktop robot-localization vision-opencv gazebo-ros-pkgs image-view compressed-image-transport amcl control-toolbox"
 ROS2_PKG="desktop vision-opencv" #image-view compressed-image-transport amcl "
 
 # Packages installed system-wide from source (list of owner:repo:branch on Github)
-ROS1_EXT="RethinkRobotics:baxter_common CentraleNantesRobotics:baxter_interface CentraleNantesRobotics:baxter_tools oKermorgant:coppeliasim_ros_launcher"
+ROS1_EXT="RethinkRobotics:baxter_common CentraleNantesRobotics:baxter_interface CentraleNantesRobotics:baxter_tools oKermorgant:ecn_common oKermorgant:coppeliasim_ros_launcher freefloating-gazebo:freefloating_gazebo"
 
 
 ROS2_EXT="ros2:ros1_bridge CentraleNantesRobotics:baxter_common_ros2 ros:xacro:dashing-devel"
@@ -70,16 +70,21 @@ sudo chown $USER $LIBS_EXT_PATH -R
 cd $LIBS_EXT_PATH
 
 # ViSP from sources
-sudo apt install libogre-1.9-dev libopencv-dev libeigen3-dev libopenblas-dev liblapack-dev libxml2-dev libzbar-dev libgsl-dev
+sudo apt install -qy libogre-1.9-dev libopencv-dev libeigen3-dev libopenblas-dev liblapack-dev libxml2-dev libzbar-dev libgsl-dev
 github_clone "lagadic:visp"
 mkdir -p visp/build && cd visp/build
-cmake .. -DBUILD_DEMOS=OFF -DBUILD_DEPRECATED_FUNCTIONS=ON -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_PACKAGE=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DUSE_PCL=OFF -DBUILD_MODULE_visp_sensor=OFF
+cmake .. -DBUILD_DEMOS=OFF -DBUILD_DEPRECATED_FUNCTIONS=ON -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_PACKAGE=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DUSE_PCL=OFF -DBUILD_MODULE_visp_sensor=OFF -DBUILD_MODULE_visp_ar=OFF
 sudo make install
 
+# QtCreator configure
+cd $LIBS_EXT_PATH
+github_clone "oKermorgant:qtcreator_gen_config"
+
 # CoppeliaSim
+cd $LIBS_EXT_PATH
 bash $base_dir/coppeliaSim_system_install.sh
 
-chmod a+rX $LIBS_EXT_PATH -R
+sudo chmod a+rX $LIBS_EXT_PATH -R
 }
 
 
@@ -100,7 +105,7 @@ echo "[System update]"
 sudo apt-get update -qy
 
 # some prerequisite packages
-sudo apt install -qy $(add_prefix python3 colcon-common-extensions rosdep catkin-tools rosinstall argcomplete orsf-pycommon)
+sudo apt install -qy $(add_prefix python3 colcon-common-extensions rosdep catkin-tools rosinstall argcomplete osrf-pycommon)
 
 echo "[ROS 1 installation]"
 sudo apt-get install -qy $(add_prefix ros-$ROS1_DISTRO $ROS1_PKG)
@@ -192,5 +197,6 @@ uwsim_src_install()
 		sudo bash -c "echo 'if [ ! -d ~/.uwsim ]; then ln -s /opt/uwsim ~/.uwsim; fi' >> /etc/bash.bashrc"
 	fi
 	cd $src_dir
+	sudo chmod a+rwX $LIBS_EXT_PATH -R
 }
 

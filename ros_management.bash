@@ -8,6 +8,10 @@
 
 # Takes a path string separated with colons and a list of sub-paths
 # Removes path elements containing sub-paths
+
+export ros1_workspaces="${ros1_workspaces//'~'/$HOME}"
+export ros2_workspaces="${ros2_workspaces//'~'/$HOME}"
+
 remove_paths()
 {
 IFS=':' read -ra PATHES <<< "$1"
@@ -48,10 +52,9 @@ local subs="/ /install/ /devel/"
 local sub
 for sub in $subs
 do
-    if [ -f "$1$sub$setup_file" ]
-        then
+    if [ -f "$1$sub$setup_file" ]; then
             source "$1$sub$setup_file"
-            return
+        return
     fi
 done
 }
