@@ -94,7 +94,8 @@ echo "Could not find package $1"
 ros1ws()
 {
 # Clean ROS 2 paths
-remove_all_paths $ros2_workspaces  
+remove_all_paths $ros2_workspaces
+unset ROS_DISTRO
 
 # register ROS 1 workspaces
 local ws
@@ -104,14 +105,15 @@ do
 done
 # change prompt
 local ROS1_COLOR="29"   # noetic green
-export PS1="\e[38;5;${ROS1_COLOR}m[$ROS_DISTRO] $PS1_ori"
+#export PS1="\e[38;5;${ROS1_COLOR}m[$ROS_DISTRO] $PS1_ori"
 }
 
 # Activate ROS 2 ws
 ros2ws()
 {
 # Clean ROS 1 paths
-remove_all_paths $ros1_workspaces  
+remove_all_paths $ros1_workspaces
+unset ROS_DISTRO
 
 # register ROS 2 workspaces
 local ws
@@ -121,7 +123,7 @@ do
 done
 # change prompt
 local ROS2_COLOR="166"  # foxy orange
-export PS1="\e[38;5;${ROS2_COLOR}m[$ROS_DISTRO] $PS1_ori"
+export PS1="\e[38;5;${ROS2_COLOR}m[ROS2] $PS1_ori"
 #export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 #export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/dashing/share/turtlebot3_gazebo/models
 }
@@ -150,7 +152,7 @@ if [ ! -d "src/ros1_bridge" ]; then
 fi
 # clean environment variables
 remove_all_paths "$ros1_workspaces $ros2_workspaces"
-
+unset ROS_DISTRO
 # register ROS 2 overlays before the ros1_bridge overlay
 local ws
 for ws in $ros2_workspaces; do
@@ -162,13 +164,16 @@ done
 colbuild
 
 # register base ROS 1 installation
+unset ROS_DISTRO
 local ros1_base=${ros1_workspaces% *}
 register_ros_workspace $ros1_base
 # register base ROS 2 installation
+unset ROS_DISTRO
 local ros2_base=${ros2_workspaces% *}
 register_ros_workspace $ros2_base
 
 # register ROS 1 overlays
+unset ROS_DISTRO
 for ws in $ros1_workspaces; do
     if [[ "$ws" != "$ros1_base" ]]; then
         register_ros_workspace $ws
@@ -176,6 +181,7 @@ for ws in $ros1_workspaces; do
 done
 
 # register ROS 2 overlays up to the ros1_bridge overlay
+unset ROS_DISTRO
 for ws in "$ros2_workspaces"; do
     if [[ "$ws" != "$ros2_base" ]]; then
        register_ros_workspace $ws
