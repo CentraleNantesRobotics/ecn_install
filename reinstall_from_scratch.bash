@@ -37,13 +37,13 @@ sudo cp $base_dir/images/noetic-foxy.jpg $LIBS_EXT_PATH
 this_monitor=$(xrandr --query | grep " connected" | cut -d' ' -f 1)
 sudo sed -i "s/monitorVirtual1/monitor${this_monitor}/" /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 
-# make sure local workspace is {read,exec}-able
-sudo chmod a+rX $LIBS_EXT_PATH -R
-
 # Coppelia Sim
 bash $base_dir/coppeliaSim_system_install.sh
 
 # UWSim
 uwsim_src_install
+
+# make sure local workspace is {read,exec}-able
+sudo chmod a+rX $LIBS_EXT_PATH -R
 
 cd $base_dir

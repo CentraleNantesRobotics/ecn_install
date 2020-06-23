@@ -105,7 +105,7 @@ do
 done
 # change prompt
 local ROS1_COLOR="29"   # noetic green
-#export PS1="\e[38;5;${ROS1_COLOR}m[$ROS_DISTRO] $PS1_ori"
+export PS1="$PS1_ori"
 }
 
 # Activate ROS 2 ws
