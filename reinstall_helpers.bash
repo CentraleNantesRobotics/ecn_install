@@ -151,7 +151,7 @@ cd ..
 # Compile by calling ros1bridge shortcut to handle ros1_bridge special compilation steps
 ros1bridge_recompile
 
-sudo chmod a+rwX $LIBS_EXT_PATH -R
+sudo chmod a+rX $LIBS_EXT_PATH -R
 }
 
 
@@ -176,7 +176,7 @@ uwsim_src_install()
 	cd $dep-release/build
 	cmake .. -DCMAKE_BUILD_TYPE=Release && sudo make install
 	cd ../..
-	sudo rm -rf $dep-release/build
+	#sudo rm -rf $dep-release/build
 	done
 
 	# compile
@@ -186,16 +186,16 @@ uwsim_src_install()
 	if [ ! -d /opt/uwsim/data ]
 	then
 		sudo mkdir -p /opt/uwsim/ -m 2755
+                sudo chown $USER /opt/uwsim
 		cd /opt/uwsim
-		sudo wget  http://www.irs.uji.es/uwsim/files/data.tgz
-		sudo tar -xf data.tgz
-		sudo chmod a+rX -R .
-		sudo rm data.tgz	
+		wget http://pagesperso.ls2n.fr/~kermorgant-o/files/uwsim_data.tgz
+		tar -xf uwsim_data.tgz		
+		rm uwsim_data.tgz
+                chmod a+rX -R .
 		
 		# on-the-fly symlink for all users
 		sudo bash -c "echo 'if [ ! -d ~/.uwsim ]; then ln -s /opt/uwsim ~/.uwsim; fi' >> /etc/bash.bashrc"
 	fi
 	cd $src_dir
-	sudo chmod a+rwX $LIBS_EXT_PATH -R
 }
 

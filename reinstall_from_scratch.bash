@@ -10,7 +10,7 @@ sudo apt purge -qy thunderbird pidgin mousepad gnome-software xfburn gnome-mines
 sudo apt autoremove -qy --purge
 
 # install useful packages
-sudo apt install -qy curl geany qtcreator libclang-common-8-dev vlc \
+sudo apt install -qy curl geany qtcreator libclang-common-8-dev vlc openssh-server \
 ipython3 $(add_prefix python3 matplotlib scipy sympy) \
 build-essential cmake python-is-python3
 
@@ -45,5 +45,6 @@ uwsim_src_install
 
 # make sure local workspace is {read,exec}-able
 sudo chmod a+rX $LIBS_EXT_PATH -R
+sudo ldconfig
 
 cd $base_dir
