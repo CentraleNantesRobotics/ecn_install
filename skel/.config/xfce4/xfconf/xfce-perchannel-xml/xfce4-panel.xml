@@ -128,7 +128,9 @@
         <value type="string" value="15922148333.desktop"/>
       </property>
     </property>
-    <property name="plugin-18" type="string" value="xkb"/>
+    <property name="plugin-18" type="string" value="xkb">
+      <property name="group-policy" type="uint" value="0"/>
+    </property>
     <property name="plugin-6" type="string" value="launcher">
       <property name="items" type="array">
         <value type="string" value="15924700421.desktop"/>
