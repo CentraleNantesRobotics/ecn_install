@@ -72,7 +72,7 @@ cd $LIBS_EXT_PATH
 sudo apt install -qy libogre-1.9-dev libopencv-dev libeigen3-dev libopenblas-dev liblapack-dev libxml2-dev libzbar-dev libgsl-dev
 github_clone "lagadic:visp"
 mkdir -p visp/build && cd visp/build
-cmake .. -DBUILD_DEMOS=OFF -DBUILD_DEPRECATED_FUNCTIONS=ON -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_PACKAGE=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DUSE_PCL=OFF -DBUILD_MODULE_visp_sensor=OFF -DBUILD_MODULE_visp_ar=OFF
+cmake .. -DBUILD_DEMOS=OFF -DBUILD_DEPRECATED_FUNCTIONS=ON -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_PACKAGE=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DUSE_PCL=OFF -DBUILD_MODULE_visp_sensor=OFF
 sudo make install
 
 # QtCreator configure
