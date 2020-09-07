@@ -16,3 +16,8 @@ The `ros1ws` and `ros2ws` functions also update the bash prompt to highlight the
 ## Overall setup
 
 Do not blindly run the `reinstall_from_scratch.bash` script but feel free to reuse existing parts to suit your needs.
+
+
+## Virtual Machine
+
+The `virtual_machine` folder has several files to keep the Virtual Machine up to date. 

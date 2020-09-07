@@ -10,7 +10,7 @@ sudo apt purge -qy thunderbird pidgin mousepad gnome-software xfburn gnome-mines
 sudo apt autoremove -qy --purge
 
 # install useful packages
-sudo apt install -qy curl geany qtcreator libclang-common-8-dev vlc openssh-server \
+sudo apt install -qy curl geany git qtcreator libclang-common-8-dev vlc openssh-server \
 ipython3 $(add_prefix python3 matplotlib scipy sympy) \
 build-essential cmake python-is-python3
 

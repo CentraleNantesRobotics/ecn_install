@@ -2,12 +2,12 @@
 
 # List of apt-installed packages
 ROS1_PKG="desktop robot-localization vision-opencv gazebo-ros-pkgs image-view compressed-image-transport amcl control-toolbox"
-ROS2_PKG="desktop vision-opencv" #image-view compressed-image-transport amcl "
+ROS2_PKG="desktop vision-opencv xacro joint_state_publisher joint_state_publisher_gui image-view compressed-image-transport"
 
 # Packages installed system-wide from source (list of owner:repo:branch on Github)
 ROS1_EXT="RethinkRobotics:baxter_common CentraleNantesRobotics:baxter_interface CentraleNantesRobotics:baxter_tools oKermorgant:ecn_common oKermorgant:coppeliasim_ros_launcher freefloating-gazebo:freefloating_gazebo oKermorgant:slider_publisher:ros1"
 
-ROS2_EXT="ros2:ros1_bridge CentraleNantesRobotics:baxter_common_ros2 ros:xacro:dashing-devel oKermorgant:slider_publisher:ros2"
+ROS2_EXT="ros2:ros1_bridge CentraleNantesRobotics:baxter_common_ros2 oKermorgant:slider_publisher:ros2"
 
 
 # System-wide libraries to install (list of owner:repo<:branch>)

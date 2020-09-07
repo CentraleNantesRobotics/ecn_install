@@ -131,6 +131,18 @@ export PS1="\e[38;5;${ROS2_COLOR}m[ROS2] $PS1_ori"
 # some shortcuts
 colbuild()
 {
+# source ROS 2 ws up to this one
+unset AMENT_PREFIX_PATH
+unset COLCON_PREFIX_PATH
+
+local ws
+for ws in $ros2_workspaces; do
+    if [[ "$ws" = "$PWD"* ]]; then
+      break
+    fi
+    register_ros_workspace $ws
+done
+
 local cmd="colcon build --symlink-install $@"
 if [ -d "src/ros1_bridge" ]; then
     cmd="$cmd  --packages-skip ros1_bridge"
@@ -154,13 +166,6 @@ fi
 remove_all_paths "$ros1_workspaces $ros2_workspaces"
 unset ROS_DISTRO
 # register ROS 2 overlays before the ros1_bridge overlay
-local ws
-for ws in $ros2_workspaces; do
-    if [[ "$ws" = "$PWD"* ]]; then
-      break
-    fi
-    register_ros_workspace $ws
-done
 colbuild
 
 # register base ROS 1 installation
@@ -192,4 +197,3 @@ for ws in "$ros2_workspaces"; do
 done
 colcon build --symlink-install --packages-select ros1_bridge --cmake-force-configure
 }
-
