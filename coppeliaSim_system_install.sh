@@ -3,7 +3,7 @@
 # Will install Coppelia Sim in /opt 
 # Olivier Kermorgant
 
-cSim_version="4_0_0"
+cSim_version="4_1_0"
 
 ubuntu_version=`lsb_release -sr | sed 's/\./_/g'`
 cSim_file=CoppeliaSim_Edu_V${cSim_version}_Ubuntu18_04.tar.xz
