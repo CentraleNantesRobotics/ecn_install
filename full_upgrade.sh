@@ -1,5 +1,6 @@
 #!/bin/bash
 source reinstall_helpers.bash
+base_dir=$('pwd')
 
 # update all system packages
 sudo apt update -qy
@@ -33,3 +34,9 @@ done
 cd ..
 ros2ws
 colbuild
+
+sudo cp $base_dir/ros_management.bash $LIBS_EXT_PATH
+
+# make sure local workspace is {read,exec}-able
+sudo chmod a+rX $LIBS_EXT_PATH -R
+sudo ldconfig
