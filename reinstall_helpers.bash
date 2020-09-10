@@ -6,7 +6,6 @@ ROS2_PKG="desktop vision-opencv xacro joint_state_publisher joint_state_publishe
 
 # Packages installed system-wide from source (list of owner:repo:branch on Github)
 ROS1_EXT="RethinkRobotics:baxter_common CentraleNantesRobotics:baxter_interface CentraleNantesRobotics:baxter_tools oKermorgant:ecn_common oKermorgant:coppeliasim_ros_launcher freefloating-gazebo:freefloating_gazebo oKermorgant:slider_publisher:ros1"
-
 ROS2_EXT="CentraleNantesRobotics:baxter_common_ros2 oKermorgant:slider_publisher:ros2 oKermorgant:simple_launch"
 
 
@@ -147,6 +146,7 @@ echo "[ROS 1 packages from source]"
 sudo mkdir -p $ROS1_EXT_PATH/src
 sudo chown $USER $ROS1_EXT_PATH -R
 sudo cp $1/ros_management.bash $LIBS_EXT_PATH
+source $LIBS_EXT_PATH/ros_management.bash
 
 cd $ROS1_EXT_PATH/src
 local pkg
@@ -169,8 +169,8 @@ do
 github_clone $pkg
 done
 cd ..
-# Compile by calling ros1bridge shortcut to handle ros1_bridge special compilation steps
-ros1bridge_recompile
+ros2ws
+colbuild
 
 sudo chmod a+rX $LIBS_EXT_PATH -R
 }
