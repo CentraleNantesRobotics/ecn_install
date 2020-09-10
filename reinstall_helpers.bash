@@ -2,7 +2,7 @@
 
 # List of apt-installed packages
 ROS1_PKG="desktop robot-localization vision-opencv gazebo-ros-pkgs image-view compressed-image-transport amcl control-toolbox"
-ROS2_PKG="desktop vision-opencv xacro joint_state_publisher joint_state_publisher_gui image-view compressed-image-transport ros1_bridge"
+ROS2_PKG="desktop vision-opencv xacro joint_state_publisher joint_state_publisher_gui image-view compressed-image-transport ros1-bridge"
 
 # Packages installed system-wide from source (list of owner:repo:branch on Github)
 ROS1_EXT="RethinkRobotics:baxter_common CentraleNantesRobotics:baxter_interface CentraleNantesRobotics:baxter_tools oKermorgant:ecn_common oKermorgant:coppeliasim_ros_launcher freefloating-gazebo:freefloating_gazebo oKermorgant:slider_publisher:ros1"
@@ -11,7 +11,7 @@ ROS2_EXT="CentraleNantesRobotics:baxter_common_ros2 oKermorgant:slider_publisher
 
 
 # System-wide libraries to install (list of owner:repo<:branch>)
-LIBS_EXT="oKermorgant:log2plot"
+LIBS_EXT="oKermorgant:log2plot oKermorgant:qtcreator_gen_config"
 
 # define ros workspaces
 ros1_workspaces="/opt/ros/noetic /opt/local_ws/ros1"
@@ -26,7 +26,7 @@ ROS2_DISTRO=$(echo ${ros2_workspaces% *} | cut -d'/' -f 4)
 # extract 3rd party directories
 ROS1_EXT_PATH=$(echo $ros1_workspaces | cut -d' ' -f 2)
 ROS2_EXT_PATH=$(echo $ros2_workspaces | cut -d' ' -f 2)
-LIBS_EXT_PATH=$(echo ${ROS1_EXT_PATH%/*}/libs)
+LIBS_EXT_PATH=$(echo ${ROS1_EXT_PATH%/*})
 
 # adds a prefix (first argument) to a list of packages
 add_prefix()
@@ -51,47 +51,59 @@ github_clone()
 local owner=$(echo $1 | cut -d':' -f 1)
 local repo=$(echo $1 | cut -d':' -f 2)
 local branch=$(echo $1 | cut -d':' -f 3)
-if [[ ${#branch} -le 2 ]]; then
-    git clone https://github.com/$owner/$repo
-    else
-    git clone https://github.com/$owner/$repo -b $branch
+if [ -d "$repo" ]; then
+  echo "updating $repo"
+  cd $repo && git pull
+  cd ..
+else
+  if [[ ${#branch} -le 2 ]]; then
+      git clone https://github.com/$owner/$repo
+  else
+      git clone https://github.com/$owner/$repo -b $branch
+  fi
+fi
+
+# try to compile if required / relevant
+if [ "$#" -eq 2 ] && [ -f "$repo/CMakeLists.txt" ]; then
+    mkdir -p "$repo/build"
+    cd "$repo/build"
+    if [ "$2" = "--cmake" ]; then
+    cmake ..
+    fi
+    sudo make install
+    cd ../../
 fi
 }
-
 
 extra_src_installs()
 {
 base_dir=$1	
-	
 	
 # external libraries from source
 sudo mkdir -p $LIBS_EXT_PATH
 sudo chown $USER $LIBS_EXT_PATH -R
 cd $LIBS_EXT_PATH
 
-# ViSP from sources
+# ViSP from sources - special cmake flags
 sudo apt install -qy libogre-1.9-dev libopencv-dev libeigen3-dev libopenblas-dev liblapack-dev libxml2-dev libzbar-dev libgsl-dev
 github_clone "lagadic:visp"
 mkdir -p visp/build && cd visp/build
 cmake .. -DBUILD_DEMOS=OFF -DBUILD_DEPRECATED_FUNCTIONS=ON -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_PACKAGE=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DUSE_PCL=OFF -DBUILD_MODULE_visp_sensor=OFF
 sudo make install
 
-
-# log2plot from sources
-cd $LIBS_EXT_PATH
+# log2plot deps
 sudo apt install -qy texlive-latex-extra texlive-fonts-recommended dvipng
-github_clone "oKermorgant:log2plot"
-mkdir -p log2plot/build && cd log2plot/build
-cmake .. && sudo make install
 
-# QtCreator configure
+# all generic sources
 cd $LIBS_EXT_PATH
-github_clone "oKermorgant:qtcreator_gen_config"
+for pkg in $LIBS_EXT
+do
+github_clone $pkg --cmake
+done
 
 # CoppeliaSim
 cd $LIBS_EXT_PATH
 bash $base_dir/coppeliaSim_system_install.sh
-
 sudo chmod a+rX $LIBS_EXT_PATH -R
 }
 
