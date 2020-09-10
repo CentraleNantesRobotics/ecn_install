@@ -11,8 +11,7 @@ ROS2_EXT="ros2:ros1_bridge CentraleNantesRobotics:baxter_common_ros2 oKermorgant
 
 
 # System-wide libraries to install (list of owner:repo<:branch>)
-LIBS_EXT=""
-
+LIBS_EXT="oKermorgant:log2plot"
 
 # define ros workspaces
 ros1_workspaces="/opt/ros/noetic /opt/local_ws/ros1"
@@ -27,7 +26,7 @@ ROS2_DISTRO=$(echo ${ros2_workspaces% *} | cut -d'/' -f 4)
 # extract 3rd party directories
 ROS1_EXT_PATH=$(echo $ros1_workspaces | cut -d' ' -f 2)
 ROS2_EXT_PATH=$(echo $ros2_workspaces | cut -d' ' -f 2)
-LIBS_EXT_PATH=$(echo ${ROS1_EXT_PATH%/*})
+LIBS_EXT_PATH=$(echo ${ROS1_EXT_PATH%/*}/libs)
 
 # adds a prefix (first argument) to a list of packages
 add_prefix()
@@ -64,6 +63,8 @@ extra_src_installs()
 {
 base_dir=$1	
 	
+	
+# external libraries from source
 sudo mkdir -p $LIBS_EXT_PATH
 sudo chown $USER $LIBS_EXT_PATH -R
 cd $LIBS_EXT_PATH
@@ -74,6 +75,14 @@ github_clone "lagadic:visp"
 mkdir -p visp/build && cd visp/build
 cmake .. -DBUILD_DEMOS=OFF -DBUILD_DEPRECATED_FUNCTIONS=ON -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_PACKAGE=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DUSE_PCL=OFF -DBUILD_MODULE_visp_sensor=OFF
 sudo make install
+
+
+# log2plot from sources
+cd $LIBS_EXT_PATH
+sudo apt install -qy texlive-latex-extra texlive-fonts-recommended dvipng
+github_clone "oKermorgant:log2plot"
+mkdir -p log2plot/build && cd log2plot/build
+cmake .. && sudo make install
 
 # QtCreator configure
 cd $LIBS_EXT_PATH
