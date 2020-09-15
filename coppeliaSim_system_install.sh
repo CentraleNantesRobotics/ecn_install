@@ -43,7 +43,7 @@ if [ "$#" -eq 1 ]; then
     sudo mkdir -p "$1/src"
     sudo chmod -R a+rX "$1"
     cd "$1/src"
-    sudo git clone https://github.com/oKermorgant/coppeliasim_ros_launcher.git
+    git clone https://github.com/oKermorgant/coppeliasim_ros_launcher.git
 else
     echo "To run CoppeliaSim from ROS launch files, follow these steps:"
     echo " - go to your ROS workspace source"
