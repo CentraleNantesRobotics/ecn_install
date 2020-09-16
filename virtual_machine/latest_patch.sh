@@ -1,5 +1,5 @@
 #!/bin/bash
-# Execute these lines in the console of the Virtual Machine to have it up to date
+# Execute  in the console of the Virtual Machine to have it up to date
 
 
 # Downloaded before 16 September 2020
@@ -14,7 +14,8 @@ sudo chown ecn . -R
 mkdir -p ros1/src && cd ros1/src
 git clone https://github.com/ros/geometry2.git
 cd ..
-catkin config --extend /opt/ros/$ROS1_DISTRO --install --cmake-args -DCMAKE_BUILD_TYPE=Release
+sudo apt install -qy libbullet-dev 
+catkin config --extend /opt/ros/$ROS_DISTRO --install --cmake-args -DCMAKE_BUILD_TYPE=Release
 catkin build
 
 sudo apt update
