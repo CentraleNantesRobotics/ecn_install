@@ -42,6 +42,7 @@ remove_all_paths()
     export PYTHONPATH=$(remove_paths "$PYTHONPATH" $@)
     export CMAKE_PREFIX_PATH=$(remove_paths "$CMAKE_PREFIX_PATH" $@)
     export PATH=$(remove_paths "$PATH" $@)
+    export LD_LIBRARY_PATH=$(remove_paths "$LD_LIBRARY_PATH" $@)
 }
 
 # Register a single ROS 1 / 2 workspace, try to source in order : ws > ws/install > ws/devel

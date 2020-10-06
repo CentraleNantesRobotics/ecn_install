@@ -19,6 +19,7 @@ github_clone oKermorgant:qtcreator_gen_config
 
 mkdir -p ros1/src && cd ros1/src
 git clone https://github.com/ros/geometry2.git
+git clone https://github.com/oKermorgant/ecn_common
 cd ..
 sudo apt install -qy libbullet-dev 
 catkin config --extend /opt/ros/$ROS_DISTRO --install --cmake-args -DCMAKE_BUILD_TYPE=Release
