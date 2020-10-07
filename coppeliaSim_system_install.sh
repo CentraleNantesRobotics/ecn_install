@@ -51,6 +51,7 @@ else
     echo " - catkin build"
 fi
 
+cd $base_dir
 rm  $cSim_file 
 
-cd $base_dir
+
