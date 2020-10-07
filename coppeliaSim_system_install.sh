@@ -41,7 +41,7 @@ export COPPELIASIM_ROOT_DIR=${dest}
 
 if [ "$#" -eq 1 ]; then
     sudo mkdir -p "$1/src"
-    sudo chmod -R a+rX "$1"
+    sudo chmod -R a+rwX "$1"
     cd "$1/src"
     git clone https://github.com/oKermorgant/coppeliasim_ros_launcher.git
 else
