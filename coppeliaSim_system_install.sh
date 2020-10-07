@@ -35,7 +35,7 @@ sudo tar -xf $cSim_file -C ${dest} --strip 1
 
 sudo ln -s ${dest}/compiledRosPlugins/* ${dest}
 
-sudo chmod -R a+rX ${dest}
+sudo chmod -R a+rwX ${dest}
 
 export COPPELIASIM_ROOT_DIR=${dest}
 
