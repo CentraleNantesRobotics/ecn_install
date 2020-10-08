@@ -1,6 +1,22 @@
 #!/bin/bash
-# Execute in the console of the Virtual Machine to have it up to date
+# Give the previous date when this script was run
+# Avoids re-patching things
 
+prev=$1
+
+if [[ $prev > 2020-10-07 ]]
+then
+exit
+fi
+
+# a small typo in the previous patch...
+sudo chown ecn /home/ecn/ros -R
+
+
+if [[ $prev > 2020-09-16 ]]
+then
+exit
+fi
 
 # Downloaded before 16 September 2020
 cd /opt/local_ws

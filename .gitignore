@@ -1,5 +1,7 @@
 # OK general gitignore
 
+.latest
+
 # Compiled source #
 ###################
 *.com
