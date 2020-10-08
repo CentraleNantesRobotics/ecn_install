@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# cd ~/.ecn_install
-# git pull
+cd ~/.ecn_install
+git pull
 
 if [ ! -f ".latest" ]
 then
@@ -12,10 +12,8 @@ fi
 
 bash virtual_machine/patches.sh $prev
 
-
-# cd ~/.ecn_install
+cd ~/.ecn_install
 echo $(date -Idate) > .latest
-
 
 cd ~
 
