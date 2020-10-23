@@ -104,7 +104,7 @@ for ws in $ros1_workspaces
 do
     register_ros_workspace $ws
 done
-# change prompt
+# change prompt (actually not)
 local ROS1_COLOR="29"   # noetic green
 export PS1="$PS1_ori"
 }
@@ -140,6 +140,7 @@ unset AMENT_PREFIX_PATH
 unset COLCON_PREFIX_PATH
 
 local ws
+local PWD=$(pwd)
 for ws in $ros2_workspaces; do
     if [[ "$ws" = "$PWD"* ]]; then
       break
