@@ -5,6 +5,7 @@ base_dir=$('pwd')
 # update all system packages
 sudo apt update -qy
 sudo apt upgrade -qy
+sudo apt autoremove
 
 # update all source-installed libs
 cd $LIBS_EXT_PATH
@@ -26,6 +27,8 @@ catkin config --extend /opt/ros/$ROS1_DISTRO --install --cmake-args -DCMAKE_BUIL
 catkin build
 
 # update ROS 2 source-installed packages
+if [ -f $ROS2_EXT_PATH/src ]
+then
 cd $ROS2_EXT_PATH/src
 for pkg in $ROS2_EXT
 do
@@ -34,6 +37,7 @@ done
 cd ..
 ros2ws
 colbuild
+fi
 
 sudo cp $base_dir/ros_management.bash $LIBS_EXT_PATH
 

@@ -48,16 +48,12 @@ remove_all_paths()
 # Register a single ROS 1 / 2 workspace, try to source in order : ws > ws/install > ws/devel
 register_ros_workspace()
 {
-local setup_file="local_setup.bash"
-if [[ $ros1_workspaces = *"$1"* ]]; then
-  setup_file="setup.bash"
-fi
 local subs="/ /install/ /devel/"
 local sub
 for sub in $subs
 do
-    if [ -f "$1$sub$setup_file" ]; then
-            source "$1$sub$setup_file"
+    if [ -f "$1${sub}setup.bash" ]; then
+            source "$1${sub}setup.bash"
         return
     fi
 done

@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # List of apt-installed packages
-ROS1_PKG="desktop robot-localization vision-opencv gazebo-ros-pkgs image-view compressed-image-transport amcl control-toolbox"
-ROS2_PKG="desktop vision-opencv xacro joint_state_publisher joint_state_publisher_gui image-view compressed-image-transport ros1-bridge"
+ROS1_PKG="desktop robot-localization vision-opencv gazebo-ros-pkgs image-view compressed-image-transport amcl control-toolbox ros-noetic-kdl-parser-py"
+ROS2_PKG="desktop vision-opencv xacro joint-state-publisher joint-state-publisher-gui image-view compressed-image-transport ros1-bridge"
 
-# Packages installed system-wide from source (list of owner:repo:branch on Github)
-ROS1_EXT="RethinkRobotics:baxter_common CentraleNantesRobotics:baxter_interface CentraleNantesRobotics:baxter_tools oKermorgant:ecn_common oKermorgant:coppeliasim_ros_launcher freefloating-gazebo:freefloating_gazebo oKermorgant:slider_publisher:ros1"
+# Packages installed system-wide from source (list of owner:repo[:branch] on Github)
+ROS1_EXT="RethinkRobotics:baxter_common CentraleNantesRobotics:baxter_interface CentraleNantesRobotics:baxter_tools oKermorgant:ecn_common oKermorgant:coppeliasim_ros_launcher freefloating-gazebo:freefloating_gazebo oKermorgant:slider_publisher:ros1 CentraleNantesRobotics:baxter_simple_sim"
 ROS2_EXT="CentraleNantesRobotics:baxter_common_ros2 oKermorgant:slider_publisher:ros2 oKermorgant:simple_launch"
 
 
-# System-wide libraries to install (list of owner:repo<:branch>)
+# System-wide libraries to install (list of owner:repo[:branch])
 LIBS_EXT="oKermorgant:log2plot oKermorgant:qtcreator_gen_config"
 
 # define ros workspaces
@@ -107,7 +107,7 @@ sudo chmod a+rX $LIBS_EXT_PATH -R
 }
 
 
-# Setup ROS 1 / 2 system install through apt
+# Setup ROS 1  system install through apt
 ros_apt_install()
 {
 echo "[Getting ROS key]"
@@ -117,6 +117,31 @@ curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo ap
 echo "[Adding ROS repositories]"
 if [ ! -e /etc/apt/sources.list.d/ros-latest.list ]; then
   sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+fi
+
+echo "[System update]"
+sudo apt-get update -qy
+
+# some prerequisite packages
+sudo apt install -qy $(add_prefix python3 rosdep catkin-tools rosinstall argcomplete osrf-pycommon)
+
+echo "[ROS 1 installation]"
+sudo apt-get install -qy $(add_prefix ros-$ROS1_DISTRO $ROS1_PKG)
+
+source /opt/ros/$ROS1_DISTRO/setup.bash
+echo "[rosdep init]"
+sudo sh -c "rosdep init"
+rosdep update
+}
+
+ros2_apt_install()
+{
+echo "[Getting ROS key]"
+sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+
+echo "[Adding ROS2 repositories]"
+if [ ! -e /etc/apt/sources.list.d/ros2-latest.list ]; then
   sudo sh -c 'echo "deb http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'
 fi
 
@@ -126,20 +151,12 @@ sudo apt-get update -qy
 # some prerequisite packages
 sudo apt install -qy $(add_prefix python3 colcon-common-extensions rosdep catkin-tools rosinstall argcomplete osrf-pycommon)
 
-echo "[ROS 1 installation]"
-sudo apt-get install -qy $(add_prefix ros-$ROS1_DISTRO $ROS1_PKG)
-
-source /opt/ros/$ROS1_DISTRO/setup.bash
-echo "[rosdep init]"
-sudo sh -c "rosdep init"
-rosdep update
-
 echo "[ROS 2 installation]"
 sudo apt-get install -y $(add_prefix ros-$ROS2_DISTRO $ROS2_PKG)	
 }
 
 
-# Installs required ROS 1 / 2 packages from source
+# Installs required ROS1 packages from source
 ros_src_install()
 {
 echo "[ROS 1 packages from source]"
@@ -159,6 +176,12 @@ ros1ws
 catkin config --extend /opt/ros/$ROS1_DISTRO --install --cmake-args -DCMAKE_BUILD_TYPE=Release
 catkin build
 
+sudo chmod a+rX $LIBS_EXT_PATH -R
+}
+
+# Installs required ROS2 packages from source
+ros2_src_install()
+{
 echo "[ROS 2 packages from source]"
 sudo mkdir -p $ROS2_EXT_PATH/src
 sudo chown $USER $ROS2_EXT_PATH -R

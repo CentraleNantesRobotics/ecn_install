@@ -25,9 +25,11 @@ extra_src_installs $base_dir
 
 # install apt-available ROS 1 & 2
 ros_apt_install
+ros2_apt_install
 
 # install other ROS 1/2 packages from source
 ros_src_install $base_dir
+ros2_src_install $base_dir
 
 # install user skeleton
 sudo cp -r $base_dir/skel /etc/
