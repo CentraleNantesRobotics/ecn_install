@@ -77,9 +77,7 @@ then
 sudo chown ecn /home/ecn/ros -R
 fi
 
-
 ros1_apt_install
-
 
 if [[ $prev < 2020-11-06 ]] && [ $student = "OD_Robotique" ]; then
     # prep ROS 2 labs...

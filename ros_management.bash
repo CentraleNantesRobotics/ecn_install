@@ -39,6 +39,8 @@ echo $THISPATH | cut -c2-
 # Updates ROS-related system paths by removing all elements containing sub-paths
 remove_all_paths()
 {
+    export AMENT_PREFIX_PATH=$(remove_paths "$AMENT_PREFIX_PATH" $@)
+    export AMENT_CURRENT_PREFIX=$(remove_paths "$AMENT_CURRENT_PREFIX" $@)
     export PYTHONPATH=$(remove_paths "$PYTHONPATH" $@)
     export CMAKE_PREFIX_PATH=$(remove_paths "$CMAKE_PREFIX_PATH" $@)
     export PATH=$(remove_paths "$PATH" $@)
@@ -133,6 +135,7 @@ remove_all_paths $ros1_workspaces
 unset ROS_DISTRO
 # source ROS 2 ws up to this one
 unset AMENT_PREFIX_PATH
+unset AMENT_CURRENT_PREFIX
 unset COLCON_PREFIX_PATH
 
 local ws
