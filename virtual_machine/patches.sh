@@ -3,9 +3,6 @@
 # Avoids re-patching things
 
 INSTALLDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null 2>&1 && pwd )"
-echo $INSTALLDIR
-
-exit 1
 
 git_update_subfolders()
 {
