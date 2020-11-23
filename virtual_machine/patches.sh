@@ -56,25 +56,25 @@ source reinstall_helpers.bash
 
 if [[ $prev < 2020-09-16 ]]
 then
-# Downloaded before 16 September 2020
-cd $LIBS_EXT_PATH
-sudo chown ecn . -R
+    # Downloaded before 16 September 2020
+    cd $LIBS_EXT_PATH
+    sudo chown ecn . -R
 
-sudo apt install -qy texlive-latex-extra texlive-fonts-recommended dvipng libbullet-dev 
+    sudo apt install -qy texlive-latex-extra texlive-fonts-recommended dvipng libbullet-dev 
 
-github_clone oKermorgant:log2plot --cmake
-github_clone oKermorgant:qtcreator_gen_config
+    github_clone oKermorgant:log2plot --cmake
+    github_clone oKermorgant:qtcreator_gen_config
 
-mkdir -p ros1/src && cd ros1/src
-git clone https://github.com/ros/geometry2.git
-git clone https://github.com/oKermorgant/ecn_common
-git clone https://github.com/RethinkRobotics/baxter_common.git
+    mkdir -p ros1/src && cd ros1/src
+    git clone https://github.com/ros/geometry2.git
+    git clone https://github.com/oKermorgant/ecn_common
+    git clone https://github.com/RethinkRobotics/baxter_common.git
 fi
 
 if [[ $prev < 2020-10-07 ]]
 then
-# a small typo in the previous patch...
-sudo chown ecn /home/ecn/ros -R
+    # a small typo in the previous patch...
+    sudo chown ecn /home/ecn/ros -R
 fi
 
 ros1_apt_install
@@ -95,6 +95,14 @@ if [[ $prev < 2020-11-06 ]] && [ $student = "OD_Robotique" ]; then
 	do
 	github_clone $pkg
 	done
+fi
+
+if [[ $prev < 2020-11-23 ]] && [ $student = "OD_Robotique" ]; then
+# uwsim
+uwsim_src_install
+# ffg
+cd $ROS1_EXT_PATH/src
+github_clone freefloating-gazebo:freefloating_gazebo
 fi
 
 
