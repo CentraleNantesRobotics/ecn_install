@@ -2,6 +2,11 @@
 # Uses the previous date when this script was run
 # Avoids re-patching things
 
+INSTALLDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null 2>&1 && pwd )"
+echo $INSTALLDIR
+
+exit 1
+
 git_update_subfolders()
 {
 for f in $(ls $1)
@@ -14,7 +19,7 @@ do
 done
 }
 
-cd ~/.ecn_install
+cd $INSTALLDIR
 
 if [ ! -f ".latest" ]
 then
@@ -80,7 +85,7 @@ fi
 ros1_apt_install
 
 if [[ $prev < 2020-11-06 ]] && [ $student = "OD_Robotique" ]; then
-    # prep ROS 2 labs...
+    # prep ROS 2 labs... with ROS 1 packages
 	cd $ROS1_EXT_PATH/src
 	github_clone CentraleNantesRobotics:baxter_simple_sim
 	github_clone oKermorgant:slider_publisher:ros1
@@ -98,11 +103,11 @@ if [[ $prev < 2020-11-06 ]] && [ $student = "OD_Robotique" ]; then
 fi
 
 if [[ $prev < 2020-11-23 ]] && [ $student = "OD_Robotique" ]; then
-# uwsim
-uwsim_src_install
-# ffg
-cd $ROS1_EXT_PATH/src
-github_clone freefloating-gazebo:freefloating_gazebo
+    # uwsim
+    uwsim_src_install
+    # ffg
+    cd $ROS1_EXT_PATH/src
+    github_clone freefloating-gazebo:freefloating_gazebo
 fi
 
 
@@ -120,6 +125,6 @@ echo "Updating ROS 2 source-installed packages"
     colbuild
 fi
 
-cd ~/.ecn_install
+cd $INSTALLDIR
 echo $(date -Idate) > .latest
 cd ~
