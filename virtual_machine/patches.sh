@@ -79,7 +79,7 @@ then
     sudo chown ecn /home/ecn/ros -R
 fi
 
-ros1_apt_install
+ros_apt_install
 
 if [[ $prev < 2020-11-06 ]] && [ $student = "OD_Robotique" ]; then
     # prep ROS 2 labs... with ROS 1 packages
@@ -103,14 +103,14 @@ if [[ $prev < 2020-11-23 ]] && [ $student = "OD_Robotique" ]; then
     cd $ROS2_EXT_PATH
     rm -rf install build log
     # uwsim
-    uwsim_src_install
+    #uwsim_src_install
     sudo apt install -qy $(add_prefix  ros-$ROS1_DISTRO gazebo-ros)
     # ffg
     cd $ROS1_EXT_PATH/src
     github_clone freefloating-gazebo:freefloating_gazebo
 fi
 
-if [[ $prev < 2020-11-30 ]] && [ $student = "OD_Robotique" ]; then
+if [[ $prev < 2020-12-02 ]] && [ $student = "OD_Robotique" ]; then
     sudo apt install -qy $(add_prefix  ros-$ROS1_DISTRO gazebo-plugins) 
     cd $ROS1_EXT_PATH
     catkin build freefloating_gazebo --force-cmake
@@ -121,7 +121,7 @@ git_update_subfolders $ROS1_EXT_PATH/src
 cd $ROS1_EXT_PATH
 ros1ws
 catkin config --extend /opt/ros/$ROS1_DISTRO --install --cmake-args -DCMAKE_BUILD_TYPE=Release
-catkin build
+catkin build --force-cmake
 
 if [ -f ROS2_EXT_PATH/src ]; then
 echo "Updating ROS 2 source-installed packages"
