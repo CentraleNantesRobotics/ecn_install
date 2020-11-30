@@ -100,13 +100,21 @@ if [[ $prev < 2020-11-06 ]] && [ $student = "OD_Robotique" ]; then
 fi
 
 if [[ $prev < 2020-11-23 ]] && [ $student = "OD_Robotique" ]; then
+    cd $ROS2_EXT_PATH
+    rm -rf install build log
     # uwsim
     uwsim_src_install
+    sudo apt install -qy $(add_prefix  ros-$ROS1_DISTRO gazebo-ros)
     # ffg
     cd $ROS1_EXT_PATH/src
     github_clone freefloating-gazebo:freefloating_gazebo
 fi
 
+if [[ $prev < 2020-11-30 ]] && [ $student = "OD_Robotique" ]; then
+    sudo apt install -qy $(add_prefix  ros-$ROS1_DISTRO gazebo-plugins) 
+    cd $ROS1_EXT_PATH
+    catkin build freefloating_gazebo --force-cmake
+fi
 
 echo "Updating ROS 1 source-installed packages"
 git_update_subfolders $ROS1_EXT_PATH/src
