@@ -123,7 +123,7 @@ ros1ws
 catkin config --extend /opt/ros/$ROS1_DISTRO --install --cmake-args -DCMAKE_BUILD_TYPE=Release
 catkin build --force-cmake
 
-if [ -f ROS2_EXT_PATH/src ]; then
+if [ -d ROS2_EXT_PATH/src ]; then
 echo "Updating ROS 2 source-installed packages"
     git_update_subfolders $ROS2_EXT_PATH/src
     cd $ROS2_EXT_PATH
