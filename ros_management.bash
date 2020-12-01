@@ -54,8 +54,8 @@ local subs="/ /install/ /devel/"
 local sub
 for sub in $subs
 do
-    if [ -f "$1${sub}setup.bash" ]; then
-            source "$1${sub}setup.bash"
+    if [ -f "$1${sub}local_setup.bash" ]; then
+            source "$1${sub}local_setup.bash"
         return
     fi
 done

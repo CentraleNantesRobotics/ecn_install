@@ -235,7 +235,7 @@ uwsim_src_install()
 		wget http://pagesperso.ls2n.fr/~kermorgant-o/files/uwsim_data.tgz
 		tar -xf uwsim_data.tgz		
 		rm uwsim_data.tgz
-                chmod a+rX -R .
+        chmod a+rX -R .
 		
 		# on-the-fly symlink for all users
 		sudo bash -c "echo 'if [ ! -d ~/.uwsim ]; then ln -s /opt/uwsim ~/.uwsim; fi' >> /etc/bash.bashrc"

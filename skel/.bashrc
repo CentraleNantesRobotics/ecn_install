@@ -148,7 +148,7 @@ ros1_workspaces="/opt/ros/noetic /opt/local_ws/ros1 ~/ros"
 ros2_workspaces="/opt/ros/foxy /opt/local_ws/ros2 ~/ros2"
 source /opt/local_ws/ros_management.bash
 # by default, do not see other computers
-if [ "$hostname" != "ecn" ]; then
+if [ "$hostname" != "ecn-focal" ]; then
 export ROS_DOMAIN_ID=$(tr -dc '0-9' <<< $hostname)
 fi
 ros1ws
