@@ -116,6 +116,11 @@ if [[ $prev < 2020-12-02 ]] && [ $student = "OD_Robotique" ]; then
     catkin build freefloating_gazebo --force-cmake
 fi
 
+if [[ $prev < 2020-12-3 ]] && [ $student = "OD_Robotique" ]; then
+    cd $INSTALLDIR
+    
+fi
+
 echo "Updating ROS 1 source-installed packages"
 git_update_subfolders $ROS1_EXT_PATH/src
 cd $ROS1_EXT_PATH
