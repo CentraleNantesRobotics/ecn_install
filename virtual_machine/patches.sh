@@ -132,6 +132,9 @@ if [[ $prev < 2020-12-3 ]]; then
     done
     rm -rf src/geometry2
    fi
+   if [ -d src/underwater_simulation ]; then
+    touch src/underwater_simulation/CATKIN_IGNORE
+   fi
 fi
 
 echo "Updating ROS 1 source-installed packages"
