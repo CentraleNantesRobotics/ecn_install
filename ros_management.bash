@@ -102,6 +102,10 @@ for ws in $ros1_workspaces
 do
     register_ros_workspace $ws
 done
+for ws in $ros1_workspaces
+do
+    register_ros_workspace $ws
+done
 # change prompt (actually not)
 local ROS1_COLOR="29"   # noetic green
 export PS1="$PS1_ori"
