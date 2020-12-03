@@ -68,7 +68,6 @@ then
     github_clone oKermorgant:qtcreator_gen_config
 
     mkdir -p ros1/src && cd ros1/src
-    git clone https://github.com/ros/geometry2.git
     git clone https://github.com/oKermorgant/ecn_common
     git clone https://github.com/RethinkRobotics/baxter_common.git
 fi
@@ -114,6 +113,25 @@ if [[ $prev < 2020-12-02 ]] && [ $student = "OD_Robotique" ]; then
     sudo apt install -qy $(add_prefix  ros-$ROS1_DISTRO gazebo-plugins) 
     cd $ROS1_EXT_PATH
     catkin build freefloating_gazebo --force-cmake
+fi
+
+if [[ $prev < 2020-12-3 ]]; then
+   # remove geometry2 pkg, was fixed   
+   cd $ROS1_EXT_PATH
+   if [ -d src/geometry2 ]; then
+    geom2=$(ls src/geometry2)
+    dsts="build devel/.private devel/include devel/lib devel/share install/include install/lib install/share"
+    for dst in $dsts
+    do
+        for pkg in $geom2
+        do
+            if [ -d "$dst/$pkg" ]; then
+                rm -rf $dst/$pkg
+            fi        
+        done
+    done
+    rm -rf src/geometry2
+   fi
 fi
 
 echo "Updating ROS 1 source-installed packages"
