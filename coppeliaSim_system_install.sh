@@ -5,7 +5,6 @@
 
 cSim_version="4_1_0"
 
-
 # check if already installed
 install_cSim=1
 if [ -f /opt/coppeliaSim/readme.txt ]
@@ -20,7 +19,7 @@ fi
 if [ $install_cSim -eq 1 ]
 then
     ubuntu_version=`lsb_release -sr | sed 's/\./_/g'`
-    cSim_file=CoppeliaSim_Edu_V${cSim_version}_Ubuntu18_04.tar.xz
+    cSim_file=CoppeliaSim_Edu_V${cSim_version}_Ubuntu20_04.tar.xz
 
     base_dir=$('pwd')
 
