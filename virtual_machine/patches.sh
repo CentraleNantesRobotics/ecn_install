@@ -161,7 +161,7 @@ cd $INSTALLDIR
 echo $(date -Idate) > .latest
 
 
-if [[ $prev < 2020-12-3 ]] && [ $student = "OD_Robotique" ]; then
+if [[ $prev < 2020-12-03 ]] && [ $student = "OD_Robotique" ]; then
     cd $INSTALLDIR/skel/.config
     rsync -avr xfce4 ~/.config
     echo "XFCE will restart to reload the panel"
