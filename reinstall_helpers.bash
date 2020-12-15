@@ -6,7 +6,7 @@ ROS2_PKG="desktop vision-opencv xacro joint-state-publisher joint-state-publishe
 
 # Packages installed system-wide from source (list of owner:repo[:branch] on Github)
 ROS1_EXT="RethinkRobotics:baxter_common CentraleNantesRobotics:baxter_interface CentraleNantesRobotics:baxter_tools oKermorgant:ecn_common oKermorgant:coppeliasim_ros_launcher freefloating-gazebo:freefloating_gazebo oKermorgant:slider_publisher:ros1 CentraleNantesRobotics:baxter_simple_sim"
-ROS2_EXT="CentraleNantesRobotics:baxter_common_ros2 oKermorgant:slider_publisher:ros2 oKermorgant:simple_launch"
+ROS2_EXT="CentraleNantesRobotics:baxter_common_ros2 oKermorgant:slider_publisher:ros2 oKermorgant:simple_launch oKermorgant:map_simulator:ros2"
 
 # System-wide libraries to install (list of owner:repo[:branch])
 LIBS_EXT="oKermorgant:log2plot oKermorgant:qtcreator_gen_config"

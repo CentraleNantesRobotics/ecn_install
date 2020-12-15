@@ -137,6 +137,12 @@ if [[ $prev < 2020-12-3 ]]; then
    fi
 fi
 
+if [[ $prev < 2020-12-16 ]] && [ $student = "OD_Robotique" ]; then
+    # add map simulator for lab 4
+    cd $ROS2_EXT_PATH/src
+    github_clone oKermorgant:map_simulator:ros2
+fi
+
 echo "Updating ROS 1 source-installed packages"
 git_update_subfolders $ROS1_EXT_PATH/src
 cd $ROS1_EXT_PATH
