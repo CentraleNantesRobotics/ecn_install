@@ -76,9 +76,10 @@ if [[ $prev < 2020-10-07 ]]
 then
     # a small typo in the previous patch...
     sudo chown ecn /home/ecn/ros -R
+    ros_apt_install
 fi
 
-ros_apt_install
+
 
 if [[ $prev < 2020-11-06 ]] && [ $student = "OD_Robotique" ]; then
     # prep ROS 2 labs... with ROS 1 packages
@@ -141,6 +142,7 @@ if [[ $prev < 2020-12-16 ]] && [ $student = "OD_Robotique" ]; then
     # add map simulator for lab 4
     cd $ROS2_EXT_PATH/src
     github_clone oKermorgant:map_simulator:ros2
+    sudo apt install -qy $(add_prefix  ros-$ROS2_DISTRO navigation2) 
 fi
 
 echo "Updating ROS 1 source-installed packages"
