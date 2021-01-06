@@ -55,6 +55,8 @@ cp skel/.bashrc ~
 cp ros_management.bash /opt/local_ws
 source reinstall_helpers.bash
 
+sudo apt purge libreoffice-core libreoffice-common -qy
+sudo apt autoremove --purge -qy
 
 if [[ $prev < 2020-09-16 ]]
 then
