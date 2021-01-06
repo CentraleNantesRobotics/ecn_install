@@ -59,11 +59,10 @@ source reinstall_helpers.bash
 if [[ $prev < 2020-09-16 ]]
 then
     # Downloaded before 16 September 2020
-    cd $LIBS_EXT_PATH
-    sudo chown ecn . -R
-
     sudo apt install -qy texlive-latex-extra texlive-fonts-recommended dvipng libbullet-dev 
 
+    cd $LIBS_EXT_PATH
+    sudo chown ecn . -R
     github_clone oKermorgant:log2plot --cmake
     github_clone oKermorgant:qtcreator_gen_config
 
@@ -78,8 +77,6 @@ then
     sudo chown ecn /home/ecn/ros -R
     ros_apt_install
 fi
-
-
 
 if [[ $prev < 2020-11-06 ]] && [ $student = "OD_Robotique" ]; then
     # prep ROS 2 labs... with ROS 1 packages
@@ -104,16 +101,10 @@ if [[ $prev < 2020-11-23 ]] && [ $student = "OD_Robotique" ]; then
     rm -rf install build log
     # uwsim
     #uwsim_src_install
-    sudo apt install -qy $(add_prefix  ros-$ROS1_DISTRO gazebo-ros)
+    sudo apt install -qy $(add_prefix  ros-$ROS1_DISTRO gazebo-ros gazebo-plugins)
     # ffg
     cd $ROS1_EXT_PATH/src
     github_clone freefloating-gazebo:freefloating_gazebo
-fi
-
-if [[ $prev < 2020-12-02 ]] && [ $student = "OD_Robotique" ]; then
-    sudo apt install -qy $(add_prefix  ros-$ROS1_DISTRO gazebo-plugins) 
-    cd $ROS1_EXT_PATH
-    catkin build freefloating_gazebo --force-cmake
 fi
 
 if [[ $prev < 2020-12-3 ]]; then
@@ -145,6 +136,11 @@ if [[ $prev < 2020-12-16 ]] && [ $student = "OD_Robotique" ]; then
     sudo apt install -qy $(add_prefix  ros-$ROS2_DISTRO navigation2) 
 fi
 
+if [[ $prev < 2021-01-06 ]] && [ $student = "OD_Robotique" ]; then
+    cd $ROS1_EXT_PATH
+    rm -rf build devel logs
+fi
+
 echo "Updating ROS 1 source-installed packages"
 git_update_subfolders $ROS1_EXT_PATH/src
 cd $ROS1_EXT_PATH
@@ -162,10 +158,9 @@ fi
 cd $INSTALLDIR
 echo $(date -Idate) > .latest
 
-
-if [[ $prev < 2020-12-03 ]] && [ $student = "OD_Robotique" ]; then
+if [[ $prev < 2021-01-06 ]] && [ $student = "OD_Robotique" ]; then
     cd $INSTALLDIR/skel/.config
-    rsync -avr xfce4 ~/.config
+    rsync -avr xfce4 ~/.config --delete
     echo "XFCE will restart to reload the panel"
     sleep 10
     pkill -KILL -u ecn
