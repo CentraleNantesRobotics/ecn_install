@@ -47,16 +47,18 @@ fi
 echo "Performing update for $student, last update was on $prev"
 
 # # do a full upgrade anyway
+sudo apt purge libreoffice-core libreoffice-common -qy
+sudo apt autoremove --purge -qy
 sudo apt update -qy
 sudo apt upgrade -qy
+sudo apt autoremove --purge -qy
 
 # # update bashrc / ros management
 cp skel/.bashrc ~
 cp ros_management.bash /opt/local_ws
 source reinstall_helpers.bash
 
-sudo apt purge libreoffice-core libreoffice-common -qy
-sudo apt autoremove --purge -qy
+
 
 if [[ $prev < 2020-09-16 ]]
 then
