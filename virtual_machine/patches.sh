@@ -148,6 +148,8 @@ fi
 if [[ $prev < 2021-03-05 ]] && [ $student = "OD_Robotique" ]; then
     cd $ROS1_EXT_PATH/src
     github_clone oKermorgant:coppeliasim_ros_launcher
+    cd $INSTALLDIR
+    bash coppeliaSim_system_install.sh
 fi
 
 echo "Updating ROS 1 source-installed packages"
