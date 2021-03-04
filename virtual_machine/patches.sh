@@ -145,6 +145,11 @@ if [[ $prev < 2021-01-06 ]] && [ $student = "OD_Robotique" ]; then
     rm -rf build devel logs
 fi
 
+if [[ $prev < 2021-03-05 ]] && [ $student = "OD_Robotique" ]; then
+    cd $ROS1_EXT_PATH/src
+    github_clone oKermorgant:coppeliasim_ros_launcher
+fi
+
 echo "Updating ROS 1 source-installed packages"
 git_update_subfolders $ROS1_EXT_PATH/src
 cd $ROS1_EXT_PATH

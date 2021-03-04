@@ -106,9 +106,10 @@ for ws in $ros1_workspaces
 do
     register_ros_workspace $ws
 done
-# change prompt (actually not)
+# change prompt (actually not by default)
 local ROS1_COLOR="29"   # noetic green
 export PS1="$PS1_ori"
+source /usr/share/gazebo/setup.sh
 }
 
 # Activate ROS 2 ws
@@ -127,8 +128,7 @@ done
 # change prompt
 local ROS2_COLOR="166"  # foxy orange
 export PS1="\e[38;5;${ROS2_COLOR}m[ROS2] $PS1_ori"
-#export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-#export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/dashing/share/turtlebot3_gazebo/models
+source /usr/share/gazebo/setup.sh
 }
 
 # some shortcuts
