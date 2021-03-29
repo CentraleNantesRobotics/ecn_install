@@ -58,7 +58,7 @@ sudo apt autoremove --purge -qy
 # # update bashrc / ros management
 if [[ $prev < 2021-03-30 ]] && [ $student = "OD_Robotique" ]; then
     cd /opt/local_ws
-    github_clone oKermorgant:ros_management_tools
+    git clone https://gihub.com/oKermorgant/ros_management_tools
     rm -rf qtcreator_gen_config
     rm -rf log2plot
 fi
