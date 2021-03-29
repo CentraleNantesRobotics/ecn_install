@@ -2,8 +2,6 @@
 # Uses the previous date when this script was run
 # Avoids re-patching things
 
-git pull --recurse-submodules
-
 INSTALLDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null 2>&1 && pwd )"
 
 git_update_subfolders()
@@ -55,11 +53,17 @@ sudo apt update -qy
 sudo apt upgrade -qy
 sudo apt autoremove --purge -qy
 
+
+
 # # update bashrc / ros management
+if [[ $prev < 2021-03-30 ]] && [ $student = "OD_Robotique" ]; then
+    cd /opt/local_ws
+    github_clone oKermorgant:ros_management_tools
+    rm -rf qtcreator_gen_config
+    rm -rf log2plot
+fi
 cp skel/.bashrc ~
 source reinstall_helpers.bash
-
-
 
 if [[ $prev < 2020-09-16 ]]
 then
@@ -158,12 +162,7 @@ if [[ $prev < 2021-03-06 ]] && [ $student = "OD_Robotique" ]; then
     github_clone oKermorgant:ecn_common
 fi
 
-if [[ $prev < 2021-03-06 ]] && [ $student = "OD_Robotique" ]; then
-    cd /opt/local_ws
-    github_clone oKermorgant:ros_management_tools
-    rm -rf qtcreator_gen_config
-    rm -rf log2plot
-fi
+
 
 echo "Updating source-installed packages"
 git_update_subfolders /opt/local_ws
