@@ -62,6 +62,7 @@ if [[ $prev < 2021-03-30 ]] && [ $student = "OD_Robotique" ]; then
     rm -rf qtcreator_gen_config
     rm -rf log2plot
 fi
+cd $INSTALLDIR
 cp skel/.bashrc ~
 source reinstall_helpers.bash
 
