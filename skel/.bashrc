@@ -116,9 +116,6 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# QtCreator configure shortcut
-alias gqt=/opt/local_ws/qtcreator_gen_config/qtcreator_gen_config.py
-
 rosdl() {
 ros1ws
 mkdir -p ~/ros/src
@@ -143,10 +140,12 @@ cd src/$1
 gqt
 }
 
+# QtCreator configure shortcut
+alias gqt=/opt/local_ws/ros_management_tools/qtcreator/qtcreator_gen_config.py
 
 ros1_workspaces="/opt/ros/noetic /opt/local_ws/ros1 ~/ros"
 ros2_workspaces="/opt/ros/foxy /opt/local_ws/ros2 ~/ros2"
-source /opt/local_ws/ros_management.bash
+source /opt/local_ws/ros_management_tools/ros_management.bash
 ros1ws
 # RViz2 display bug
 export LC_NUMERIC="en_US.UTF-8"
