@@ -53,12 +53,10 @@ sudo apt update -qy
 sudo apt upgrade -qy
 sudo apt autoremove --purge -qy
 
-
-
 # # update bashrc / ros management
-if [[ $prev < 2021-03-30 ]] && [ $student = "OD_Robotique" ]; then
+if [[ $prev < 2021-03-30 ]]; then
     cd /opt/local_ws
-    git clone https://gihub.com/oKermorgant/ros_management_tools
+    git clone https://github.com/oKermorgant/ros_management_tools
     rm -rf qtcreator_gen_config
     rm -rf log2plot
 fi
@@ -73,8 +71,6 @@ then
 
     cd $LIBS_EXT_PATH
     sudo chown ecn . -R
-    github_clone oKermorgant:log2plot --cmake
-    github_clone oKermorgant:qtcreator_gen_config
 
     mkdir -p ros1/src && cd ros1/src
     git clone https://github.com/oKermorgant/ecn_common
