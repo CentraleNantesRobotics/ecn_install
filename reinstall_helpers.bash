@@ -2,7 +2,7 @@
 
 # List of apt-installed packages
 ROS1_PKG="desktop robot-localization vision-opencv gazebo-ros-pkgs image-view compressed-image-transport amcl control-toolbox kdl-parser-py"
-ROS2_PKG="desktop vision-opencv xacro joint-state-publisher joint-state-publisher-gui image-view compressed-image-transport ros1-bridge simple_launch"
+ROS2_PKG="desktop vision-opencv xacro joint-state-publisher joint-state-publisher-gui image-view compressed-image-transport ros1-bridge simple-launch ament-cmake"
 
 # Packages installed system-wide from source (list of owner:repo[:branch] on Github)
 ROS1_EXT="RethinkRobotics:baxter_common CentraleNantesRobotics:baxter_interface CentraleNantesRobotics:baxter_tools oKermorgant:ecn_common oKermorgant:coppeliasim_ros_launcher freefloating-gazebo:freefloating_gazebo oKermorgant:slider_publisher:ros1 CentraleNantesRobotics:baxter_simple_sim"
