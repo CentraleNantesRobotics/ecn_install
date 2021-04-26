@@ -99,9 +99,6 @@ do
 github_clone $pkg --cmake
 done
 
-# CoppeliaSim
-cd $LIBS_EXT_PATH
-bash $base_dir/coppeliaSim_system_install.sh
 sudo chmod a+rX $LIBS_EXT_PATH -R
 }
 
