@@ -1,0 +1,3 @@
+[submodule "ros_management_tools"]
+	path = ros_management_tools
+	url = https://github.com/oKermorgant/ros_management_tools.git

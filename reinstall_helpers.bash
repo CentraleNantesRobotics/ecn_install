@@ -15,7 +15,7 @@ LIBS_EXT="oKermorgant:log2plot oKermorgant:qtcreator_gen_config"
 ros1_workspaces="/opt/ros/noetic /opt/local_ws/ros1"
 ros2_workspaces="/opt/ros/foxy /opt/local_ws/ros2"
 
-source /opt/local_ws/ros_management_tools/ros_management.bash
+source ros_management_tools/ros_management.bash
 
 # extract ROS base distros
 ROS1_DISTRO=$(echo ${ros1_workspaces% *} | cut -d'/' -f 4)
