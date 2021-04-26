@@ -9,7 +9,7 @@ ROS1_EXT="RethinkRobotics:baxter_common CentraleNantesRobotics:baxter_interface 
 ROS2_EXT="CentraleNantesRobotics:baxter_common_ros2 oKermorgant:slider_publisher:ros2 oKermorgant:map_simulator:ros2"
 
 # System-wide libraries to install (list of owner:repo[:branch])
-LIBS_EXT="oKermorgant:log2plot oKermorgant:qtcreator_gen_config"
+LIBS_EXT="oKermorgant:log2plot oKermorgant:ros_management_tools"
 
 # define ros workspaces
 ros1_workspaces="/opt/ros/noetic /opt/local_ws/ros1"
@@ -158,8 +158,7 @@ ros_src_install()
 echo "[ROS 1 packages from source]"
 sudo mkdir -p $ROS1_EXT_PATH/src
 sudo chown $USER $ROS1_EXT_PATH -R
-sudo cp $1/ros_management.bash $LIBS_EXT_PATH
-source $LIBS_EXT_PATH/ros_management.bash
+source $LIBS_EXT_PATH/ros_management_tools/ros_management.bash
 
 cd $ROS1_EXT_PATH/src
 local pkg
