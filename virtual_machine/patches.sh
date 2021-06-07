@@ -21,6 +21,7 @@ cd $INSTALLDIR
 if [ ! -f ".latest" ]
 then
     prev=2020-09-01
+    ros_apt_install
 else
     prev=$(cat .latest)
 fi
@@ -53,36 +54,12 @@ sudo apt update -qy
 sudo apt upgrade -qy
 sudo apt autoremove --purge -qy
 
-# # update bashrc / ros management
-if [[ $prev < 2021-03-30 ]]; then
-    cd /opt/local_ws
-    git clone https://github.com/oKermorgant/ros_management_tools
-    rm -rf qtcreator_gen_config
-    rm -rf log2plot
-fi
+# update bashrc / ros management
 cd $INSTALLDIR
 cp skel/.bashrc ~
+source ~/.bashrc
 source reinstall_helpers.bash
 
-if [[ $prev < 2020-09-16 ]]
-then
-    # Downloaded before 16 September 2020
-    sudo apt install -qy texlive-latex-extra texlive-fonts-recommended dvipng libbullet-dev 
-
-    cd $LIBS_EXT_PATH
-    sudo chown ecn . -R
-
-    mkdir -p ros1/src && cd ros1/src
-    git clone https://github.com/oKermorgant/ecn_common
-    git clone https://github.com/RethinkRobotics/baxter_common.git
-fi
-
-if [[ $prev < 2020-10-07 ]]
-then
-    # a small typo in the previous patch...
-    sudo chown ecn /home/ecn/ros -R
-    ros_apt_install
-fi
 
 if [[ $prev < 2020-11-06 ]] && [ $student = "OD_Robotique" ]; then
     # prep ROS 2 labs... with ROS 1 packages
@@ -92,8 +69,8 @@ if [[ $prev < 2020-11-06 ]] && [ $student = "OD_Robotique" ]; then
 
     # install ROS 2 base packages
     ros2_apt_install
-	sudo mkdir -p $ROS2_EXT_PATH/src
-	sudo chown $USER $ROS2_EXT_PATH -R
+	mkdir -p $ROS2_EXT_PATH/src
+	chown $USER $ROS2_EXT_PATH -R
 	cd $ROS2_EXT_PATH/src
 	local pkg
 	for pkg in $ROS2_EXT
@@ -107,44 +84,10 @@ if [[ $prev < 2020-11-23 ]] && [ $student = "OD_Robotique" ]; then
     rm -rf install build log
     # uwsim
     #uwsim_src_install
-    sudo apt install -qy $(add_prefix  ros-$ROS1_DISTRO gazebo-ros gazebo-plugins)
+    sudo apt install -qy $(add_prefix ros-$ROS1_DISTRO gazebo-ros gazebo-plugins)
     # ffg
     cd $ROS1_EXT_PATH/src
     github_clone freefloating-gazebo:freefloating_gazebo
-fi
-
-if [[ $prev < 2020-12-3 ]]; then
-   # remove geometry2 pkg, was fixed   
-   cd $ROS1_EXT_PATH
-   if [ -d src/geometry2 ]; then
-    geom2=$(ls src/geometry2)
-    dsts="build devel/.private devel/include devel/lib devel/share install/include install/lib install/share"
-    for dst in $dsts
-    do
-        for pkg in $geom2
-        do
-            if [ -d "$dst/$pkg" ]; then
-                rm -rf $dst/$pkg
-            fi        
-        done
-    done
-    rm -rf src/geometry2
-   fi
-   if [ -d src/underwater_simulation ]; then
-    touch src/underwater_simulation/CATKIN_IGNORE
-   fi
-fi
-
-if [[ $prev < 2020-12-16 ]] && [ $student = "OD_Robotique" ]; then
-    # add map simulator for lab 4
-    cd $ROS2_EXT_PATH/src
-    github_clone oKermorgant:map_simulator:ros2
-    sudo apt install -qy $(add_prefix  ros-$ROS2_DISTRO navigation2) 
-fi
-
-if [[ $prev < 2021-01-06 ]] && [ $student = "OD_Robotique" ]; then
-    cd $ROS1_EXT_PATH
-    rm -rf build devel logs
 fi
 
 if [[ $prev < 2021-03-05 ]] && [ $student = "OD_Robotique" ]; then
@@ -154,22 +97,27 @@ if [[ $prev < 2021-03-05 ]] && [ $student = "OD_Robotique" ]; then
     bash coppeliaSim_system_install.sh
 fi
 
-if [[ $prev < 2021-03-06 ]] && [ $student = "OD_Robotique" ]; then
-    cd $ROS1_EXT_PATH/src
-    github_clone oKermorgant:ecn_common
-fi
-
 
 
 echo "Updating source-installed packages"
-git_update_subfolders /opt/local_ws
+for f in $(ls /opt/local_ws)
+do
+    if [ -d "/opt/local_ws/$f/.git" ]; then
+        cd /opt/local_ws/$f
+        echo "Refreshing /opt/local_ws/$f..."
+        git pull
+        if [ -d "/opt/local_ws/$f/build" ]; then
+            cd /opt/local_ws/$f/build
+            sudo make install
+        fi
+    fi
+done
 
 echo "Updating ROS 1 source-installed packages"
 source ~/.bashrc
 git_update_subfolders $ROS1_EXT_PATH/src
 cd $ROS1_EXT_PATH
 ros1ws
-catkin config --extend /opt/ros/$ROS1_DISTRO --install --cmake-args -DCMAKE_BUILD_TYPE=Release
 catkin build --force-cmake
 
 if [ -d $ROS2_EXT_PATH/src ]; then
@@ -181,11 +129,3 @@ fi
 
 cd $INSTALLDIR
 echo $(date -Idate) > .latest
-
-if [[ $prev < 2021-01-06 ]] && [ $student = "OD_Robotique" ]; then
-    cd $INSTALLDIR/skel/.config
-    rsync -avr xfce4 ~/.config --delete
-    echo "XFCE will restart to reload the panel"
-    sleep 10
-    pkill -KILL -u ecn
-fi

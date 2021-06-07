@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # List of apt-installed packages
-ROS1_PKG="desktop robot-localization vision-opencv gazebo-ros-pkgs image-view compressed-image-transport amcl control-toolbox kdl-parser-py"
-ROS2_PKG="desktop vision-opencv xacro joint-state-publisher joint-state-publisher-gui image-view compressed-image-transport ros1-bridge simple-launch ament-cmake"
+ROS1_PKG="desktop robot-localization vision-opencv gazebo-ros-pkgs image-view compressed-image-transport amcl control-toolbox kdl-parser-py slider-publisher"
+ROS2_PKG="desktop vision-opencv xacro joint-state-publisher joint-state-publisher-gui image-view compressed-image-transport ros1-bridge simple-launch ament-cmake slider-publisher navigation2"
 
 # Packages installed system-wide from source (list of owner:repo[:branch] on Github)
-ROS1_EXT="RethinkRobotics:baxter_common CentraleNantesRobotics:baxter_interface CentraleNantesRobotics:baxter_tools oKermorgant:ecn_common oKermorgant:coppeliasim_ros_launcher freefloating-gazebo:freefloating_gazebo oKermorgant:slider_publisher:ros1 CentraleNantesRobotics:baxter_simple_sim"
-ROS2_EXT="CentraleNantesRobotics:baxter_common_ros2 oKermorgant:slider_publisher:ros2 oKermorgant:map_simulator:ros2"
+ROS1_EXT="RethinkRobotics:baxter_common CentraleNantesRobotics:baxter_interface CentraleNantesRobotics:baxter_tools oKermorgant:ecn_common oKermorgant:coppeliasim_ros_launcher freefloating-gazebo:freefloating_gazebo CentraleNantesRobotics:baxter_simple_sim"
+ROS2_EXT="CentraleNantesRobotics:baxter_common_ros2 oKermorgant:map_simulator:ros2"
 
 # System-wide libraries to install (list of owner:repo[:branch])
 LIBS_EXT="oKermorgant:log2plot oKermorgant:ros_management_tools"
@@ -108,7 +108,6 @@ ros_apt_install()
 {
 echo "[Getting ROS key]"
 sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
-curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
 
 echo "[Adding ROS repositories]"
 if [ ! -e /etc/apt/sources.list.d/ros-latest.list ]; then
@@ -134,7 +133,6 @@ ros2_apt_install()
 {
 echo "[Getting ROS key]"
 sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
-curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
 
 echo "[Adding ROS2 repositories]"
 if [ ! -e /etc/apt/sources.list.d/ros2-latest.list ]; then
