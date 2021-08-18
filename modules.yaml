@@ -12,10 +12,12 @@ ros:
     ros:
         apt: [desktop, joint-state-publisher,robot-localization,vision-opencv,gazebo-ros-pkgs,image-view,compressed-image-transport,amcl,control-toolbox,kdl-parser-py,slider-publisher]
     apt: [python3-rosdep,python3-rosinstall,python3-rosinstall-generator,python3-wstool,build-essential,python3-catkin-tools]
+    git: [oKermorgant:ros_management_tools]
         
 ros2:
     ros2:
         apt: [desktop,slider-publisher,simple-launch,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2]
+    git: [oKermorgant:ros_management_tools]
         
 coppeliasim:
     deb: [https://box.ec-nantes.fr/index.php/s/2m4ZwLYoHmpbiMs/download/coppeliasim_4.2.0.deb] 

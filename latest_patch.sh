@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# cd ~/.ecn_install
-git pull --recurse-submodules
+cd ~/.ecn_install
+git pull
 
 # system patches
 bash ./patches.sh

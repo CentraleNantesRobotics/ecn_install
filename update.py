@@ -221,7 +221,8 @@ class Element:
         base_dir = self.abs_folder()
         if os.path.exists(base_dir):
             # update repo
-            run('git pull', cwd=base_dir)            
+            print('Updating ' + base_dir)
+            run('git pull', cwd=base_dir)
         else:
             # clone
             if self.pkg.count(':') == 2:
@@ -232,7 +233,7 @@ class Element:
                 run('git clone ' + self.pkg, cwd=root)
             
         # install if not ROS
-        if self.src == Source.GIT:
+        if self.src == Source.GIT and os.path.exists(base_dir + '/CMakeLists.txt'):
             build_dir = base_dir + '/build'
             run(f'mkdir -p {build_dir}')
             run('cmake {} ..'.format(self.cmake),cwd=build_dir)
@@ -272,15 +273,18 @@ class Module:
                 config['mod'].append(dep)
         
         self.config = config
+        if 'update' not in self.config or '-f' in sys.argv:
+            self.config['update'] = True
+
         self.parse_depends()        
         
     def check_status(self):
         if 'description' in self.config:
             self.configure(Action.KEEP)
-        if 'update' in self.config and not self.config['update']:
-            self.status = Status.INSTALLED
-        else:
-            self.status = min(dep.status for dep in self.all_deps())
+        self.status = min(dep.status for dep in self.all_deps())
+
+        if self.status != Status.ABSENT and not self.config['update']:
+            self.status = Status.INSTALLED   
         
     def sync_depends(self, modules):
                 
