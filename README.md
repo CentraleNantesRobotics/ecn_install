@@ -20,4 +20,8 @@ Do not blindly run the `reinstall_from_scratch.bash` script but feel free to reu
 
 ## Virtual Machine
 
-The `virtual_machine` folder has several files to keep the Virtual Machine up to date. 
+The `update.py` is used to keep the Virtual Machine up to date. Run it without arguments or by specifying which module you want to update:
+  - `update.py -u` will update all installed modules
+  - `update.py -u arpro` will only update arpro
+  - `update.py -a` will install all depdencies for all labs (Robotics major / M1 CORO-IMARO / M2 CORO-IMARO)
+    

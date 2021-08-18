@@ -47,7 +47,7 @@ fi
 
 echo "Performing update for $student, last update was on $prev"
 
-# # do a full upgrade anyway
+# do a full upgrade anyway
 sudo apt purge libreoffice-core libreoffice-common -qy
 sudo apt autoremove --purge -qy
 sudo apt update -qy

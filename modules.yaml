@@ -1,0 +1,76 @@
+# student groups
+OD Robotique: [arpro, rasom, midwa, planif]
+M1 CORO: [arpro,sofar,manip]
+M2 CORO-IMARO: [tbc,amoro]
+
+# where git-based packages will be downloaded
+# ros packages will be in lib_folder/ros and lib_folder/ros2
+lib_folder: /opt/local_ws
+
+# hidden modules (without description) others may depend on 
+ros:
+    ros:
+        apt: [desktop, joint-state-publisher,robot-localization,vision-opencv,gazebo-ros-pkgs,image-view,compressed-image-transport,amcl,control-toolbox,kdl-parser-py,slider-publisher]
+    apt: [python3-rosdep,python3-rosinstall,python3-rosinstall-generator,python3-wstool,build-essential,python3-catkin-tools]
+        
+ros2:
+    ros2:
+        apt: [desktop,slider-publisher,simple-launch,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2]
+        
+coppeliasim:
+    deb: [https://box.ec-nantes.fr/index.php/s/2m4ZwLYoHmpbiMs/download/coppeliasim_4.2.0.deb] 
+    ros:
+        apt: [cv-bridge]
+        git: [oKermorgant:coppeliasim_ros_launcher]
+        
+visp:
+    git: [lagadic:visp]
+    cmake: '-DBUILD_DEMOS=OFF -DBUILD_DEPRECATED_FUNCTIONS=ON -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_PACKAGE=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DUSE_PCL=OFF -DBUILD_MODULE_visp_sensor=OFF'
+    apt: [libogre-1.9-dev, libopencv-dev, libeigen3-dev, libopenblas-dev, liblapack-dev, libxml2-dev, libzbar-dev, libgsl-dev]
+    update: False   # disable auto update even if git has new commits
+    
+log2plot:
+    git: [oKermorgant:log2plot]
+    apt: [python3-matplotlib, texlive-latex-extra, texlive-fonts-recommended, dvipng]
+    mod: [visp]
+    
+# main module definitions
+arpro:
+    description: 'Advanced programming / C++'
+    deb: [https://box.ec-nantes.fr/index.php/s/arRrwDNyzcGD84r/download/duels_3.3.3.deb]
+    apt: [python3-pygame, libzmq3-dev, python3-zmq]
+    
+manip:
+    description: Robot modeling and control
+    mod: [visp, ros]
+        
+planif:
+    description: Robot planning and control
+    mod: [visp, coppeliasim]
+    
+sofar:
+    description: Software architecture / ROS
+    mod: [ros]
+    
+midwa:
+    description: Middleware / ROS 2
+    ros2: 
+        git: [oKermorgant:map_simulator:ros2,CentraleNantesRobotics:baxter_common_ros2]
+    ros:
+        git: [RethinkRobotics:baxter_common,CentraleNantesRobotics:baxter_interface,CentraleNantesRobotics:baxter_tools,oKermorgant:ecn_common,CentraleNantesRobotics:baxter_simple_sim]
+
+rasom: 
+    description: Underwater robotics
+    apt: [libopenscenegraph-dev, libfftw3-dev, libxml++2.6-dev]
+    ros:
+        apt: [control-toolbox]
+        git: [oKermorgant:underwater_simulation, freefloating-gazebo:freefloating_gazebo]
+    
+tbc:
+    description: Task-based control
+    mod: [coppeliasim,log2plot]
+
+amoro:
+    description: Advanced Modeling of Robots
+    ros2:
+        apt: [ros2-control, ros2-controllers, gazebo-ros2-control]
