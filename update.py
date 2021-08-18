@@ -32,7 +32,7 @@ class Sudo:
                     self.passwd = getpass.getpass('Enter admin password: ')
                 else:
                     dlg = QInputDialog(gui)                 
-                    dlg.setWindowIcon(QIcon(get_file('ecn.png')))
+                    dlg.setWindowIcon(QIcon(get_file('images/ecn.png')))
                     dlg.setWindowTitle('Performing update')
                     dlg.setInputMode(QInputDialog.TextInput)            
                     dlg.setLabelText("Enter admin password:")                        
@@ -399,7 +399,7 @@ class UpdaterGUI(QWidget):
     def __init__(self):
         super().__init__()
                 
-        self.setWindowIcon(QIcon(get_file('ecn.png')))
+        self.setWindowIcon(QIcon(get_file('images/ecn.png')))
         self.setWindowTitle('Virtual Machine updater')                           
                 
         # build GUI        
