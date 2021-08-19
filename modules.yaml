@@ -75,4 +75,4 @@ tbc:
 amoro:
     description: Advanced Modeling of Robots
     ros2:
-        apt: [ros2-control, ros2-controllers, gazebo-ros2-control]
+        apt: [ros2-control, ros2-controllers, gazebo-ros2-control,gazebo-ros-pkgs]
