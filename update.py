@@ -58,8 +58,9 @@ class Sudo:
                 if 'incorrect' not in out[1].decode():
                     ask_passwd = False
                 
-    def run(self, cmd, cwd=None):
-        display(cmd,True)
+    def run(self, cmd, cwd=None,show=True):
+        if show:
+            display(cmd,True)
         proc = Popen(['sudo','-S'] + shlex.split(cmd), stdin=PIPE, stderr=PIPE,cwd=cwd)
         proc.communicate(self.passwd)
         proc.wait()
@@ -223,8 +224,14 @@ class Element:
         
         if not os.path.exists(root):
             sudo.run(f'mkdir -p {root}')
-        user = os.environ['USER']
-        sudo.run(f'chown {user} {Element.folders[Source.GIT]} -R')
+        
+        perms = run(f'stat {Element.folders[Source.GIT]}')
+        for line in perms:
+            if line.startswith('Access'):
+                if 'root' in line:
+                    user = os.environ['USER']
+                    sudo.run(f'chown {user} {Element.folders[Source.GIT]} -R')
+                break
             
         base_dir = self.abs_folder()
         if os.path.exists(base_dir):
@@ -383,20 +390,24 @@ def perform_update(action = None, gui = None):
         if dep.need_install():
             ret.append(dep.update_from(sudo))
     
+    need_chmod = False
     # recompile ros1ws
     if Source.GIT_ROS in ret or '-f' in sys.argv:
         print('Compiling ROS 1 local workspace...')
         if not os.path.exists(f'{Element.folders[Source.GIT_ROS]}/.catkin_tools'):
             run(f'catkin config --init --extend /opt/ros/{ros1} --install -DCATKIN_ENABLE_TESTING=False --make-args -Wno-dev --cmake-args -DCMAKE_BUILD_TYPE=Release', cwd=Element.folders[Source.GIT_ROS])
         run(f'catkin build  --continue-on-failure', cwd=Element.folders[Source.GIT_ROS],show=True)
+        need_chmod = True
             
     # recompile ros2ws
     if Source.GIT_ROS2 in ret or '-f' in sys.argv:
         print('Compiling ROS 2 local workspace...')
         run(f'bash -c -i "source /opt/ros/{ros2}/setup.bash && colcon build --symlink-install --continue-on-error"', cwd=Element.folders[Source.GIT_ROS2],show=True)
+        need_chmod = True
     
-    sudo.run(f'chmod a+rX {Element.folders[Source.GIT]} -R')
-    sudo.run('ldconfig')
+    if need_chmod:
+        sudo.run(f'chmod a+rX {Element.folders[Source.GIT]} -R',False)
+    sudo.run('ldconfig',False)
     
 def Font(size = 10):
     return QFont("Helvetica", size, QFont.Bold)
@@ -504,6 +515,9 @@ class UpdaterGUI(QWidget):
                 module.menu.setCurrentIndex(Action.INSTALL)
             else:
                 module.menu.setCurrentIndex(Action.KEEP)
+    
+if '-t' in sys.argv:
+    sys.exit(0)
     
 if '-u' in sys.argv:    
     if sys.argv[-1] == '-u':

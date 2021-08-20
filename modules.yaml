@@ -39,7 +39,7 @@ log2plot:
 # main module definitions
 arpro:
     description: 'Advanced programming / C++'
-    deb: [https://box.ec-nantes.fr/index.php/s/arRrwDNyzcGD84r/download/duels_3.3.3.deb]
+    deb: [https://box.ec-nantes.fr/index.php/s/Jycykdor869BLKS/download/duels_3.3.3.deb]
     apt: [python3-pygame, libzmq3-dev, python3-zmq]
     
 manip:
