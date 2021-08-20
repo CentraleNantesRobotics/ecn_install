@@ -22,8 +22,9 @@ def display(s, sudo = False):
 def get_file(name):
     return base_path + '/' + name
 
-def run(cmd, cwd=None):
-    display(cmd)
+def run(cmd, cwd=None,show=False):
+    if show:
+        display(cmd)
     return check_output(shlex.split(cmd), stderr=PIPE, cwd=cwd).decode('utf-8').splitlines()
 
 class Sudo:
@@ -165,7 +166,7 @@ class Element:
     def check(self):
         
         if not Element.packages:
-            out = run('apt list --installed')
+            out = run('apt list --installed',True)
             for line in out:
                 if '/' not in line:
                     continue
@@ -235,9 +236,9 @@ class Element:
             if self.pkg.count(':') == 2:
                 # branch is specified
                 url,branch = self.pkg.rsplit(':',1)
-                run(f'git clone {url} -b {branch}', cwd=root)
+                run(f'git clone {url} -b {branch}', cwd=root,show=True)
             else:
-                run('git clone ' + self.pkg, cwd=root)
+                run('git clone ' + self.pkg, cwd=root,show=True)
             
         # install if not ROS
         if self.src == Source.GIT and os.path.exists(base_dir + '/CMakeLists.txt'):
@@ -387,12 +388,12 @@ def perform_update(action = None, gui = None):
         print('Compiling ROS 1 local workspace...')
         if not os.path.exists(f'{Element.folders[Source.GIT_ROS]}/.catkin_tools'):
             run(f'catkin config --init --extend /opt/ros/{ros1} --install -DCATKIN_ENABLE_TESTING=False --make-args -Wno-dev --cmake-args -DCMAKE_BUILD_TYPE=Release', cwd=Element.folders[Source.GIT_ROS])
-        run(f'catkin build  --continue-on-failure', cwd=Element.folders[Source.GIT_ROS])
+        run(f'catkin build  --continue-on-failure', cwd=Element.folders[Source.GIT_ROS],show=True)
             
     # recompile ros2ws
     if Source.GIT_ROS2 in ret or '-f' in sys.argv:
         print('Compiling ROS 2 local workspace...')
-        run(f'bash -c -i "source /opt/ros/{ros2}/setup.bash && colcon build --symlink-install --continue-on-error"', cwd=Element.folders[Source.GIT_ROS2])
+        run(f'bash -c -i "source /opt/ros/{ros2}/setup.bash && colcon build --symlink-install --continue-on-error"', cwd=Element.folders[Source.GIT_ROS2],show=True)
     
     sudo.run(f'chmod a+rX {Element.folders[Source.GIT]} -R')
     sudo.run('ldconfig')
