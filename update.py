@@ -94,7 +94,8 @@ class Sudo:
     def deb_install(self, url):
         dst = os.path.basename(url)
         run(f'wget {url} -P /tmp')
-        self.run(f'apt install -qy /tmp/{dst}')
+        self.run(f'dpkg -i /tmp/{dst}')
+        self.run('apt install --fix-missing')
             
 def src_type(src, dst):
     return '_'.join([src,dst]).upper().strip('_')
