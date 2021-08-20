@@ -13,10 +13,17 @@ base_path = os.path.dirname(os.path.abspath(__file__))
 ros1 = 'noetic'
 ros2 = 'foxy'
 
+def display(s, sudo = False):
+    if sudo:
+        print('\033[93m [sudo]\t' + '\033[1;37;0m ' + s)
+    else:
+        print('\033[96m ['+os.environ['USER'] +']\t' + '\033[1;37;0m ' + s)
+
 def get_file(name):
     return base_path + '/' + name
 
 def run(cmd, cwd=None):
+    display(cmd)
     return check_output(shlex.split(cmd), stderr=PIPE, cwd=cwd).decode('utf-8').splitlines()
 
 class Sudo:
@@ -51,8 +58,8 @@ class Sudo:
                     ask_passwd = False
                 
     def run(self, cmd, cwd=None):
-        print(f'running "{cmd}" as sudo...')
-        proc = Popen(['sudo','-S'] + shlex.split(cmd), stdin=PIPE, stderr=PIPE, stdout=PIPE,cwd=cwd)
+        display(cmd,True)
+        proc = Popen(['sudo','-S'] + shlex.split(cmd), stdin=PIPE, stderr=PIPE,cwd=cwd)
         proc.communicate(self.passwd)
         proc.wait()
                 
