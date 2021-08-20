@@ -406,8 +406,8 @@ def perform_update(action = None, gui = None):
         need_chmod = True
     
     if need_chmod:
-        sudo.run(f'chmod a+rX {Element.folders[Source.GIT]} -R',False)
-    sudo.run('ldconfig',False)
+        sudo.run(f'chmod a+rX {Element.folders[Source.GIT]} -R',show=False)
+    sudo.run('ldconfig',show=False)
     
 def Font(size = 10):
     return QFont("Helvetica", size, QFont.Bold)
