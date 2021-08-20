@@ -166,7 +166,7 @@ class Element:
     def check(self):
         
         if not Element.packages:
-            out = run('apt list --installed',True)
+            out = run('apt list --installed',show=True)
             for line in out:
                 if '/' not in line:
                     continue
