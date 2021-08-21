@@ -231,7 +231,7 @@ class Element:
             if line.startswith('Access'):
                 if 'root' in line:
                     user = os.environ['USER']
-                    sudo.run(f'chown {user} {Element.folders[Source.GIT]} -R')
+                    sudo.run(f'chown {user} {Element.folders[Source.GIT]} -R',show=False)
                 break
             
         base_dir = self.abs_folder()
@@ -533,9 +533,12 @@ if '-u' in sys.argv:
 if '-a' in sys.argv:
     perform_update(Action.INSTALL)
     sys.exit(0)
-        
-## build GUI
-app = QApplication(sys.argv)
-gui = UpdaterGUI()
 
-sys.exit(app.exec_())
+try:
+    ## build GUI
+    app = QApplication(sys.argv)
+    gui = UpdaterGUI()
+
+    sys.exit(app.exec_())
+except:
+    pass
