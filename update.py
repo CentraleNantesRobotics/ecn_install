@@ -87,6 +87,14 @@ class Sudo:
         self.run(f'dpkg -i /tmp/{dst}')
         self.run('apt install --fix-missing')
         
+        
+poweroff = False
+
+if '--poweroff' in sys.argv:
+    r = input('Will poweroff computer after update [y/N] ')
+    if r in ('Y','y'):
+        poweroff = True
+        
 sudo = Sudo()
                     
 def src_type(src, dst):
@@ -108,12 +116,15 @@ class Element:
     packages = {}
     packages_old = []
                 
-    def __init__(self, pkg, src):
+    def __init__(self, pkg, src,update=True):
         
         self.pkg, self.src = Element.resolve(pkg, src)
-        self.status = self.check()
-        self.pending = {}
         
+        self.status = self.check()
+        if self.status == Status.OLD and not update:
+            self.status = Status.INSTALLED
+            
+        self.pending = {}
         self.cmake = ''
         
     def cmake_flag(self, flag):
@@ -158,7 +169,7 @@ class Element:
     def parent_folder(self):
         return Element.folders[self.src] + ('' if self.src == Source.GIT else '/src')
         
-    def check(self):
+    def check(self):        
         
         if not Element.packages:
             out = run('apt list --installed',show=True)
@@ -272,7 +283,7 @@ class Module:
             if dep.matches(pkg, src):
                 break
         else:
-            dep = Element(pkg, src)
+            dep = Element(pkg, src,self.config['update'])
             Module.depends.append(dep)
         
         self.add_depends(dep)
@@ -293,15 +304,12 @@ class Module:
         if 'update' not in self.config or '-f' in sys.argv:
             self.config['update'] = True
 
-        self.parse_depends()        
+        self.parse_depends()
         
     def check_status(self):
         if 'description' in self.config:
             self.configure(Action.KEEP)
         self.status = min(dep.status for dep in self.all_deps())
-
-        if self.status != Status.ABSENT and not self.config['update']:
-            self.status = Status.INSTALLED   
         
     def sync_depends(self, modules):
                 
@@ -521,13 +529,6 @@ class UpdaterGUI(QWidget):
     
 if '-t' in sys.argv:
     sys.exit(0)
-    
-poweroff = False
-
-if '--poweroff' in sys.argv:
-    r = input('Will poweroff computer after update [y/N] ')
-    if r in ('Y','y'):
-        poweroff = True
     
 if '-u' in sys.argv:    
     if sys.argv[-1] == '-u':
