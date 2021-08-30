@@ -28,35 +28,22 @@ def run(cmd, cwd=None,show=False):
     return check_output(shlex.split(cmd), stderr=PIPE, cwd=cwd).decode('utf-8').splitlines()
 
 class Sudo:
-    def __init__(self, gui = None):
+    def __init__(self,gui=False):
         if os.uname()[1] == 'ecn-focal':
             self.passwd = 'ecn'.encode()
         else:
             self.passwd = None
             ask_passwd = True
-            while ask_passwd:
-                if gui is None:
-                    import getpass
-                    self.passwd = getpass.getpass('Enter admin password: ')
-                else:
-                    dlg = QInputDialog(gui)                 
-                    dlg.setWindowIcon(QIcon(get_file('images/ecn.png')))
-                    dlg.setWindowTitle('Performing update')
-                    dlg.setInputMode(QInputDialog.TextInput)            
-                    dlg.setLabelText("Enter admin password:")                        
-                    dlg.setTextEchoMode(QLineEdit.Password)
-                    dlg.resize(300,100)
-                    ok = dlg.exec_()                                
-                    self.passwd = dlg.textValue()
-                    if not ok:
-                        continue
-                if self.passwd is not None:
-                    self.passwd = (self.passwd).encode()
+            import getpass
+            while ask_passwd:                    
+                self.passwd = getpass.getpass('Enter admin password: ').encode()
                 # check passwd
                 proc = Popen(['sudo','-S','-l'],stdin=PIPE,stdout=PIPE,stderr=PIPE)
                 out = proc.communicate(self.passwd)
                 if 'incorrect' not in out[1].decode():
                     ask_passwd = False
+                        
+        self.run('apt update -qy')
                 
     def run(self, cmd, cwd=None,show=True):
         if show:
@@ -67,15 +54,18 @@ class Sudo:
                 
     def apt_install(self, pkgs):
         
+        if not len(pkgs):
+            return
+        
         # check ROS keys if needed
         need_ros1 = any(pkg.startswith(f'ros-{ros1}') for pkg in pkgs)
         need_ros2 = any(pkg.startswith(f'ros-{ros2}') for pkg in pkgs)
-        if need_ros1 or need_ros2:
+        if need_ros1 or need_ros2:                        
             
             refresh_src = False
             
             if not any('Open Robotics' in line for line in run('apt-key list')):
-                self.run("apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654")
+                self.run("curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -")
                 refresh_src = True
             
             if need_ros1 and not os.path.exists('/etc/apt/sources.list.d/ros-latest.list'):
@@ -96,7 +86,9 @@ class Sudo:
         run(f'wget {url} -P /tmp')
         self.run(f'dpkg -i /tmp/{dst}')
         self.run('apt install --fix-missing')
-            
+        
+sudo = Sudo()
+                    
 def src_type(src, dst):
     return '_'.join([src,dst]).upper().strip('_')
 
@@ -114,6 +106,7 @@ status = {Status.ABSENT: 'Not installed', Status.OLD: 'Needs update', Status.INS
 class Element:
     
     packages = {}
+    packages_old = []
                 
     def __init__(self, pkg, src):
         
@@ -176,9 +169,16 @@ class Element:
                 pkg = line[0][:line[0].find('/')]
                 ver = line[1]
                 Element.packages[pkg] = ver
+            
+            out = run('apt list --upgradeable',show=True)
+            Element.packages_old = [line.split('/')[0] for line in out if '/' in line]
         
         if self.src == Source.APT:
-            return Status.INSTALLED if self.pkg in Element.packages else Status.ABSENT
+            if self.pkg not in Element.packages:
+                return Status.ABSENT
+            if self.pkg in Element.packages_old:
+                return Status.OLD
+            return Status.INSTALLED
         
         if self.src == Source.DEB:  # package_X.X.X.deb
             pkg,ver = os.path.basename(self.pkg).split('_')
@@ -268,7 +268,7 @@ class Module:
     def add_depend(self, pkg, src):
         
         for dep in Module.depends:
-            if dep.matches(pkg, src):                
+            if dep.matches(pkg, src):
                 break
         else:
             dep = Element(pkg, src)
@@ -363,7 +363,7 @@ for module in modules.values():
     module.sync_depends(modules)
     module.check_status()
 
-def perform_update(action = None, gui = None):
+def perform_update(action = None):
     '''
     Final action
     '''
@@ -371,12 +371,10 @@ def perform_update(action = None, gui = None):
         for m in modules:
             m.configure(action)
             
-    sudo = Sudo(gui)
     if sudo.passwd is None:
         return    
                 
-    # apt-based new packages
-    sudo.run('apt update -qy')
+    # apt-based new packages    
     pkgs = [dep.pkg for dep in Module.depends if dep.src==Source.APT and dep.need_install()]
     if len(pkgs):
         sudo.apt_install(pkgs)
