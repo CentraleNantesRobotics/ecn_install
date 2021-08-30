@@ -196,7 +196,7 @@ class Element:
         upstream = run('git status', cwd=base_dir)[1].split("'")[1]
                 
         diff = run(f'git rev-list HEAD...{upstream} --count', cwd=base_dir)[0]
-        if diff == '0' and '-f' not in sys.argv:
+        if diff == '0' and '-g' not in sys.argv:
             return Status.INSTALLED
         # to be updated
         return Status.OLD
