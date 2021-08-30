@@ -368,7 +368,7 @@ def perform_update(action = None):
     Final action
     '''
     if action is not None:
-        for m in modules:
+        for m in modules.values():
             m.configure(action)
             
     if sudo.passwd is None:
