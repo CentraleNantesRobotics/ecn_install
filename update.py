@@ -495,7 +495,7 @@ class UpdaterGUI(QWidget):
         self.show()
         
     def perform(self, event):
-        perform_update(gui = self)
+        perform_update()
         self.close()
         
     def group_update(self, clicked):
