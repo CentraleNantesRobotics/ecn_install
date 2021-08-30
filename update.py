@@ -364,7 +364,7 @@ for module in modules.values():
     module.sync_depends(modules)
     module.check_status()
 
-def perform_update(action = None):
+def perform_update(action = None, poweroff=False):
     '''
     Final action
     '''
@@ -408,6 +408,9 @@ def perform_update(action = None):
     if need_chmod:
         sudo.run(f'chmod a+rX {Element.folders[Source.GIT]} -R',show=False)
     sudo.run('ldconfig',show=False)
+    
+    if poweroff:
+        sudo.run('poweroff')
     
 def Font(size = 10):
     return QFont("Helvetica", size, QFont.Bold)
@@ -519,6 +522,13 @@ class UpdaterGUI(QWidget):
 if '-t' in sys.argv:
     sys.exit(0)
     
+poweroff = False
+
+if '--poweroff' in sys.argv:
+    r = input('Will poweroff computer after update [y/N] ')
+    if r in ('Y','y'):
+        poweroff = True
+    
 if '-u' in sys.argv:    
     if sys.argv[-1] == '-u':
         perform_update(Action.KEEP)
@@ -526,12 +536,10 @@ if '-u' in sys.argv:
         for key in sys.argv:
             if key in modules:
                 modules[key].configure(Action.INSTALL)
-        perform_update()
-    sys.exit(0)
+        perform_update(poweroff=poweroff)
         
 if '-a' in sys.argv:
-    perform_update(Action.INSTALL)
-    sys.exit(0)
+    perform_update(Action.INSTALL,poweroff=poweroff)
 
 try:
     ## build GUI
