@@ -3,9 +3,9 @@ import yaml
 import sys
 import os
 import shlex
-from python_qt_binding.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout,QHBoxLayout,QGridLayout, QLabel, QPushButton, QCheckBox, QComboBox, QSpacerItem, QSizePolicy, QInputDialog, QLineEdit
-from python_qt_binding.QtCore import Signal, Qt,  pyqtSlot
-from python_qt_binding.QtGui import QFont, QIcon
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout,QHBoxLayout,QGridLayout, QLabel, QPushButton, QCheckBox, QComboBox, QSpacerItem, QSizePolicy, QInputDialog, QLineEdit
+from PyQt5.QtCore import pyqtSignal as Signal
+from PyQt5.QtGui import QFont, QIcon
 from subprocess import check_output, PIPE, Popen, DEVNULL
 
 base_path = os.path.dirname(os.path.abspath(__file__))
