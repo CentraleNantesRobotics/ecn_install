@@ -263,9 +263,10 @@ class Element:
         # install if not ROS
         if self.src == Source.GIT and os.path.exists(base_dir + '/CMakeLists.txt'):
             build_dir = base_dir + '/build'
-            run(f'mkdir -p {build_dir}')
-            run('cmake {} ..'.format(self.cmake),cwd=build_dir)
-            sudo.run('make install', cwd=build_dir)            
+            run(f'mkdir -p {build_dir}',show=False)
+            print(f'Compiling {base_dir} ...')
+            run('cmake {} ..'.format(self.cmake),cwd=build_dir,show=False)            
+            sudo.run('make install', cwd=build_dir, show=False)            
             
         return self.src
                         
@@ -419,6 +420,8 @@ def perform_update(action = None, poweroff=False):
     
     if poweroff:
         sudo.run('poweroff')
+    else:
+        sys.exit(0)
     
 def Font(size = 10):
     return QFont("Helvetica", size, QFont.Bold)
