@@ -48,7 +48,7 @@ class Sudo:
     def run(self, cmd, cwd=None,show=True):
         if show:
             display(cmd,True)
-        proc = Popen(['sudo','-S'] + shlex.split(cmd), stdin=PIPE, stderr=PIPE,cwd=cwd)
+        proc = Popen(['sudo','-S'] + shlex.split(cmd), stdin=PIPE, stderr=PIPE,stdout=PIPE if show else DEVNULL,cwd=cwd)
         proc.communicate(self.passwd)
         proc.wait()
                 
@@ -212,7 +212,7 @@ class Element:
         # to be updated
         return Status.OLD
     
-    def update_from(self, sudo):
+    def update(self):
         
         # TODO check if should be removed
         if self.status == Status.INSTALLED and '-f' not in sys.argv:
@@ -397,7 +397,7 @@ def perform_update(action = None, poweroff=False):
     ret = []
     for dep in Module.depends:
         if dep.need_install():
-            ret.append(dep.update_from(sudo))
+            ret.append(dep.update())
     
     need_chmod = False
     # recompile ros1ws

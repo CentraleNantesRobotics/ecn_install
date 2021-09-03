@@ -1,6 +1,6 @@
 # student groups
-OD Robotique: [arpro, rasom, midwa, planif]
-M1 CORO: [arpro,sofar,manip]
+OD Robotique: [arpro, rasom, midwa, planif,covis]
+M1 CORO: [arpro,sofar,manip,covis]
 M2 CORO-IMARO: [tbc,amoro]
 
 # where git-based packages will be downloaded
@@ -40,7 +40,7 @@ log2plot:
 # main module definitions
 arpro:
     description: 'Advanced programming / C++'
-    deb: [https://box.ec-nantes.fr/index.php/s/Jycykdor869BLKS/download/duels_3.3.3.deb]
+    deb: [https://box.ec-nantes.fr/index.php/s/E94cS43rZ4Zriew/download/duels_3.3.4.deb]
     apt: [python3-pygame, libzmq3-dev, python3-zmq]
     
 manip:
@@ -78,3 +78,7 @@ amoro:
     ros2:
         apt: [ros2-control, ros2-controllers, gazebo-ros2-control,gazebo-ros-pkgs]
     apt: [gummi]    # tex editor for reports
+
+covis:
+    description: Computer Vision
+    deb: [https://box.ec-nantes.fr/index.php/s/LZD3tTaYE4FjwMd/download/pycharm_2021.2.1.deb]
