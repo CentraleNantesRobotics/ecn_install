@@ -8,4 +8,4 @@ git pull
 bash ./patches.sh
 
 # module dependencies
-python3 ./update.py "$@" | true
+python3 ./update.py "$@" 

@@ -29,6 +29,7 @@ def run(cmd, cwd=None,show=False):
 
 class Sudo:
     def __init__(self,gui=False):
+        print('Retrieving system state...')
         if os.uname()[1] == 'ecn-focal':
             self.passwd = 'ecn'.encode()
         else:
