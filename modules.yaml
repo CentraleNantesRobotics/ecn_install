@@ -77,7 +77,7 @@ amoro:
     description: Advanced Modeling of Robots
     ros2:
         apt: [ros2-control, ros2-controllers, gazebo-ros2-control,gazebo-ros-pkgs]
-    apt: [gummi]    # tex editor for reports
+    apt: [gummi, python3-pyqtgraph]    # tex editor for reports
 
 covis:
     description: Computer Vision
