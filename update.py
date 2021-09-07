@@ -451,7 +451,7 @@ def perform_update(action = None, poweroff=False):
     
     # remove old ones
     pkgs = [dep.remove() for dep in Module.depends]
-    sudo.apt_remove(filter(lambda pkg: type(pkg) == str, pkgs))
+    sudo.apt_remove([pkg for pkg in pkgs if pkg])
                 
     # apt-based new packages    
     pkgs = [dep.pkg for dep in Module.depends if dep.src==Source.APT and dep.need_install()]
