@@ -3,6 +3,8 @@ import yaml
 import sys
 import os
 import shlex
+from shutil import rmtree
+import re
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout,QHBoxLayout,QGridLayout, QLabel, QPushButton, QCheckBox, QComboBox, QSpacerItem, QSizePolicy, QInputDialog, QLineEdit
 from PyQt5.QtCore import pyqtSignal as Signal
 from PyQt5.QtGui import QFont, QIcon
@@ -81,13 +83,17 @@ class Sudo:
                 self.run('apt update -qy')
                 
         self.run('apt install -qy ' + ' '.join(pkgs))
+    
+    def apt_remove(pkgs):
+        if not len(pkgs):
+            return
+        self.run('apt purge -qy ' + ' '.join(pkgs))
+        self.run('apt autoremove --purge -qy')
         
     def deb_install(self, url):
-        dst = os.path.basename(url)
-        run(f'wget {url} -P /tmp')
-        self.run(f'dpkg -i /tmp/{dst}')
-        self.run('apt install --fix-missing')
-        
+        dst = os.path.basename(url).split('=')[-1]
+        run(f'wget {url} -O /tmp/{dst}')
+        self.run(f'dpkg -i /tmp/{dst}')      
         
 poweroff = False
 
@@ -112,18 +118,16 @@ Status = Enum('Absent', 'Old', 'Installed')
 actions = {Action.REMOVE: 'Remove', Action.KEEP: 'Keep as it is', Action.INSTALL: 'Install / update'}
 status = {Status.ABSENT: 'Not installed', Status.OLD: 'Needs update', Status.INSTALLED: 'Up-to-date'}
 
-class Element:
+class Depend:
     
     packages = {}
     packages_old = []
                 
-    def __init__(self, pkg, src,update=True):
+    def __init__(self, pkg, src):
         
-        self.pkg, self.src = Element.resolve(pkg, src)
+        self.pkg, self.src = Depend.resolve(pkg, src)
         
         self.status = self.check()
-        if self.status == Status.OLD and not update:
-            self.status = Status.INSTALLED
             
         self.pending = {}
         self.cmake = ''
@@ -135,9 +139,12 @@ class Element:
     def need_install(self):
         return self.result == Action.INSTALL and self.status != Status.INSTALLED
     
+    def need_remove(self):
+        return self.result == Action.REMOVE and self.status != Status.ABSENT
+    
     @staticmethod
     def init_folders(folder):
-        Element.folders = {Source.GIT: folder, 
+        Depend.folders = {Source.GIT: folder, 
                Source.GIT_ROS: folder+'/ros1', 
                Source.GIT_ROS2: folder+'/ros2'}
         
@@ -154,7 +161,7 @@ class Element:
         return pkg, src
         
     def matches(self, pkg, src):
-        pkg, src = Element.resolve(pkg, src)
+        pkg, src = Depend.resolve(pkg, src)
         return pkg == self.pkg and src == self.src
         
     def configure(self, module, action):
@@ -168,11 +175,11 @@ class Element:
         return self.parent_folder() + '/' + os.path.splitext(os.path.basename(pkg))[0]
     
     def parent_folder(self):
-        return Element.folders[self.src] + ('' if self.src == Source.GIT else '/src')
+        return Depend.folders[self.src] + ('' if self.src == Source.GIT else '/src')
         
     def check(self):        
         
-        if not Element.packages:
+        if not Depend.packages:
             out = run('apt list --installed',show=True)
             for line in out:
                 if '/' not in line:
@@ -180,23 +187,25 @@ class Element:
                 line = line.split()
                 pkg = line[0][:line[0].find('/')]
                 ver = line[1]
-                Element.packages[pkg] = ver
+                Depend.packages[pkg] = ver
             
             out = run('apt list --upgradeable',show=True)
-            Element.packages_old = [line.split('/')[0] for line in out if '/' in line]
+            Depend.packages_old = [line.split('/')[0] for line in out if '/' in line]
         
         if self.src == Source.APT:
-            if self.pkg not in Element.packages:
+            if self.pkg not in Depend.packages:
                 return Status.ABSENT
-            if self.pkg in Element.packages_old:
+            if self.pkg in Depend.packages_old:
                 return Status.OLD
             return Status.INSTALLED
         
-        if self.src == Source.DEB:  # package_X.X.X.deb
-            pkg,ver = os.path.basename(self.pkg).split('_')
-            ver = ver[:ver.rfind('.')]
-            if pkg in Element.packages:
-                return Status.INSTALLED if Element.packages[pkg] == ver else Status.OLD
+        if self.src == Source.DEB:  # package_X.X.X*.deb
+            pkg,ver_ext = os.path.basename(self.pkg.split('=')[-1]).split('_',1)
+            
+            ver = re.search('[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9])?',ver_ext)
+            ver = ver_ext[ver.start():ver.end()]
+            if pkg in Depend.packages:
+                return Status.INSTALLED if Depend.packages[pkg] >= ver else Status.OLD
             return Status.ABSENT
         
         base_dir = self.abs_folder()
@@ -215,23 +224,15 @@ class Element:
     
     def update(self):
         
-        # TODO check if should be removed
-        if self.status == Status.INSTALLED and '-f' not in sys.argv:
+        if not self.need_install():
             return None
-        
+                
         if self.src == Source.APT:
             return Source.APT
         
-        if self.result == Action.KEEP:
-            return None
-        
         if self.src == Source.DEB:
-            if self.need_install():
-                sudo.deb_install(self.pkg)
-            elif self.status != Status.ABSENT and self.result == Action.REMOVE:
-                pkg = os.path.basename(self.pkg).split('_')[0]
-                sudo.run(f'apt purge {pkg}')
-            return None
+            sudo.deb_install(self.pkg)
+            return Source.DEB
         
         # git-based, may also be inside ros1 or ros2 local ws
         root = self.parent_folder()
@@ -239,12 +240,12 @@ class Element:
         if not os.path.exists(root):
             sudo.run(f'mkdir -p {root}')
         
-        perms = run(f'stat {Element.folders[Source.GIT]}')
+        perms = run(f'stat {Depend.folders[Source.GIT]}')
         for line in perms:
             if line.startswith('Access'):
                 if 'root' in line:
                     user = os.environ['USER']
-                    sudo.run(f'chown {user} {Element.folders[Source.GIT]} -R',show=False)
+                    sudo.run(f'chown {user} {Depend.folders[Source.GIT]} -R',show=False)
                 break
             
         base_dir = self.abs_folder()
@@ -267,13 +268,72 @@ class Element:
             run(f'mkdir -p {build_dir}',show=False)
             print(f'Compiling {base_dir} ...')
             run('cmake {} ..'.format(self.cmake),cwd=build_dir,show=False)            
-            sudo.run('make install', cwd=build_dir, show=False)            
+            sudo.run('make install', cwd=build_dir, show=False)
             
         return self.src
                         
     def remove(self):
-        # later...
-        1 
+        
+        if not self.need_remove():
+            return None
+        
+        # deb packages are removed in a single call to apt
+        if self.src == Source.APT:
+            return self.pkg
+        if self.src == Source.DEB:
+            return os.path.basename(self.pkg.split('=')[-1]).split('_',1)[0]
+        
+        # git packages are removed right here
+        base_dir = self.abs_folder()
+        
+        if self.src == Source.GIT:            
+            manifest = base_dir + '/build/install_manifest.txt'
+        
+            if os.path.exists(manifest):
+                # purge installed files
+                with open(manifest) as f:
+                    files = f.read().splitlines()
+                folders = set()
+                for f in files:
+                    folder = f
+                    while folder != '/':
+                        folder = os.path.dirname(folder)
+                        if os.path.exists(folder):
+                            folders.add(folder)
+                        
+                    if os.path.exists(f):
+                        sudo.run(f'rm {f}',show=False)
+                # cleanup created directories
+                empty_folders = True
+                while empty_folders:
+                    empty_folders = [folder for folder in folders if not os.listdir(folder)]
+                    for folder in empty_folders:
+                        sudo.run(f'rm -rf {folder}',show=False)
+                        folders.remove(folder)
+            
+            # destroy git clone, has to use sudo because of build artifacts during install
+            sudo.run(f'rm -rf {base_dir}')                        
+                        
+        if self.src in (Source.GIT_ROS, Source.GIT_ROS2):
+            # find all packages defined in this clone
+            pkgs = []
+            for root, subdirs, files in os.walk(base_dir):
+                if 'package.xml' in files:
+                    with open(root + '/package.xml') as f:
+                        xml = f.read()
+                        pkgs.append(xml[xml.find('<name>')+6:xml.find('</name>')].strip())
+                    subdirs = []
+                    
+            for root in ('build','install','log'):
+                for pkg in pkgs:
+                    folder = f'{Depend.folders[self.src]}/{root}/{pkg}'
+                    if os.path.exists(folder):
+                        rmtree(folder)
+                        
+            # destroy git clone
+            rmtree(base_dir)
+            
+        return None
 
 class Module:
     
@@ -285,7 +345,7 @@ class Module:
             if dep.matches(pkg, src):
                 break
         else:
-            dep = Element(pkg, src,self.config['update'])
+            dep = Depend(pkg, src)
             Module.depends.append(dep)
         
         self.add_depends(dep)
@@ -303,10 +363,11 @@ class Module:
                 config['mod'].append(dep)
         
         self.config = config
-        if 'update' not in self.config or '-f' in sys.argv:
-            self.config['update'] = True
 
         self.parse_depends()
+        
+        if name == 'cleanup':
+            self.configure(Action.REMOVE)
         
     def check_status(self):
         if 'description' in self.config:
@@ -360,19 +421,22 @@ class Module:
         return self.name.upper() + ' (' + self.config['description'] + ')'
     
     def configure(self, action):
+        if self.name == 'cleanup':
+            action = Action.REMOVE
         for dep in self.all_deps():
             dep.configure(self.name, action)
             
 with open(get_file('modules.yaml')) as f:
     info = yaml.safe_load(f)
     
-Element.init_folders(info['lib_folder'] if 'lib_folder' in info else '/opt/local_ws')
+Depend.init_folders(info['lib_folder'] if 'lib_folder' in info else '/opt/local_ws')
 modules = dict((name, Module(name, config)) for name, config in info.items() if isinstance(config, dict))
 groups = dict(((name, config) for name, config in info.items() if isinstance(config, list)))
 
 for module in modules.values():
     module.sync_depends(modules)
     module.check_status()
+    
 
 def perform_update(action = None, poweroff=False):
     '''
@@ -383,7 +447,11 @@ def perform_update(action = None, poweroff=False):
             m.configure(action)
             
     if sudo.passwd is None:
-        return    
+        return
+    
+    # remove old ones
+    pkgs = [dep.remove() for dep in Module.depends]
+    sudo.apt_purge(filter(lambda pkg: type(pkg) == str, pkgs))
                 
     # apt-based new packages    
     pkgs = [dep.pkg for dep in Module.depends if dep.src==Source.APT and dep.need_install()]
@@ -395,28 +463,31 @@ def perform_update(action = None, poweroff=False):
     sudo.run('apt autoremove --purge -qy')
     
     # other packages can deal with themselves
-    ret = []
-    for dep in Module.depends:
-        if dep.need_install():
-            ret.append(dep.update())
+    removed = [dep.update() for dep in Module.depends]
     
+    if Source.DEB in removed:
+        sudo.run('apt install --fix-missing')
+    
+    # recompile ros ws
     need_chmod = False
-    # recompile ros1ws
-    if Source.GIT_ROS in ret or '-f' in sys.argv:
-        print('Compiling ROS 1 local workspace...')
-        if not os.path.exists(f'{Element.folders[Source.GIT_ROS]}/.catkin_tools'):
-            run(f'catkin config --init --extend /opt/ros/{ros1} --install -DCATKIN_ENABLE_TESTING=False --make-args -Wno-dev --cmake-args -DCMAKE_BUILD_TYPE=Release', cwd=Element.folders[Source.GIT_ROS])
-        run(f'catkin build  --continue-on-failure', cwd=Element.folders[Source.GIT_ROS],show=True)
-        need_chmod = True
+    
+    for ros, src, distro in enumerate(((Source.GIT_ROS, ros1),(Source.GIT_ROS2, ros2))):
+        
+        if src in removed or '-f' in sys.argv:
             
-    # recompile ros2ws
-    if Source.GIT_ROS2 in ret or '-f' in sys.argv:
-        print('Compiling ROS 2 local workspace...')
-        run(f'bash -c -i "source /opt/ros/{ros2}/setup.bash && colcon build --symlink-install --continue-on-error"', cwd=Element.folders[Source.GIT_ROS2],show=True)
-        need_chmod = True
+            if os.path.exists(f'{Depend.folders[src]}/.catkin_tools'):
+                # was compiled with catkin -> purge
+                for root in ('build','install','logs','devel','.catkin_tools'):
+                    target = f'{Depend.folders[Source.GIT_ROS]}/{root}'
+                    if os.path.exists(target):
+                        rmtree(target)
+                        
+            print(f'Compiling ROS {ros+1} local workspace...')
+            run(f'bash -c -i "source /opt/ros/{distro}/setup.bash && colcon build --symlink-install --continue-on-error"', cwd=Depend.folders[src],show=True)
+            need_chmod = True
     
     if need_chmod:
-        sudo.run(f'chmod a+rX {Element.folders[Source.GIT]} -R',show=False)
+        sudo.run(f'chmod a+rX {Depend.folders[Source.GIT]} -R',show=False)
     sudo.run('ldconfig',show=False)
     
     if poweroff:

@@ -21,26 +21,27 @@ ros2:
     git: [oKermorgant:ros_management_tools]
         
 coppeliasim:
-    deb: [https://box.ec-nantes.fr/index.php/s/2m4ZwLYoHmpbiMs/download/coppeliasim_4.2.0.deb] 
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=coppeliasim_4.2.0.deb']
     ros:
         apt: [cv-bridge]
         git: [oKermorgant:coppeliasim_ros_launcher]
 
 visp:
-    git: [lagadic:visp]
-    cmake: '-DBUILD_DEMOS=OFF -DBUILD_DEPRECATED_FUNCTIONS=ON -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_PACKAGE=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DUSE_PCL=OFF -DBUILD_MODULE_visp_sensor=OFF'
-    apt: [libogre-1.9-dev, libopencv-dev, libeigen3-dev, libopenblas-dev, liblapack-dev, libxml2-dev, libzbar-dev, libgsl-dev]
-    update: False   # disable auto update even if git has new commits
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=libvisp-dev_3.4.1-1_amd64.deb']
 
 log2plot:
-    git: [oKermorgant:log2plot]
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=log2plot_1.0.0.deb']
     apt: [python3-matplotlib, texlive-latex-extra, texlive-fonts-recommended, dvipng]
     mod: [visp]
+    
+# special module that always wants its dependencies to be removed
+cleanup:
+    git: [lagadic:visp,oKermorgant:log2plot]
     
 # main module definitions
 arpro:
     description: 'Advanced programming / C++'
-    deb: [https://box.ec-nantes.fr/index.php/s/E94cS43rZ4Zriew/download/duels_3.3.4.deb]
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=duels_3.3.4.deb']
     apt: [python3-pygame, libzmq3-dev, python3-zmq]
     
 manip:
@@ -81,4 +82,4 @@ amoro:
 
 covis:
     description: Computer Vision
-    deb: [https://box.ec-nantes.fr/index.php/s/LZD3tTaYE4FjwMd/download/pycharm_2021.2.1.deb]
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=pycharm_2021.2.1.deb']
