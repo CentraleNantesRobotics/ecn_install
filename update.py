@@ -84,7 +84,7 @@ class Sudo:
                 
         self.run('apt install -qy ' + ' '.join(pkgs))
     
-    def apt_remove(pkgs):
+    def apt_remove(self,pkgs):
         if not len(pkgs):
             return
         self.run('apt purge -qy ' + ' '.join(pkgs))
