@@ -271,6 +271,29 @@ class Depend:
             sudo.run('make install', cwd=build_dir, show=False)
             
         return self.src
+    
+    @staticmethod
+    def rmtree(files, use_sudo = False):
+        
+        this_run = sudo.run if use_sudo else run
+        
+        folders = set()
+        for f in files:
+            folder = f
+            while folder != '/':
+                folder = os.path.dirname(folder)
+                if os.path.exists(folder):
+                    folders.add(folder)
+                
+            if os.path.exists(f):
+                this_run(f'rm {f}',show=False)
+        # cleanup created directories
+        empty_folders = True
+        while empty_folders:
+            empty_folders = [folder for folder in folders if not os.listdir(folder)]
+            for folder in empty_folders:
+                this_run(f'rm -rf {folder}',show=False)
+                folders.remove(folder)
                         
     def remove(self):
         
@@ -292,24 +315,7 @@ class Depend:
             if os.path.exists(manifest):
                 # purge installed files
                 with open(manifest) as f:
-                    files = f.read().splitlines()
-                folders = set()
-                for f in files:
-                    folder = f
-                    while folder != '/':
-                        folder = os.path.dirname(folder)
-                        if os.path.exists(folder):
-                            folders.add(folder)
-                        
-                    if os.path.exists(f):
-                        sudo.run(f'rm {f}',show=False)
-                # cleanup created directories
-                empty_folders = True
-                while empty_folders:
-                    empty_folders = [folder for folder in folders if not os.listdir(folder)]
-                    for folder in empty_folders:
-                        sudo.run(f'rm -rf {folder}',show=False)
-                        folders.remove(folder)
+                    self.rmtree(f.read().splitlines(), use_sudo = True)
             
             # destroy git clone, has to use sudo because of build artifacts during install
             sudo.run(f'rm -rf {base_dir}')                        
@@ -324,11 +330,20 @@ class Depend:
                         pkgs.append(xml[xml.find('<name>')+6:xml.find('</name>')].strip())
                     subdirs = []
                     
-            for root in ('build','install','log'):
-                for pkg in pkgs:
-                    folder = f'{Depend.folders[self.src]}/{root}/{pkg}'
-                    if os.path.exists(folder):
-                        rmtree(folder)
+            if self.src == Source.GIT_ROS:
+                manifest = f'{Depend.folders[self.src]}/build/{pkg}/install_manifest.txt'
+                if os.path.exists(manifest):
+                    with open(manifest) as f:
+                        files = f.read().splitlines()
+                    self.rmtree([f for f in files if not os.path.dirname(f).endswith('/install')])
+                run(f'catkin clean {pkg}', cwd=Depend.folders[self.src])
+                    
+            if self.src == Source.GIT_ROS2:
+                for root in ('build','install','log'):
+                    for pkg in pkgs:
+                        folder = f'{Depend.folders[self.src]}/{root}/{pkg}'
+                        if os.path.exists(folder):
+                            rmtree(folder)
                         
             # destroy git clone
             rmtree(base_dir)
@@ -463,28 +478,29 @@ def perform_update(action = None, poweroff=False):
     sudo.run('apt autoremove --purge -qy')
     
     # other packages can deal with themselves
-    removed = [dep.update() for dep in Module.depends]
+    updated = [dep.update() for dep in Module.depends]
     
-    if Source.DEB in removed:
-        sudo.run('apt install --fix-missing')
+    if Source.DEB in updated:
+        sudo.run('apt install --fix-missing --fix-broken')
     
-    # recompile ros ws
-    need_chmod = False
-    
-    for ros, src, distro in enumerate(((Source.GIT_ROS, ros1),(Source.GIT_ROS2, ros2))):
-        
-        if src in removed or '-f' in sys.argv:
-            
-            if os.path.exists(f'{Depend.folders[src]}/.catkin_tools'):
-                # was compiled with catkin -> purge
-                for root in ('build','install','logs','devel','.catkin_tools'):
-                    target = f'{Depend.folders[Source.GIT_ROS]}/{root}'
-                    if os.path.exists(target):
-                        rmtree(target)
-                        
-            print(f'Compiling ROS {ros+1} local workspace...')
-            run(f'bash -c -i "source /opt/ros/{distro}/setup.bash && colcon build --symlink-install --continue-on-error"', cwd=Depend.folders[src],show=True)
-            need_chmod = True
+    # recompile ros1ws
+    if Source.GIT_ROS in ret or '-f' in sys.argv:
+        print('Compiling ROS 1 local workspace...')
+        if not os.path.exists(f'{Element.folders[Source.GIT_ROS]}/.catkin_tools'):
+            # purge colcon install
+            for folder in ('build','install','devel','log'):
+                if os.path.exists(f'{Element.folders[Source.GIT_ROS]}/{folder}'):
+                    rmtree(f'{Element.folders[Source.GIT_ROS]}/{folder}')
+                    
+            run(f'catkin config --init --extend /opt/ros/{ros1} --install -DCATKIN_ENABLE_TESTING=False --make-args -Wno-dev --cmake-args -DCMAKE_BUILD_TYPE=Release', cwd=Element.folders[Source.GIT_ROS])
+        run(f'catkin build  --continue-on-failure', cwd=Element.folders[Source.GIT_ROS],show=True)
+        need_chmod = True
+
+    # recompile ros2ws
+    if Source.GIT_ROS2 in ret or '-f' in sys.argv:
+        print('Compiling ROS 2 local workspace...')
+        run(f'bash -c -i "source /opt/ros/{ros2}/setup.bash && colcon build --symlink-install --continue-on-error"', cwd=Element.folders[Source.GIT_ROS2],show=True)
+        need_chmod = True
     
     if need_chmod:
         sudo.run(f'chmod a+rX {Depend.folders[Source.GIT]} -R',show=False)

@@ -30,13 +30,14 @@ visp:
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=libvisp-dev_3.4.1-1_amd64.deb']
 
 log2plot:
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=log2plot_1.0.0.deb']
+    git: [oKermorgant:log2plot]
     apt: [python3-matplotlib, texlive-latex-extra, texlive-fonts-recommended, dvipng]
     mod: [visp]
     
 # special module that always wants its dependencies to be removed
 cleanup:
-    git: [lagadic:visp,oKermorgant:log2plot]
+    git: [lagadic:visp]
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=log2plot_1.0.0.deb']
     
 # main module definitions
 arpro:
