@@ -35,6 +35,7 @@ log2plot:
     mod: [visp]
     
 # special module that always wants its dependencies to be removed
+# will be removed unless required by other modules
 cleanup:
     git: [lagadic:visp]
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=log2plot_1.0.0.deb']
