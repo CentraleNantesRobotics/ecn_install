@@ -290,7 +290,7 @@ class Depend:
             build_dir = base_dir + '/build'
             run(f'mkdir -p {build_dir}',show=False)
             run('cmake {} ..'.format(self.cmake),cwd=build_dir,show=False)            
-            sudo.run('make install', cwd=build_dir, show=False)
+            sudo.run('make install -j4', cwd=build_dir, show=False)
             
         return self.src
     
