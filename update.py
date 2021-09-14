@@ -204,13 +204,12 @@ class Depend:
             for line in out:
                 if '/' not in line:
                     continue
-                line = line.split()
-                pkg = line[0][:line[0].find('/')]
+                pkg,ver,_,status = line.split(' ',3)
+                pkg = pkg[:pkg.find('/')]
                 ver = line[1]
                 Depend.packages[pkg] = ver
-            
-            out = run('apt list --upgradeable',show=True)
-            Depend.packages_old = [line.split('/')[0] for line in out if '/' in line]
+                if 'upgradeable to:' in status:
+                    Depend.packages_old.append(pkg)
         
         if self.src == Source.APT:
             if self.pkg not in Depend.packages:

@@ -2,7 +2,7 @@ Some scripts to easily setup Ubuntu Focal / ROS Noetic / ROS 2 Foxy at Centrale 
 
 ## ROS 1 / ROS 2 management
 
-The script `ros_management.bash` has a set of tools to handle ROS 1 / ROS 2 workspaces. It can be sourced in a `.bashrc` after defining the two variables `ros1_workspaces` and `ros2_workspaces`, that point to the overlay-ordered workspaces:
+ROS 1/2 dependencies assume you use the [ros_management](https://github.com/oKermorgant/ros_management_tools) tool to handle ROS 1 / ROS 2 workspaces. It can be sourced in a `.bashrc` after defining the two variables `ros1_workspaces` and `ros2_workspaces`, that point to the overlay-ordered workspaces:
 
 ```bash
 ros1_workspaces="/opt/ros/noetic ~/a_first_ros1_workspace ~/main_ros1_overlay"
@@ -25,3 +25,4 @@ The `update.py` is used to keep the Virtual Machine up to date. Run it without a
   - `update.py -u arpro` will only update arpro
   - `update.py -a` will install all depdencies for all labs (Robotics major / M1 CORO-IMARO / M2 CORO-IMARO)
     
+In the lab dependencies, system-wide overlays are installed at `/opt/local_ws/ros1` and `/opt/local_ws/ros2`. They should be sourced in your `.bashrc` if you use this system on a native Ubuntu OS.
