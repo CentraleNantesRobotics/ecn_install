@@ -160,7 +160,7 @@ class Depend:
         return self.result == Action.REMOVE and self.status != Status.ABSENT
         
     def keep_apt(self):
-        return self.status != Status.ABSENT and self.result != Action.REMOVE and self.src == Source.APT
+        return self.status != Status.ABSENT and self.result != Action.REMOVE and self.src == Source.APT           
     
     @staticmethod
     def init_folders(folder):
@@ -190,6 +190,15 @@ class Depend:
         #print(f'{module} wants {self.pkg} to be: {actions[action]} -> {actions[self.result]}')
         #print('', self.pending)
         
+    def pending_status(self):
+        if self.result == Action.INSTALL:
+            return Status.INSTALLED
+        elif self.result == Action.REMOVE:
+            return Status.ABSENT
+        
+        # Action.KEEP
+        return self.status        
+        
     def abs_folder(self):
         pkg = self.pkg.split(':')[1]
         return self.parent_folder() + '/' + os.path.splitext(os.path.basename(pkg))[0]
@@ -197,7 +206,7 @@ class Depend:
     def parent_folder(self):
         return Depend.folders[self.src] + ('' if self.src == Source.GIT else '/src')
         
-    def check(self):        
+    def check(self):       
         
         if not Depend.packages:
             out = run('apt list --installed',show=True)
@@ -426,9 +435,15 @@ class Module:
         if name == 'cleanup':
             self.configure(Action.REMOVE)
         
-    def check_status(self):
+    def check_status(self, pending = False):
+        
+        if pending:
+            self.status = min(dep.pending_status() for dep in self.all_deps())
+            return self.status          
+        
         self.status = min(dep.status for dep in self.all_deps())
-        if 'description' in self.config:
+        if 'description' in self.config and '-r' in sys.argv:
+            # auto clean deps if module is not here
             self.configure(Action.KEEP if self.status != Status.ABSENT else Action.REMOVE)
         
     def sync_depends(self, modules):
@@ -505,8 +520,7 @@ def perform_update(action = None, poweroff=False):
             
     if sudo.passwd is None:
         return
-            
-            
+                        
     # remove old ones
     pkgs = [dep.remove() for dep in Module.depends]
     kept = [dep.pkg for dep in Module.depends if dep.keep_apt()]
@@ -539,7 +553,7 @@ def perform_update(action = None, poweroff=False):
     updated = [dep.update() for dep in to_install[Source.GIT_ROS] + to_install[Source.GIT_ROS2]]
     # recompile ros1ws    
     if Source.GIT_ROS in updated or '-f' in sys.argv:
-        print('Compiling ROS 1 local workspace...')
+        print(f'Compiling ROS 1 auxiliary workspace @ {Depend.folders[Source.GIT_ROS]} ...')
         if not os.path.exists(f'{Depend.folders[Source.GIT_ROS]}/.catkin_tools'):
             # purge colcon install
             for folder in ('build','install','devel','log'):
@@ -552,7 +566,7 @@ def perform_update(action = None, poweroff=False):
 
     # recompile ros2ws
     if Source.GIT_ROS2 in updated or '-f' in sys.argv:
-        print('Compiling ROS 2 local workspace...')
+        print(f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]} ...')
         run(f'bash -c -i "source /opt/ros/{ros2}/setup.bash && colcon build --symlink-install --continue-on-error"', cwd=Depend.folders[Source.GIT_ROS2],show=True)
         need_chmod = True
     
@@ -673,20 +687,24 @@ class UpdaterGUI(QWidget):
                 module.menu.setCurrentIndex(Action.KEEP)
     
 if '-t' in sys.argv:
+    # to test things
     sys.exit(0)
     
-if '-u' in sys.argv:    
-    if sys.argv[-1] == '-u':
-        perform_update(Action.KEEP)
-    else:
-        for key in sys.argv:
-            if key in modules:
-                modules[key].configure(Action.INSTALL)
-        perform_update(poweroff=poweroff)
+if '-u' in sys.argv:
+    to_update = [mod for mod in modules if mod in sys.argv]
+
+    if len(to_update) == 0:
+        # update all existing ones
+        to_update = [mod for mod in modules if modules[mod].status != Status.ABSENT]
+                
+    for mod in to_update:
+        modules[mod].configure(Action.INSTALL)
+            
+    perform_update(poweroff=poweroff)
         
 if '-a' in sys.argv:
+    # install / update all modules
     perform_update(Action.INSTALL,poweroff=poweroff)
-
 
 sys._excepthook = sys.excepthook 
 def exception_hook(exctype, value, traceback):
