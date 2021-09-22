@@ -442,9 +442,11 @@ class Module:
             return self.status          
         
         self.status = min(dep.status for dep in self.all_deps())
-        if 'description' in self.config and '-r' in sys.argv:
+        
+        autoclean = '-r' in sys.argv
+        if 'description' in self.config:
             # auto clean deps if module is not here
-            self.configure(Action.KEEP if self.status != Status.ABSENT else Action.REMOVE)
+            self.configure(Action.REMOVE if (self.status = Status.ABSENT and autoclean) else Action.REMOVE)
         
     def sync_depends(self, modules):
                 
