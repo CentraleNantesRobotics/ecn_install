@@ -576,7 +576,7 @@ def perform_update(action = None, poweroff=False):
     sudo.run('ldconfig',show=False)
     
     if os.path.exists('/opt/coppeliaSim'):
-        sudo.run('chmod a+rwX -R /opt/coppeliaSim',show=False)
+        sudo.run('chmod a+rwX -R /opt/coppeliaSim',show=False)        
     
     if poweroff:
         sudo.run('poweroff')
