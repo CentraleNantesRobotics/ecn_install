@@ -25,7 +25,7 @@ coppeliasim:
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=coppeliasim_4.2.0.deb']
     ros:
         apt: [cv-bridge]
-        git: [oKermorgant:coppeliasim_ros_launcher]
+        git: [oKermorgant:coppeliasim_ros_launcher, oKermorgant:ecn_common]
 
 visp:
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=libvisp-dev_3.4.1-1_amd64.deb']
@@ -40,8 +40,6 @@ log2plot:
 cleanup:
     git: [lagadic:visp]
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=log2plot_1.0.0.deb']
-    ros: 
-        git: [oKermorgant:ecn_common]
     
 # main module definitions
 arpro:
@@ -78,6 +76,7 @@ rasom:
 tbc:
     description: Task-based control
     mod: [coppeliasim,log2plot]
+    
 
 amoro:
     description: Advanced Modeling of Robots

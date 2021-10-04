@@ -51,7 +51,7 @@ class Sudo:
     def run(self, cmd, cwd=None,show=True):
         if show:
             display(cmd,True)
-        proc = Popen(['sudo','-S'] + shlex.split(cmd), stdin=PIPE, stderr=PIPE,stdout=PIPE if show else DEVNULL,cwd=cwd)
+        proc = Popen(['sudo','-S'] + shlex.split(cmd), stdin=PIPE, stderr=PIPE, stdout=PIPE if show else DEVNULL,cwd=cwd)
         proc.communicate(self.passwd)
         proc.wait()
                 
@@ -510,7 +510,6 @@ groups = dict(((name, config) for name, config in info.items() if isinstance(con
 for module in modules.values():
     module.sync_depends(modules)
     module.check_status()
-    
 
 def perform_update(action = None, poweroff=False):
     '''
@@ -575,6 +574,9 @@ def perform_update(action = None, poweroff=False):
     if need_chmod:
         sudo.run(f'chmod a+rX {Depend.folders[Source.GIT]} -R',show=False)
     sudo.run('ldconfig',show=False)
+    
+    if os.path.exists('/opt/coppeliaSim'):
+        sudo.run('chmod a+rwX -R /opt/coppeliaSim',show=False)
     
     if poweroff:
         sudo.run('poweroff')

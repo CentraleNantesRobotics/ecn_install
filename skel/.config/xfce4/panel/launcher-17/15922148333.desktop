@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Exec=bash -i -c "qtcreator %F"
+Exec=bash -i -c "ros!ws && qtcreator %F"
 Name=Qt Creator
 GenericName=C++ IDE for developing Qt applications
 X-KDE-StartupNotify=true
