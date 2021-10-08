@@ -116,6 +116,9 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# QtCreator configure shortcut
+alias gqt=/opt/local_ws/ros_management_tools/qtcreator/qtcreator_gen_config.py
+
 rosdl() {
 ros1ws
 mkdir -p ~/ros/src
@@ -125,7 +128,9 @@ git clone "https://github.com/oKermorgant/$1.git"
 cd ..
 catkin build
 cd src/$1
-gqt
+if [ -f CMakeLists.txt ]; then
+    gqt
+fi
 }
 
 ros2dl() {
@@ -137,11 +142,10 @@ git clone "https://github.com/oKermorgant/$1.git"
 cd ..
 colbuild
 cd src/$1
-gqt
+if [ -f CMakeLists.txt ]; then
+    gqt
+fi
 }
-
-# QtCreator configure shortcut
-alias gqt=/opt/local_ws/ros_management_tools/qtcreator/qtcreator_gen_config.py
 
 ros1_workspaces="/opt/ros/noetic /opt/local_ws/ros1 ~/ros"
 ros2_workspaces="/opt/ros/foxy /opt/local_ws/ros2 ~/ros2"

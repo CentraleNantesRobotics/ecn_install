@@ -18,7 +18,6 @@ ros:
 ros2:
     ros2:
         apt: [desktop,slider-publisher,simple-launch,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2]
-        git: [oKermorgant:simple_launch]
     apt: [python3-colcon-core,python3-colcon-common-extensions]
     git: [oKermorgant:ros_management_tools]
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=qtcreator-ros_1.0.1.deb']
