@@ -35,7 +35,7 @@ log2plot:
     git: [oKermorgant:log2plot]
     apt: [python3-matplotlib, texlive-latex-extra, texlive-fonts-recommended, dvipng]
     mod: [visp]
-    
+        
 # special module that always wants its dependencies to be removed
 # will be removed unless required by other modules
 cleanup:
@@ -77,8 +77,9 @@ rasom:
 tbc:
     description: Task-based control
     mod: [coppeliasim,log2plot]
+    ros:
+        git: [RethinkRobotics:baxter_common]
     
-
 amoro:
     description: Advanced Modeling of Robots
     ros2:
