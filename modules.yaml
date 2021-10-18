@@ -8,19 +8,21 @@ M2 CORO-IMARO: [tbc,amoro]
 lib_folder: /opt/local_ws
 
 # hidden modules (without description) others may depend on 
+
+ros12:
+    git: [oKermorgant:ros_management_tools]
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=qtcreator-ros_1.0.1.deb']
+
 ros:
     ros:
         apt: [desktop, joint-state-publisher,robot-localization,vision-opencv,gazebo-ros-pkgs,image-view,compressed-image-transport,amcl,control-toolbox,kdl-parser-py,slider-publisher]
-    apt: [python3-rosdep,python3-rosinstall,python3-rosinstall-generator,python3-wstool,build-essential,python3-catkin-tools]
-    git: [oKermorgant:ros_management_tools]
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=qtcreator-ros_1.0.1.deb']
+    mod: [ros12]
         
 ros2:
     ros2:
         apt: [desktop,slider-publisher,simple-launch,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2]
     apt: [python3-colcon-core,python3-colcon-common-extensions]
-    git: [oKermorgant:ros_management_tools]
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=qtcreator-ros_1.0.1.deb']
+    mod: [ros12]
         
 coppeliasim:
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=coppeliasim_4.2.0.deb']
@@ -35,13 +37,22 @@ log2plot:
     git: [oKermorgant:log2plot]
     apt: [python3-matplotlib, texlive-latex-extra, texlive-fonts-recommended, dvipng]
     mod: [visp]
+    
+# special module that always wants it dependencies to be installed
+base: 
+    apt: curl geany git qtcreator libclang-common-8-dev vlc openssh-server ipython3 python3-matplotlib python3-scipy python3-sympy build-essential cmake
         
+    
 # special module that always wants its dependencies to be removed
 # will be removed unless required by other modules
 cleanup:
     git: [lagadic:visp]
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=log2plot_1.0.0.deb']
     
+    
+    
+    
+
 # main module definitions
 arpro:
     description: 'Advanced programming / C++'

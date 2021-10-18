@@ -135,6 +135,8 @@ Status = Enum('Absent', 'Old', 'Installed')
 actions = {Action.REMOVE: 'Remove', Action.KEEP: 'Keep as it is', Action.INSTALL: 'Install / update'}
 status = {Status.ABSENT: 'Not installed', Status.OLD: 'Needs update', Status.INSTALLED: 'Up-to-date'}
 
+special_modules = {'cleanup': Action.REMOVE, 'base': Action.INSTALL}
+
 class Depend:
     
     packages = {}
@@ -432,8 +434,8 @@ class Module:
 
         self.parse_depends()
         
-        if name == 'cleanup':
-            self.configure(Action.REMOVE)
+        if name in special_modules:
+            self.configure(special_modules[name])
         
     def check_status(self, pending = False):
         
@@ -495,8 +497,8 @@ class Module:
         return self.name.upper() + ' (' + self.config['description'] + ')'
     
     def configure(self, action):
-        if self.name == 'cleanup':
-            action = Action.REMOVE
+        if self.name in special_modules:
+            action = special_modules[self.name]            
         for dep in self.all_deps():
             dep.configure(self.name, action)
             
