@@ -555,7 +555,7 @@ def perform_update(action = None, poweroff=False):
     need_chmod = False
     updated = [dep.update() for dep in to_install[Source.GIT_ROS] + to_install[Source.GIT_ROS2]]
     # recompile ros1ws    
-    if Source.GIT_ROS in updated or '-f' in sys.argv:
+    if Source.GIT_ROS in updated or ('-f' in sys.argv and os.path.exists(Depend.folders[Source.GIT_ROS])):
         print(f'Compiling ROS 1 auxiliary workspace @ {Depend.folders[Source.GIT_ROS]} ...')
         if not os.path.exists(f'{Depend.folders[Source.GIT_ROS]}/.catkin_tools'):
             # purge colcon install
@@ -568,7 +568,7 @@ def perform_update(action = None, poweroff=False):
         need_chmod = True
 
     # recompile ros2ws
-    if Source.GIT_ROS2 in updated or '-f' in sys.argv:
+    if Source.GIT_ROS2 in updated or ('-f' in sys.argv and os.path.exists(Depend.folders[Source.GIT_ROS2])):
         print(f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]} ...')
         run(f'bash -c -i "source /opt/ros/{ros2}/setup.bash && colcon build --symlink-install --continue-on-error"', cwd=Depend.folders[Source.GIT_ROS2],show=True)
         need_chmod = True
