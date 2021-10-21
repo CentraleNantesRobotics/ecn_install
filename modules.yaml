@@ -40,7 +40,7 @@ log2plot:
     
 # special module that always wants it dependencies to be installed
 base: 
-    apt: curl geany git qtcreator libclang-common-8-dev vlc openssh-server ipython3 python3-matplotlib python3-scipy python3-sympy build-essential cmake
+    apt: [curl geany git qtcreator libclang-common-8-dev vlc openssh-server ipython3 python3-matplotlib python3-scipy python3-sympy build-essential cmake]
         
     
 # special module that always wants its dependencies to be removed
