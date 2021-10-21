@@ -441,7 +441,7 @@ class Module:
         
         if pending:
             self.status = min(dep.pending_status() for dep in self.all_deps())
-            return self.status          
+            return self.status      
         
         self.status = min(dep.status for dep in self.all_deps())
         
@@ -498,7 +498,7 @@ class Module:
     
     def configure(self, action):
         if self.name in special_modules:
-            action = special_modules[self.name]            
+            action = special_modules[self.name]     
         for dep in self.all_deps():
             dep.configure(self.name, action)
             
