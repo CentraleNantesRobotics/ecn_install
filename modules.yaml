@@ -21,7 +21,7 @@ ros:
 ros2:
     ros2:
         apt: [desktop,slider-publisher,simple-launch,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2]
-    apt: [python3-colcon-core,python3-colcon-common-extensions]
+    apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat]
     mod: [ros12]
         
 coppeliasim:
