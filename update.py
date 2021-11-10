@@ -107,7 +107,7 @@ class Sudo:
         
     def deb_install(self, url):
         dst = os.path.basename(url).split('=')[-1]
-        run(f'wget {url} -O /tmp/{dst}')
+        run(f'wget "{url}" -O /tmp/{dst}')
         self.run(f'dpkg -i /tmp/{dst}')
         
 poweroff = False
@@ -214,11 +214,11 @@ class Depend:
             out = run('apt list --installed',show=True)
             for line in out:
                 if '/' not in line:
-                    continue
+                    continue                
                 pkg,ver,_,status = line.split(' ',3)
                 pkg = pkg[:pkg.find('/')]
-                ver = line[1]
                 Depend.packages[pkg] = ver
+
                 if 'upgradeable to:' in status:
                     Depend.packages_old.append(pkg)
         
