@@ -11,7 +11,7 @@ lib_folder: /opt/local_ws
 
 plankton:
     ros2:
-        git: [oKermorgant:Plankton,CentraleNantesROV:bluerov2_plankton]
+        git: [oKermorgant:Plankton,CentraleNantesROV:bluerov2_plankton,CentraleNantesROV:iauv_control]
         apt: [gazebo-ros-pkgs]
     apt: [gazebo11, libgazebo11-dev]
 
