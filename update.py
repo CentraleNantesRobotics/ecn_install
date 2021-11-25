@@ -285,8 +285,7 @@ class Depend:
             self.uninstall()
             
             # update repo            
-            print('Updating ' + base_dir)
-            run('git pull', cwd=base_dir)
+            run('git pull',cwd=base_dir,show=True)
         else:
             # clone
             if self.pkg.count(':') == 2:
