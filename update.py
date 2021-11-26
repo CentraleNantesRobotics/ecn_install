@@ -147,6 +147,7 @@ class Depend:
         self.pkg, self.src = Depend.resolve(pkg, src)
         
         self.status = self.check()
+        self.result = Action.KEEP
             
         self.pending = {}
         self.cmake = ''
