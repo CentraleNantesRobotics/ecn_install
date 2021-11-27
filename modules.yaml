@@ -54,9 +54,8 @@ base:
 cleanup:
     git: [lagadic:visp]
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=log2plot_1.0.0.deb']
-    
-    
-    
+    ros2:
+        git: [oKermorgant:simple_launch]
     
 
 # main module definitions
