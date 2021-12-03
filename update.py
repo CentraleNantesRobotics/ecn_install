@@ -247,7 +247,8 @@ class Depend:
         # check GIT version
         upstream = run('git status', cwd=base_dir)[1].split("'")[1]
                 
-        diff = run(f'git fetch && git rev-list HEAD...{upstream} --count', cwd=base_dir)[0]
+        run('git fetch',cwd=base_dir)
+        diff = run(f'git rev-list HEAD...{upstream} --count', cwd=base_dir)[0]
         if diff == '0' and '-g' not in sys.argv:
             return Status.INSTALLED
         # to be updated
