@@ -68,7 +68,7 @@ class Sudo:
             refresh_src = False
             
             if not any('Open Robotics' in line for line in run('apt-key list')):
-                self.run("curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -")
+                self.run("curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -")
                 refresh_src = True
             
             if need_ros1 and not os.path.exists('/etc/apt/sources.list.d/ros-latest.list'):
@@ -285,8 +285,9 @@ class Depend:
             # uninstall previous files in case new commit removes any
             self.uninstall()
             
-            # update repo            
-            run('git pull',cwd=base_dir,show=True)
+            # update repo
+            display('Refreshing repo ' + base_dir,True)
+            run('git pull',cwd=base_dir,show=False)
         else:
             # clone
             if self.pkg.count(':') == 2:
