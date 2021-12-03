@@ -248,7 +248,7 @@ class Depend:
         run('git fetch',cwd=base_dir)
         git_status = run('git status', cwd=base_dir)[1]
         
-        if 'up-to-date' in git_status and '-g' not in sys.argv:
+        if 'behind' not in git_status and '-g' not in sys.argv:
             return Status.INSTALLED
         return Status.OLD        
     
