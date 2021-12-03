@@ -244,15 +244,13 @@ class Depend:
         if not os.path.exists(base_dir):
             return Status.ABSENT
                 
-        # check GIT version
-        upstream = run('git status', cwd=base_dir)[1].split("'")[1]
-                
+        # check GIT wrt upstream
         run('git fetch',cwd=base_dir)
-        diff = run(f'git rev-list HEAD...{upstream} --count', cwd=base_dir)[0]
-        if diff == '0' and '-g' not in sys.argv:
+        git_status = run('git status', cwd=base_dir)[1]
+        
+        if 'up-to-date' in git_status and '-g' not in sys.argv:
             return Status.INSTALLED
-        # to be updated
-        return Status.OLD
+        return Status.OLD        
     
     def update(self):
         
