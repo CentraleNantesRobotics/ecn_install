@@ -46,7 +46,7 @@ log2plot:
     
 mapsim:
     ros2: 
-        git: [oKermorgant:map_simulator:ros2,oKermorgant:anchor_msgs]
+        git: [oKermorgant:map_simulator:ros2,oKermorgant:anchor_msgs,oKermorgant:odom_to_tf]
     
 # special module that always wants it dependencies to be installed
 base: 
