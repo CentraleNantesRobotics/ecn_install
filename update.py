@@ -575,7 +575,6 @@ def perform_update(action = None, poweroff=False):
     
     if need_chmod:
         sudo.run(f'chmod a+rX {Depend.folders[Source.GIT]} -R',show=False)
-    sudo.run('ldconfig',show=False)
     
     if os.path.exists('/opt/coppeliaSim'):
         sudo.run('chmod a+rwX -R /opt/coppeliaSim',show=False)        

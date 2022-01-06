@@ -59,6 +59,8 @@ cleanup:
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=log2plot_1.0.0.deb']
     ros2:
         git: [oKermorgant:simple_launch]
+    ros:
+        git: [CentraleNantesRobotics:baxter_simple_sim]
     
 
 # main module definitions
@@ -83,9 +85,10 @@ midwa:
     description: Middleware / ROS 2
     mod: [mapsim]
     ros2: 
-        git: [CentraleNantesRobotics:baxter_common_ros2]
+        apt: [turtlebot3-description]
+        git: [CentraleNantesRobotics:baxter_common_ros2,CentraleNantesRobotics:baxter_simple_sim:ros2]
     ros:
-        git: [RethinkRobotics:baxter_common,CentraleNantesRobotics:baxter_interface,CentraleNantesRobotics:baxter_tools,CentraleNantesRobotics:baxter_simple_sim]
+        git: [RethinkRobotics:baxter_common,CentraleNantesRobotics:baxter_interface,CentraleNantesRobotics:baxter_tools]
 
 rasom: 
     description: Underwater robotics
