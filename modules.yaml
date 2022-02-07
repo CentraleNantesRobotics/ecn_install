@@ -1,5 +1,5 @@
 # student groups
-OD Robotique: [arpro, rasom, midwa, planif,covis]
+OD Robotique: [arpro, rasom, midwa, planif,covis,integ]
 M1 CORO: [arpro,sofar,manip,covis]
 M2 CORO-IMARO: [tbc,amoro]
 
@@ -96,7 +96,12 @@ rasom:
     ros:
         apt: [control-toolbox]
         git: [oKermorgant:underwater_simulation, freefloating-gazebo:freefloating_gazebo]
-    
+        
+integ: 
+    description: Integration project
+    ros: 
+        apt: [position-controllers, velocity-controllers, effort-controllers, joint-state-controller, gazebo-ros-control, control-toolbox]
+        
 tbc:
     description: Task-based control
     mod: [coppeliasim,log2plot]
