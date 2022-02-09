@@ -29,6 +29,13 @@ ros2:
         apt: [desktop,slider-publisher,simple-launch,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2]
     apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat]
     mod: [ros12]
+    
+visp_ros1:
+    ros:
+        apt: [visp]
+visp_ros2:
+    ros2:
+        apt: [visp]
         
 coppeliasim:
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=coppeliasim_4.2.0.deb']
@@ -36,13 +43,10 @@ coppeliasim:
         apt: [cv-bridge]
         git: [oKermorgant:coppeliasim_ros_launcher, oKermorgant:ecn_common]
 
-visp:
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=libvisp-dev_3.4.1-1_amd64.deb']
-
 log2plot:
     git: [oKermorgant:log2plot]
     apt: [python3-matplotlib, texlive-latex-extra, texlive-fonts-recommended, dvipng]
-    mod: [visp]
+    mod: [visp_ros1,visp_ros2]
     
 mapsim:
     ros2: 
@@ -56,13 +60,10 @@ base:
 # will be removed unless required by other modules
 cleanup:
     git: [lagadic:visp]
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=log2plot_1.0.0.deb']
-    ros2:
-        git: [oKermorgant:simple_launch]
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=log2plot_1.0.0.deb','https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=libvisp-dev_3.4.1-1_amd64.deb']
     ros:
         git: [CentraleNantesRobotics:baxter_simple_sim]
     
-
 # main module definitions
 arpro:
     description: 'Advanced programming / C++'
@@ -71,11 +72,11 @@ arpro:
     
 manip:
     description: Robot modeling and control
-    mod: [visp, ros]
+    mod: [visp_ros1, ros]
         
 planif:
     description: Robot planning and control
-    mod: [visp, coppeliasim]
+    mod: [visp_ros1, coppeliasim]
     
 sofar:
     description: Software architecture / ROS
@@ -100,7 +101,7 @@ rasom:
 integ: 
     description: Integration project
     ros: 
-        apt: [position-controllers, velocity-controllers, effort-controllers, joint-state-controller, gazebo-ros-control, control-toolbox]
+        apt: [position-controllers, velocity-controllers, effort-controllers, joint-state-controller, gazebo-ros-control, control-toolbox,visp_ros1]
         
 tbc:
     description: Task-based control
