@@ -33,6 +33,7 @@ ros2:
 visp_ros1:
     ros:
         apt: [visp]
+        
 visp_ros2:
     ros2:
         apt: [visp]
@@ -101,7 +102,7 @@ rasom:
 integ: 
     description: Integration project
     ros: 
-        apt: [position-controllers, velocity-controllers, effort-controllers, joint-state-controller, gazebo-ros-control, control-toolbox,visp_ros1]
+        apt: [position-controllers, velocity-controllers, effort-controllers, joint-state-controller, gazebo-ros-control, control-toolbox,visp]
         
 tbc:
     description: Task-based control
@@ -113,7 +114,7 @@ amoro:
     description: Advanced Modeling of Robots
     ros2:
         apt: [ros2-control, ros2-controllers, gazebo-ros2-control,gazebo-ros-pkgs]
-    apt: [gummi, python3-pyqtgraph]    # tex editor for reports
+    apt: [gummi, python3-pyqtgraph]    # tex editor for reports?
 
 covis:
     description: Computer Vision
