@@ -3,7 +3,10 @@ import yaml
 import sys
 import os
 import shlex
+import time
 from shutil import rmtree
+from threading import Thread
+from random import choice
 import re
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout,QHBoxLayout,QGridLayout, QLabel, QPushButton, QCheckBox, QComboBox, QSpacerItem, QSizePolicy, QInputDialog, QLineEdit
 from PyQt5.QtCore import pyqtSignal as Signal
@@ -15,19 +18,81 @@ base_path = os.path.dirname(os.path.abspath(__file__))
 ros1 = 'noetic'
 ros2 = 'foxy'
 
-def display(s, sudo = False):
-    if sudo:
-        print('\033[93m [sudo]\t' + '\033[1;37;0m ' + s)
-    else:
-        print('\033[96m ['+os.environ['USER'] +']\t' + '\033[1;37;0m ' + s)
+class Display:
+    
+    user = os.environ['USER']
+    show = False
+    running = True
+    cmd = ''
+    @staticmethod
+    def init():        
+        Display.user_offset = max(4, len(Display.user)) + 3 - len(Display.user)
+        Display.sudo_offset = max(4, len(Display.user)) - 1
+        # run blit thread
+        Display.thread = Thread(target=Display.blit)
+        Display.thread.start()
+        
+    @staticmethod
+    def to_msg(cmd, sudo):
+        if sudo:
+            return f'\033[93m [sudo]{Display.sudo_offset*" "}\033[1;37;0m {cmd}'
+        else:
+            return f'\033[96m [{Display.user}]{Display.user_offset*" "}\033[1;37;0m {cmd}'
+                
+    @staticmethod
+    def msg(cmd, sudo = False):
+        if type(cmd) == list:
+            Display.cmd = [Display.to_msg(cmd[0],sudo), Display.to_msg(' ↪ ' + cmd[1],sudo)]
+        else:
+            Display.cmd = Display.to_msg(cmd, sudo)        
+        
+    @staticmethod
+    def blit():
+        
+        animations = ['◜◝◞◟', '▲►▼◄', '/-\\|','◣◤◥◢','▤▥▦▧▨▩']
+        animation = choice(animations)
+        idx = 0
+        prev_cmd = ''
+        while Display.running: 
+            if prev_cmd != Display.cmd and prev_cmd != '':
+                print(prev_cmd, '✓')
+                animation = choice(animations)
+                idx = 0
+                
+            if type(Display.cmd) == list:
+                print(Display.cmd[0])
+                Display.cmd = Display.cmd[1]
+            if Display.cmd != '':
+                print(Display.cmd, animation[idx], end="\r")
+                idx = (idx+1) % len(animation)
+            prev_cmd = Display.cmd
+            time.sleep(0.1) 
+            
+    @staticmethod
+    def endl():
+        Display.cmd = ''
+        
+    @staticmethod
+    def stop(exit = True):
+        Display.cmd = ''
+        time.sleep(0.15)
+        Display.running = False
+        print('All set!')
+        if exit:
+            sys.exit(0)
+        
+Display.init()
 
 def get_file(name):
     return base_path + '/' + name
 
 def run(cmd, cwd=None,show=False):
     if show:
-        display(cmd)
-    return check_output(shlex.split(cmd), stderr=PIPE, cwd=cwd).decode('utf-8').splitlines()
+        Display.msg(cmd)
+    if type(cmd) == list:
+        cmd = cmd[0]
+    out = check_output(shlex.split(cmd), stderr=PIPE, cwd=cwd).decode('utf-8').splitlines()
+    return out
 
 class Sudo:
     def __init__(self,gui=False):
@@ -49,8 +114,11 @@ class Sudo:
         self.run('apt update -qy')
                 
     def run(self, cmd, cwd=None,show=True):
+        
         if show:
-            display(cmd,True)
+            Display.msg(cmd, True)
+        if type(cmd) == list:
+            cmd = cmd[0]
         proc = Popen(['sudo','-S'] + shlex.split(cmd), stdin=PIPE, stderr=PIPE, stdout=PIPE if show else DEVNULL,cwd=cwd)
         proc.communicate(self.passwd)
         proc.wait()
@@ -72,17 +140,17 @@ class Sudo:
                 refresh_src = True
             
             if need_ros1 and not os.path.exists('/etc/apt/sources.list.d/ros-latest.list'):
-                self.run("sh -c 'echo \"deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main\" > /etc/apt/sources.list.d/ros-latest.list'")
+                self.run(["sh -c 'echo \"deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main\" > /etc/apt/sources.list.d/ros-latest.list'", 'Getting ROS 1 keys'])
                 refresh_src = True
                 
             if need_ros2 and not os.path.exists('/etc/apt/sources.list.d/ros2-latest.list'):
-                self.run("sh -c 'echo \"deb http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main\" > /etc/apt/sources.list.d/ros2-latest.list'")
+                self.run(["sh -c 'echo \"deb http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main\" > /etc/apt/sources.list.d/ros2-latest.list'", 'Getting ROS 2 keys'])
                 refresh_src = True
                 
             if refresh_src:
                 self.run('apt update -qy')
                 
-        self.run('apt install -qy ' + ' '.join(pkgs))
+        self.run(['apt install -qy ' + ' '.join(pkgs), 'Installing packages'])
     
     def apt_remove(self,pkgs,kept):
         
@@ -91,6 +159,7 @@ class Sudo:
             
         # simulate removal of each element
         actually_removed = []
+        Display.msg('Listing useless packages', True)
         for pkg in pkgs:
             out = run(f'apt remove {pkg} --dry-run',show=False)
             for line in out:
@@ -102,7 +171,7 @@ class Sudo:
                 actually_removed.append(pkg)
         
         if len(actually_removed):
-            self.run('apt purge -qy ' + ' '.join(actually_removed))
+            self.run(['apt purge -qy ' + ' '.join(actually_removed), 'Removing packages'])
             self.run('apt autoremove --purge -qy')
         
     def deb_install(self, url):
@@ -258,11 +327,11 @@ class Depend:
             return None
                 
         if self.src == Source.APT:
-            return Source.APT
+            return self.src
         
         if self.src == Source.DEB:
             sudo.deb_install(self.pkg)
-            return Source.DEB
+            return self.src
         
         # git-based, may also be inside ros1 or ros2 local ws
         root = self.parent_folder()
@@ -285,7 +354,7 @@ class Depend:
             self.uninstall()
             
             # update repo
-            display('Refreshing repo ' + base_dir,True)
+            Display.msg('Refreshing repo ' + base_dir,True)
             run('git pull',cwd=base_dir,show=False)
         else:
             # clone
@@ -299,6 +368,7 @@ class Depend:
         # install if not ROS
         if self.src == Source.GIT and os.path.exists(base_dir + '/CMakeLists.txt'):
             build_dir = base_dir + '/build'
+            Display.msg(f'Compiling + installing {base_dir}')
             run(f'mkdir -p {build_dir}',show=False)
             run('cmake {} ..'.format(self.cmake),cwd=build_dir,show=False)            
             sudo.run('make install -j4', cwd=build_dir, show=False)
@@ -556,7 +626,6 @@ def perform_update(action = None, poweroff=False):
     updated = [dep.update() for dep in to_install[Source.GIT_ROS] + to_install[Source.GIT_ROS2]]
     # recompile ros1ws    
     if Source.GIT_ROS in updated or ('-f' in sys.argv and os.path.exists(Depend.folders[Source.GIT_ROS])):
-        print(f'Compiling ROS 1 auxiliary workspace @ {Depend.folders[Source.GIT_ROS]} ...')
         if not os.path.exists(f'{Depend.folders[Source.GIT_ROS]}/.catkin_tools'):
             # purge colcon install
             for folder in ('build','install','devel','log'):
@@ -564,25 +633,25 @@ def perform_update(action = None, poweroff=False):
                     rmtree(f'{Depend.folders[Source.GIT_ROS]}/{folder}')
                     
             run(f'catkin config --init --extend /opt/ros/{ros1} --install -DCATKIN_ENABLE_TESTING=False --make-args -Wno-dev --cmake-args -DCMAKE_BUILD_TYPE=Release', cwd=Depend.folders[Source.GIT_ROS])
-        run(f'catkin build  --continue-on-failure', cwd=Depend.folders[Source.GIT_ROS],show=True)
+        run([f'catkin build  --continue-on-failure', f'Compiling ROS 1 auxiliary workspace @ {Depend.folders[Source.GIT_ROS]}'], cwd=Depend.folders[Source.GIT_ROS], show=True)
         need_chmod = True
 
     # recompile ros2ws
     if Source.GIT_ROS2 in updated or ('-f' in sys.argv and os.path.exists(Depend.folders[Source.GIT_ROS2])):
-        print(f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]} ...')
-        run(f'bash -c -i "source /opt/ros/{ros2}/setup.bash && colcon build --symlink-install --continue-on-error"', cwd=Depend.folders[Source.GIT_ROS2],show=True)
+        run([f'bash -c -i "source /opt/ros/{ros2}/setup.bash && colcon build --symlink-install --continue-on-error"',f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]}'], cwd=Depend.folders[Source.GIT_ROS2], show=True)
         need_chmod = True
     
     if need_chmod:
-        sudo.run(f'chmod a+rX {Depend.folders[Source.GIT]} -R',show=False)
+        sudo.run([f'chmod a+rX {Depend.folders[Source.GIT]} -R', 'Setting permissions'])
     
     if os.path.exists('/opt/coppeliaSim'):
-        sudo.run('chmod a+rwX -R /opt/coppeliaSim',show=False)        
+        sudo.run('chmod a+rwX -R /opt/coppeliaSim',show=False)
     
     if poweroff:
+        Display.stop(False)
         sudo.run('poweroff')
     else:
-        sys.exit(0)
+        Display.stop()
     
 def Font(size = 10):
     return QFont("Helvetica", size, QFont.Bold)
@@ -693,7 +762,7 @@ class UpdaterGUI(QWidget):
     
 if '-t' in sys.argv:
     # to test things
-    sys.exit(0)
+    Display.stop()    
     
 if '-u' in sys.argv:
     to_update = [mod for mod in modules if mod in sys.argv]
@@ -718,7 +787,9 @@ def exception_hook(exctype, value, traceback):
     sys.exit(1) 
 sys.excepthook = exception_hook 
 
+Display.endl()
 app = QApplication(sys.argv)
 gui = UpdaterGUI()
 
-sys.exit(app.exec_())
+app.exec_()
+Display.stop()
