@@ -6,7 +6,6 @@ import shlex
 import time
 from shutil import rmtree
 from threading import Thread
-from random import choice
 import re
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout,QHBoxLayout,QGridLayout, QLabel, QPushButton, QCheckBox, QComboBox, QSpacerItem, QSizePolicy, QInputDialog, QLineEdit
 from PyQt5.QtCore import pyqtSignal as Signal
@@ -24,6 +23,7 @@ class Display:
     show = False
     running = True
     cmd = ''
+    delay = 0.2
     @staticmethod
     def init():        
         Display.user_offset = max(4, len(Display.user)) + 3 - len(Display.user)
@@ -49,14 +49,15 @@ class Display:
     @staticmethod
     def blit():
         
-        animations = ['◜◝◞◟', '▲►▼◄', '/-\\|','◣◤◥◢','▤▥▦▧▨▩']
-        animation = choice(animations)
+        animations = ['◜◝◞◟','◣◤◥◢','▤▥▦▧▨▩', '▲►▼◄', '/-\\|']        
+        #animation = choice(animations)
+        animation = animations[1]
         idx = 0
         prev_cmd = ''
         while Display.running: 
             if prev_cmd != Display.cmd and prev_cmd != '':
                 print(prev_cmd, '✓')
-                animation = choice(animations)
+                #animation = choice(animations)
                 idx = 0
                 
             if type(Display.cmd) == list:
@@ -66,7 +67,7 @@ class Display:
                 print(Display.cmd, animation[idx], end="\r")
                 idx = (idx+1) % len(animation)
             prev_cmd = Display.cmd
-            time.sleep(0.1) 
+            time.sleep(Display.delay) 
             
     @staticmethod
     def endl():
@@ -75,7 +76,7 @@ class Display:
     @staticmethod
     def stop(exit = True):
         Display.cmd = ''
-        time.sleep(0.15)
+        time.sleep(2*Display.delay)
         Display.running = False
         print('All set!')
         if exit:
