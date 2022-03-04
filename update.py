@@ -590,7 +590,8 @@ def perform_update(action = None, poweroff=False):
     '''
     if action is not None:
         for m in modules.values():
-            m.configure(action)
+            if 'description' in m.config:
+                m.configure(action)
             
     if sudo.passwd is None:
         return
