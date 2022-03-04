@@ -51,7 +51,7 @@ class Display:
         
         animations = ['◜◝◞◟','◣◤◥◢','▤▥▦▧▨▩', '▲►▼◄', '/-\\|']        
         #animation = choice(animations)
-        animation = animations[1]
+        animation = animations[-1]
         idx = 0
         prev_cmd = ''
         while Display.running: 
