@@ -29,20 +29,22 @@ year = localtime().tm_year
 def process(home):
     
     # try to get student year, if any
-    name = os.path.basename(home)
-    if name[-4:].isdigit():
-        st_year = int(name[-4:])
-        if st_year < year-2:
-            # just remove this folder, user is from LDAP
-            remove_with_info(home)
-            return
+    if '-s' in sys.argv:
+        name = os.path.basename(home)
+        if name[-4:].isdigit():
+            st_year = int(name[-4:])
+            if st_year < year-2:
+                # just remove this folder, user is from LDAP
+                remove_with_info(home)
+                return
     
     ros_cache = f'{home}/.ros/log'
     if os.path.exists(ros_cache):
         remove_with_info(ros_cache)
     
     
-print('Will execute following function on user accounts:')
+print('Will execute following function on user accounts:\n')
+
 print(getsource(process))
 
 r = input('\nConfirm [Y/n] ')
