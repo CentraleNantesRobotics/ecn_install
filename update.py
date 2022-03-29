@@ -649,7 +649,8 @@ def perform_update(action = None, poweroff=False):
     if os.path.exists('/opt/coppeliaSim'):
         sudo.run('chmod a+rwX -R /opt/coppeliaSim',show=False)
     
-    if poweroff:
+    # poweroff only if no one else is connected
+    if poweroff and all(user == Display.user for user in run('users')[0].split()):
         Display.stop(False)
         sudo.run('poweroff')
     else:
