@@ -1,4 +1,4 @@
-Some scripts to easily setup Ubuntu Focal / ROS Noetic / ROS 2 Foxy at Centrale Nantes
+Some scripts to easily setup Ubuntu Focal / ROS 1 / ROS 2 at Centrale Nantes
 
 ## ROS 1 / ROS 2 management
 
@@ -7,11 +7,11 @@ ROS 1/2 dependencies assume you use the [ros_management](https://github.com/oKer
 ```bash
 ros1_workspaces="/opt/ros/noetic ~/a_first_ros1_workspace ~/main_ros1_overlay"
 ros2_workspaces="/opt/ros/foxy ~/some_ros2_workspace ~/main_ros2_overlay"
-source /path/to/ros_management.bash
-ros1ws  # activate ROS 1 / disable ROS 2
-ros2ws  # activate ROS 2 / disable ROS 1
+# activate ROS 1 by default
+source /path/to/ros_management.bash -k -p -ros1
 ```
-The `ros1ws` and `ros2ws` functions also update the bash prompt to highlight the current distro in use.
+
+If `ros1ws` or `ros2ws` are called then the corresponding ROS version will become the default in future terminals.
 
 ## Overall setup
 
