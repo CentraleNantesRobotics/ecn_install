@@ -2,11 +2,13 @@
 
 import sys
 import os
-from shutil import rmtree
+from shutil import rmtree, copy
 from time import localtime
 from inspect import getsource
+from subprocess import run
 
 user_dirs = ['/home','/user/eleves']
+base_dir = os.path.dirname(__file__)
 
 def msg_exit(msg):
     print(msg)
@@ -44,7 +46,7 @@ def clean_accounts(home):
     if os.path.exists(ros_cache):
         remove_with_info(ros_cache)
         
-def update_bashrc(home):
+def update_bashrc_geany(home):
     '''
     Update .bashrc file for ros_management_tools
     '''
@@ -72,14 +74,30 @@ def update_bashrc(home):
                     content[i] = ''
                     updated = True
     
-    if not updated: return
-    print(f'Updating {bashrc}')
-    with open(bashrc, 'w') as f:
-        f.write('\n'.join(content))
-            
+    if updated:
+        print(f'Updating {bashrc}')
+        with open(bashrc, 'w') as f:
+            f.write('\n'.join(content))
+        
+    # also updates geany configuration    
+    geany_conf = ['.config/geany/geany.conf', '.config/geany/filedefs/filetypes.common']
+    updated = False
+    for conf in geany_conf:
+        dst = f'{home}/{conf}'
+        src = f'{base_dir}/../skel/{conf}'
+        if not os.path.exists(dst):
+            print(f'Creating {dst}')
+            updated = True
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            copy(src, dst)    
     
+    if updated:
+        user = os.path.basename(home)    
+        run(['chown',f'{user}:{user}',f'{home}/.config/geany', '-R'])
+    
+
 #fct_called = clean_accounts
-fct_called = update_bashrc
+fct_called = update_bashrc_geany
     
 print('Will execute following function on user accounts:\n')
 
