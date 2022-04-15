@@ -137,7 +137,7 @@ class Sudo:
             refresh_src = False
             
             if not any('Open Robotics' in line for line in run('apt-key list')):
-                self.run("curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -")
+                self.run("sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key  -o /etc/apt/trusted.gpg.d/ros-archive-keyring.gpg")
                 refresh_src = True
             
             if need_ros1 and not os.path.exists('/etc/apt/sources.list.d/ros-latest.list'):
