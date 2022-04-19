@@ -147,6 +147,9 @@ if [ -f CMakeLists.txt ]; then
 fi
 }
 
+# shorter prompt
+export PS1="\e[1;34m\w\e[0m$ "
+
 ros1_workspaces="/opt/ros/noetic /opt/local_ws/ros1 ~/ros"
 ros2_workspaces="/opt/ros/foxy /opt/local_ws/ros2 ~/ros2"
 # activate ROS 1 by default
