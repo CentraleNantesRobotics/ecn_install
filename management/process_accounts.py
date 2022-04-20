@@ -91,9 +91,9 @@ def update_bashrc_geany(home):
             os.makedirs(os.path.dirname(dst), exist_ok=True)
             copy(src, dst)    
     
-    if updated:
-        user = os.path.basename(home)    
-        run(['chown',f'{user}:{user}',f'{home}/.config/geany', '-R'])
+    if updated or '-f' in sys.argv:
+        user = os.path.basename(home)
+        run(['chown',user,f'{home}/.config/geany', '-R'])
     
 
 #fct_called = clean_accounts
