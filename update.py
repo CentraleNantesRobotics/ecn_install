@@ -178,7 +178,8 @@ class Sudo:
     def deb_install(self, url):
         dst = os.path.basename(url).split('=')[-1]
         run(f'wget "{url}" -O /tmp/{dst}')
-        self.run(f'dpkg -i /tmp/{dst}')
+        #self.run(f'dpkg -i /tmp/{dst}')
+        self.run(f'apt install /tmp/{dst}')
         
 poweroff = False
 
@@ -646,8 +647,10 @@ def perform_update(action = None, poweroff=False):
     if need_chmod:
         sudo.run([f'chmod a+rX {Depend.folders[Source.GIT]} -R', 'Setting permissions'])
     
-    if os.path.exists('/opt/coppeliaSim'):
-        sudo.run('chmod a+rwX -R /opt/coppeliaSim',show=False)
+    # check chmod for these ones
+    for sub in ('/opt/coppeliaSim', Depend.folders[Source.GIT] + '/ros_management_tools'):
+        if os.path.exists(sub):
+            sudo.run(f'chmod a+rwX -R {sub}',show=False)
     
     # poweroff only if no one else is connected
     if poweroff and all(user == Display.user for user in run('users')[0].split()):
