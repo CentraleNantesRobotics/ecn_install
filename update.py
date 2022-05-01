@@ -14,9 +14,6 @@ from subprocess import check_output, PIPE, Popen, DEVNULL
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 
-ros1 = 'noetic'
-ros2 = 'foxy'
-
 class Display:
     
     user = os.environ['USER']
@@ -95,10 +92,14 @@ def run(cmd, cwd=None,show=False):
     out = check_output(shlex.split(cmd), stderr=PIPE, cwd=cwd).decode('utf-8').splitlines()
     return out
 
+distro = run('lsb_release -cs')[0]
+ros1 = 'noetic'
+ros2 = 'foxy' if distro == 'focal' else 'rolling'
+
 class Sudo:
-    def __init__(self,gui=False):
+    def __init__(self,gui=False):        
         print('Retrieving system state...')
-        if os.uname()[1] == 'ecn-focal':
+        if os.uname()[1] in ('ecn-focal', 'ecn-jammy'):
             self.passwd = 'ecn'.encode()
         else:
             self.passwd = None
@@ -132,20 +133,26 @@ class Sudo:
         # check ROS keys if needed
         need_ros1 = any(pkg.startswith(f'ros-{ros1}') for pkg in pkgs)
         need_ros2 = any(pkg.startswith(f'ros-{ros2}') for pkg in pkgs)
+        
         if need_ros1 or need_ros2:                        
             
             refresh_src = False
             
-            if not any('Open Robotics' in line for line in run('apt-key list')):
-                self.run("sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key  -o /etc/apt/trusted.gpg.d/ros-archive-keyring.gpg")
+            key_file = 'ros-archive-keyring.gpg'
+            key_file_installed = '/etc/apt/trusted.gpg.d/' + key_file
+            if not os.path.exists(key_file_installed):                
+                key_file_src = get_file('management/' + key_file)                
+                self.run([f'cp {key_file_src} /etc/apt/trusted.gpg.d/', 'Setting up ROS keys'])
                 refresh_src = True
+                        
+            for ver, need in (('',need_ros1), ('2', need_ros2)):                
+                if not need: continue
+                repo_file = f'/etc/apt/sources.list.d/ros{ver}-latest.list'
+                if os.path.exists(repo_file): continue
             
-            if need_ros1 and not os.path.exists('/etc/apt/sources.list.d/ros-latest.list'):
-                self.run(["sh -c 'echo \"deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main\" > /etc/apt/sources.list.d/ros-latest.list'", 'Getting ROS 1 keys'])
-                refresh_src = True
-                
-            if need_ros2 and not os.path.exists('/etc/apt/sources.list.d/ros2-latest.list'):
-                self.run(["sh -c 'echo \"deb http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main\" > /etc/apt/sources.list.d/ros2-latest.list'", 'Getting ROS 2 keys'])
+                content = f'deb [arch=amd64 signed-by={key_file_installed}] http://packages.ros.org/ros{ver}/ubuntu {distro} main'
+                self.run(f"sh -c 'echo \"{content}\" > {repo_file}'")
+                self.run(f'chmod 664 {repo_file}')
                 refresh_src = True
                 
             if refresh_src:
@@ -574,7 +581,7 @@ class Module:
         for dep in self.all_deps():
             dep.configure(self.name, action)
             
-with open(get_file('modules.yaml')) as f:
+with open(get_file(f'modules-{distro}.yaml')) as f:
     info = yaml.safe_load(f)
     
 Depend.init_folders(info['lib_folder'] if 'lib_folder' in info else '/opt/local_ws')

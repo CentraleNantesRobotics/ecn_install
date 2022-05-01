@@ -1,0 +1,121 @@
+# student groups
+OD Robotique: [arpro, rasom, midwa, planif,covis,integ]
+M1 CORO: [arpro,sofar,manip,covis]
+M2 CORO-IMARO: [tbc,amoro]
+
+# where git-based packages will be downloaded
+# ros packages will be in lib_folder/ros and lib_folder/ros2
+lib_folder: /opt/local_ws
+
+# hidden modules (without description) others may depend on 
+
+#plankton:
+    #ros2:
+        #git: [oKermorgant:Plankton,CentraleNantesROV:bluerov2_plankton,CentraleNantesROV:iauv_control,oKermorgant:pose_to_tf]
+        #apt: [gazebo-ros-pkgs]
+    #apt: [gazebo11, libgazebo11-dev]
+
+ros12:
+    git: [oKermorgant:ros_management_tools]
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=qtcreator-ros_1.0.1.deb']
+
+ros:
+    ros:
+        apt: [desktop, joint-state-publisher,robot-localization,vision-opencv,gazebo-ros-pkgs,image-view,compressed-image-transport,amcl,control-toolbox,kdl-parser-py,slider-publisher]
+    mod: [ros12]
+        
+ros2:
+    ros2:
+        apt: [desktop,slider-publisher,simple-launch,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2]
+    apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat]
+    mod: [ros12]
+    
+visp_ros1:
+    ros:
+        apt: [visp]
+        
+visp_ros2:
+    ros2:
+        apt: [visp]
+        
+coppeliasim:
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=coppeliasim_4.3.0.deb']
+    ros:
+        apt: [cv-bridge]
+        git: [oKermorgant:coppeliasim_ros_launcher, oKermorgant:ecn_common]
+
+log2plot:
+    git: [oKermorgant:log2plot]
+    apt: [python3-matplotlib, texlive-latex-extra, texlive-fonts-recommended, dvipng]
+    mod: [visp_ros1,visp_ros2]
+    
+mapsim:
+    ros2: 
+        git: [oKermorgant:map_simulator:ros2,oKermorgant:anchor_msgs,oKermorgant:pose_to_tf]
+    
+# special module that always wants it dependencies to be installed
+base: 
+    apt: [curl, geany, git, qtcreator, libclang-common-8-dev, vlc, openssh-server, ipython3, python3-matplotlib, python3-scipy, python3-sympy, build-essential, cmake]        
+    
+# special module that always wants its dependencies to be removed
+# will be removed unless required by other modules
+cleanup:
+    git: [lagadic:visp]
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=log2plot_1.0.0.deb','https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=libvisp-dev_3.4.1-1_amd64.deb']
+    ros:
+        git: [CentraleNantesRobotics:baxter_simple_sim]
+    
+# main module definitions
+arpro:
+    description: 'Advanced programming / C++'
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=duels_3.4.1.deb']
+    apt: [python3-pygame, libzmq3-dev, python3-zmq,libyaml-cpp-dev, python3-yaml]
+    
+manip:
+    description: Robot modeling and control
+    mod: [visp_ros1, ros]
+        
+planif:
+    description: Robot planning and control
+    mod: [visp_ros1, coppeliasim]
+    
+sofar:
+    description: Software architecture / ROS
+    mod: [ros]
+    
+midwa:
+    description: Middleware / ROS 2
+    mod: [mapsim]
+    ros2: 
+        apt: [turtlebot3-description]
+        git: [CentraleNantesRobotics:baxter_common_ros2,CentraleNantesRobotics:baxter_simple_sim:ros2]
+    ros:
+        git: [RethinkRobotics:baxter_common,CentraleNantesRobotics:baxter_interface,CentraleNantesRobotics:baxter_tools]
+
+rasom: 
+    description: Underwater robotics
+    apt: [libopenscenegraph-dev, libfftw3-dev, libxml++2.6-dev]
+    ros:
+        apt: [control-toolbox]
+        git: [oKermorgant:underwater_simulation, freefloating-gazebo:freefloating_gazebo]
+        
+integ: 
+    description: Integration project
+    ros: 
+        apt: [position-controllers, velocity-controllers, effort-controllers, joint-state-controller, gazebo-ros-control, control-toolbox,visp]
+        
+tbc:
+    description: Task-based control
+    mod: [coppeliasim,log2plot]
+    ros:
+        git: [RethinkRobotics:baxter_common]
+    
+amoro:
+    description: Advanced Modeling of Robots
+    ros2:
+        apt: [ros2-control,ros2-controllers,gazebo-ros2-control,gazebo-ros-pkgs]
+    apt: [gummi, python3-pyqtgraph]    # tex editor for reports?
+
+covis:
+    description: Computer Vision
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=pycharm_2021.2.1.deb']
