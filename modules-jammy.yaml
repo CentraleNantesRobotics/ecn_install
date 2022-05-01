@@ -9,45 +9,31 @@ lib_folder: /opt/local_ws
 
 # hidden modules (without description) others may depend on 
 
-#plankton:
-    #ros2:
-        #git: [oKermorgant:Plankton,CentraleNantesROV:bluerov2_plankton,CentraleNantesROV:iauv_control,oKermorgant:pose_to_tf]
-        #apt: [gazebo-ros-pkgs]
-    #apt: [gazebo11, libgazebo11-dev]
-
-ros12:
-    git: [oKermorgant:ros_management_tools]
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=qtcreator-ros_1.0.1.deb']
-
-ros:
-    ros:
-        apt: [desktop, joint-state-publisher,robot-localization,vision-opencv,gazebo-ros-pkgs,image-view,compressed-image-transport,amcl,control-toolbox,kdl-parser-py,slider-publisher]
-    mod: [ros12]
+#ros:
+    #ros:
+        #apt: [desktop, joint-state-publisher,robot-localization,vision-opencv,gazebo-ros-pkgs,image-view,compressed-image-transport,amcl,control-toolbox,kdl-parser-py,slider-publisher]
+    #mod: [ros12]
         
 ros2:
     ros2:
         apt: [desktop,slider-publisher,simple-launch,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2]
     apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat]
-    mod: [ros12]
+    git: [oKermorgant:ros_management_tools]
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=qtcreator-ros_1.0.1.deb']
     
-visp_ros1:
-    ros:
-        apt: [visp]
+visp:
+    apt: [libvisp-dev]
         
-visp_ros2:
-    ros2:
-        apt: [visp]
-        
-coppeliasim:
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=coppeliasim_4.3.0.deb']
-    ros:
-        apt: [cv-bridge]
-        git: [oKermorgant:coppeliasim_ros_launcher, oKermorgant:ecn_common]
+#coppeliasim:
+    #deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=coppeliasim_4.3.0.deb']
+    #ros2:
+        #apt: [cv-bridge]
+        #git: [oKermorgant:coppeliasim_ros_launcher, oKermorgant:ecn_common]
 
 log2plot:
     git: [oKermorgant:log2plot]
     apt: [python3-matplotlib, texlive-latex-extra, texlive-fonts-recommended, dvipng]
-    mod: [visp_ros1,visp_ros2]
+    mod: [visp]
     
 mapsim:
     ros2: 
@@ -55,15 +41,12 @@ mapsim:
     
 # special module that always wants it dependencies to be installed
 base: 
-    apt: [curl, geany, git, qtcreator, libclang-common-8-dev, vlc, openssh-server, ipython3, python3-matplotlib, python3-scipy, python3-sympy, build-essential, cmake]        
+    apt: [curl, geany, git, qtcreator, vlc, openssh-server, ipython3, python3-matplotlib, python3-scipy, python3-sympy, build-essential, cmake]        
     
 # special module that always wants its dependencies to be removed
 # will be removed unless required by other modules
 cleanup:
     git: [lagadic:visp]
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=log2plot_1.0.0.deb','https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=libvisp-dev_3.4.1-1_amd64.deb']
-    ros:
-        git: [CentraleNantesRobotics:baxter_simple_sim]
     
 # main module definitions
 arpro:
@@ -73,31 +56,30 @@ arpro:
     
 manip:
     description: Robot modeling and control
-    mod: [visp_ros1, ros]
+    mod: [visp, ros2]
         
-planif:
-    description: Robot planning and control
-    mod: [visp_ros1, coppeliasim]
+#planif:
+    #description: Robot planning and control
+    #mod: [visp_ros1, coppeliasim]
     
-sofar:
-    description: Software architecture / ROS
-    mod: [ros]
+#sofar:
+    #description: Software architecture / ROS
+    #mod: [ros]
     
 midwa:
     description: Middleware / ROS 2
     mod: [mapsim]
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ros_baxter_1.1.0.deb']
     ros2: 
         apt: [turtlebot3-description]
         git: [CentraleNantesRobotics:baxter_common_ros2,CentraleNantesRobotics:baxter_simple_sim:ros2]
-    ros:
-        git: [RethinkRobotics:baxter_common,CentraleNantesRobotics:baxter_interface,CentraleNantesRobotics:baxter_tools]
 
-rasom: 
-    description: Underwater robotics
-    apt: [libopenscenegraph-dev, libfftw3-dev, libxml++2.6-dev]
-    ros:
-        apt: [control-toolbox]
-        git: [oKermorgant:underwater_simulation, freefloating-gazebo:freefloating_gazebo]
+#rasom: 
+    #description: Underwater robotics
+    #apt: [libopenscenegraph-dev, libfftw3-dev, libxml++2.6-dev]
+    #ros:
+        #apt: [control-toolbox]
+        #git: [oKermorgant:underwater_simulation, freefloating-gazebo:freefloating_gazebo]
         
 integ: 
     description: Integration project
