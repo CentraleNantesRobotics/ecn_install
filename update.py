@@ -130,33 +130,32 @@ class Sudo:
         if not len(pkgs):
             return
         
-        # check ROS keys if needed
-        need_ros1 = any(pkg.startswith(f'ros-{ros1}') for pkg in pkgs)
-        need_ros2 = any(pkg.startswith(f'ros-{ros2}') for pkg in pkgs)
+        # enable OSRF repos if needed
+        ros1_specs = (f'ros-{ros1}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros-latest.list', 'http://packages.ros.org/ros/ubuntu')
+        ros2_specs = (f'ros-{ros2}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros2-latest.list', 'http://packages.ros.org/ros2/ubuntu')
+        ign_specs = (f'ignition-', 'https://packages.osrfoundation.org/gazebo.gpg', 'gazebo-latest.list', 'http://packages.ros.org/ros2/ubuntu')
         
-        if need_ros1 or need_ros2:                        
+        refresh_src = False
+        
+        for start, key_url, repo_file, repo_url in (ros1_specs, ros2_specs, ign_specs):
             
-            refresh_src = False
+            if not any(pkg.startswith(start) for pkg in pkgs):
+                continue
             
-            key_file = 'ros-archive-keyring.gpg'
-            key_file_installed = '/etc/apt/trusted.gpg.d/' + key_file
-            if not os.path.exists(key_file_installed):                
-                key_file_src = get_file('management/' + key_file)                
-                self.run([f'cp {key_file_src} /etc/apt/trusted.gpg.d/', 'Setting up ROS keys'])
+            key_file = '/etc/apt/trusted.gpg.d/' + os.path.basename(key_url)
+            if not os.path.exists(key_file):
+                self.run(f'wget {key_url} -O {key_file}')
                 refresh_src = True
-                        
-            for ver, need in (('',need_ros1), ('2', need_ros2)):                
-                if not need: continue
-                repo_file = f'/etc/apt/sources.list.d/ros{ver}-latest.list'
-                if os.path.exists(repo_file): continue
             
-                content = f'deb [arch=amd64 signed-by={key_file_installed}] http://packages.ros.org/ros{ver}/ubuntu {distro} main'
+            repo_file = '/etc/apt/sources.list.d/' + repo_file
+            if not os.path.exists(repo_file):
+                content = f'deb [arch=$(dpkg --print-architecture) signed-by={key_file}] {repo_url} {distro} main'
                 self.run(f"sh -c 'echo \"{content}\" > {repo_file}'")
                 self.run(f'chmod 664 {repo_file}')
                 refresh_src = True
-                
-            if refresh_src:
-                self.run('apt update -qy')
+                                        
+        if refresh_src:
+            self.run('apt update -qy')
                 
         self.run(['apt install -qy ' + ' '.join(pkgs), 'Installing packages'])
     
@@ -294,12 +293,16 @@ class Depend:
             for line in out:
                 if '/' not in line:
                     continue                
-                pkg,ver,_,status = line.split(' ',3)
+                pkg,ver,_ = line.split(' ',2)
                 pkg = pkg[:pkg.find('/')]
                 Depend.packages[pkg] = ver
-
-                if 'upgradeable to:' in status:
-                    Depend.packages_old.append(pkg)
+                
+            out = run('apt list --upgradable')
+            for line in out:
+                if '/' not in line:
+                    continue
+                pkg,_ = line.split(' ',1)
+                Depend.packages_old.append(pkg[:pkg.find('/')])                    
         
         if self.src == Source.APT:
             if self.pkg not in Depend.packages:
@@ -370,6 +373,8 @@ class Depend:
             if self.pkg.count(':') == 2:
                 # branch is specified
                 url,branch = self.pkg.rsplit(':',1)
+                # branch may be ros-specific
+                branch = branch.replace('<distro>', distro)
                 run(f'git clone {url} -b {branch}', cwd=root,show=True)
             else:
                 run('git clone ' + self.pkg, cwd=root,show=True)
@@ -648,7 +653,7 @@ def perform_update(action = None, poweroff=False):
 
     # recompile ros2ws
     if Source.GIT_ROS2 in updated or ('-f' in sys.argv and os.path.exists(Depend.folders[Source.GIT_ROS2])):
-        run([f'bash -c -i "source /opt/ros/{ros2}/setup.bash && colcon build --symlink-install --continue-on-error"',f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]}'], cwd=Depend.folders[Source.GIT_ROS2], show=True)
+        run([f'bash -c -i "source /opt/ros/{ros2}/setup.bash && IGNITION_VERSION=fortress colcon build --symlink-install --continue-on-error"',f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]}'], cwd=Depend.folders[Source.GIT_ROS2], show=True)
         need_chmod = True
     
     if need_chmod:
