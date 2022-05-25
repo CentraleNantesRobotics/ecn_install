@@ -7,9 +7,6 @@ import time
 from shutil import rmtree
 from threading import Thread
 import re
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout,QHBoxLayout,QGridLayout, QLabel, QPushButton, QCheckBox, QComboBox, QSpacerItem, QSizePolicy, QInputDialog, QLineEdit
-from PyQt5.QtCore import pyqtSignal as Signal
-from PyQt5.QtGui import QFont, QIcon
 from subprocess import check_output, PIPE, Popen, DEVNULL
 
 base_path = os.path.dirname(os.path.abspath(__file__))
@@ -141,6 +138,11 @@ class Sudo:
             
             if not any(pkg.startswith(start) for pkg in pkgs):
                 continue
+            
+            if distro == 'jammy' and start == f'ros-{ros1}':
+                # trying to install ROS 1 packages on Jammy
+                print('ROS 1 is not available on Ubuntu 22.04, current install needs ' + ' '.join(pkg for pkg in pkgs if pkg.startswith(start)))
+                sys.exit(0)
             
             key_file = '/etc/apt/trusted.gpg.d/' + os.path.basename(key_url)
             if not os.path.exists(key_file):
@@ -286,9 +288,10 @@ class Depend:
     def parent_folder(self):
         return Depend.folders[self.src] + ('' if self.src == Source.GIT else '/src')
         
-    def check(self):       
-        
+    def check(self):
+                        
         if not Depend.packages:
+            
             out = run('apt list --installed',show=True)
             for line in out:
                 if '/' not in line:
@@ -780,7 +783,7 @@ class UpdaterGUI(QWidget):
     
 if '-t' in sys.argv:
     # to test things
-    Display.stop()    
+    Display.stop()
     
 if '-u' in sys.argv:
     to_update = [mod for mod in modules if mod in sys.argv]
@@ -806,6 +809,12 @@ def exception_hook(exctype, value, traceback):
 sys.excepthook = exception_hook 
 
 Display.endl()
+
+
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout,QHBoxLayout,QGridLayout, QLabel, QPushButton, QCheckBox, QComboBox, QSpacerItem, QSizePolicy, QInputDialog, QLineEdit
+from PyQt5.QtCore import pyqtSignal as Signal
+from PyQt5.QtGui import QFont, QIcon
+
 app = QApplication(sys.argv)
 gui = UpdaterGUI()
 

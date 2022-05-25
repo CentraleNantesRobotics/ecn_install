@@ -5,7 +5,7 @@ M2 CORO-IMARO: [tbc,amoro]
 
 # where git-based packages will be downloaded
 # ros packages will be in lib_folder/ros and lib_folder/ros2
-lib_folder: /opt/local_ws
+lib_folder: /opt/ecn
 
 # hidden modules (without description) others may depend on 
 
@@ -79,16 +79,16 @@ rasom:
     description: Underwater robotics
     apt: [libopenscenegraph-dev, libfftw3-dev, libxml++2.6-dev, ignition-fortress]
     ros2:
-        git: [oKermorgant:coral, CentraleNantesROV:floatgen, osrf:ros_ign:<distro>]
+        git: [oKermorgant:coral, CentraleNantesROV:floatgen, ros-ign]
         
-integ: 
-    description: Integration project
-    ros: 
-        apt: [position-controllers, velocity-controllers, effort-controllers, joint-state-controller, gazebo-ros-control, control-toolbox,visp]
+#integ: 
+    #description: Integration project
+    #ros: 
+        #apt: [position-controllers, velocity-controllers, effort-controllers, joint-state-controller, gazebo-ros-control, control-toolbox,visp]
         
 tbc:
     description: Task-based control
-    mod: [coppeliasim,log2plot]
+    mod: [coppeliasim,log2plot]    
     ros:
         git: [RethinkRobotics:baxter_common]
     
