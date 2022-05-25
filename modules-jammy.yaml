@@ -86,11 +86,11 @@ rasom:
     #ros: 
         #apt: [position-controllers, velocity-controllers, effort-controllers, joint-state-controller, gazebo-ros-control, control-toolbox,visp]
         
-tbc:
-    description: Task-based control
-    mod: [coppeliasim,log2plot]    
-    ros:
-        git: [RethinkRobotics:baxter_common]
+#tbc:
+    #description: Task-based control
+    #mod: [coppeliasim,log2plot]    
+    #ros:
+        #git: [RethinkRobotics:baxter_common]
     
 amoro:
     description: Advanced Modeling of Robots
