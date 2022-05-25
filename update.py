@@ -91,7 +91,7 @@ def run(cmd, cwd=None,show=False):
 
 distro = run('lsb_release -cs')[0]
 ros1 = 'noetic'
-ros2 = 'foxy' if distro == 'focal' else 'rolling'
+ros2 = 'foxy' if distro == 'focal' else 'humble'
 
 class Sudo:
     def __init__(self,gui=False):        
@@ -129,7 +129,10 @@ class Sudo:
         
         # enable OSRF repos if needed
         ros1_specs = (f'ros-{ros1}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros-latest.list', 'http://packages.ros.org/ros/ubuntu')
-        ros2_specs = (f'ros-{ros2}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros2-latest.list', 'http://packages.ros.org/ros2/ubuntu')
+        if ros2 == 'foxy':
+            ros2_specs = (f'ros-{ros2}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros2-latest.list', 'http://packages.ros.org/ros2/ubuntu')
+        else:
+            ros2_specs = (f'ros-{ros2}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros2-testing.list', 'http://packages.ros.org/ros2-testing/ubuntu')
         ign_specs = (f'ignition-', 'https://packages.osrfoundation.org/gazebo.gpg', 'gazebo-latest.list', 'http://packages.ros.org/ros2/ubuntu')
         
         refresh_src = False
