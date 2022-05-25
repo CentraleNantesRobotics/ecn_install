@@ -674,6 +674,43 @@ def perform_update(action = None, poweroff=False):
     else:
         Display.stop()
     
+    
+if '-t' in sys.argv:
+    # to test things
+    Display.stop()
+    
+if '-u' in sys.argv:
+    to_update = [mod for mod in modules if mod in sys.argv]
+
+    if len(to_update) == 0:
+        # update all existing ones
+        to_update = [mod for mod in modules if modules[mod].status != Status.ABSENT]
+                
+    for mod in to_update:
+        modules[mod].configure(Action.INSTALL)
+            
+    perform_update(poweroff=poweroff)
+        
+if '-a' in sys.argv:
+    # install / update all modules
+    perform_update(Action.INSTALL,poweroff=poweroff)
+
+sys._excepthook = sys.excepthook 
+def exception_hook(exctype, value, traceback):
+    print(exctype, value, traceback)
+    sys._excepthook(exctype, value, traceback) 
+    sys.exit(1) 
+sys.excepthook = exception_hook 
+
+Display.endl()
+
+
+# GUI part
+
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout,QHBoxLayout,QGridLayout, QLabel, QPushButton, QCheckBox, QComboBox, QSpacerItem, QSizePolicy, QInputDialog, QLineEdit
+from PyQt5.QtCore import pyqtSignal as Signal
+from PyQt5.QtGui import QFont, QIcon
+
 def Font(size = 10):
     return QFont("Helvetica", size, QFont.Bold)
 
@@ -780,40 +817,7 @@ class UpdaterGUI(QWidget):
                 module.menu.setCurrentIndex(Action.INSTALL)
             else:
                 module.menu.setCurrentIndex(Action.KEEP)
-    
-if '-t' in sys.argv:
-    # to test things
-    Display.stop()
-    
-if '-u' in sys.argv:
-    to_update = [mod for mod in modules if mod in sys.argv]
-
-    if len(to_update) == 0:
-        # update all existing ones
-        to_update = [mod for mod in modules if modules[mod].status != Status.ABSENT]
                 
-    for mod in to_update:
-        modules[mod].configure(Action.INSTALL)
-            
-    perform_update(poweroff=poweroff)
-        
-if '-a' in sys.argv:
-    # install / update all modules
-    perform_update(Action.INSTALL,poweroff=poweroff)
-
-sys._excepthook = sys.excepthook 
-def exception_hook(exctype, value, traceback):
-    print(exctype, value, traceback)
-    sys._excepthook(exctype, value, traceback) 
-    sys.exit(1) 
-sys.excepthook = exception_hook 
-
-Display.endl()
-
-
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout,QHBoxLayout,QGridLayout, QLabel, QPushButton, QCheckBox, QComboBox, QSpacerItem, QSizePolicy, QInputDialog, QLineEdit
-from PyQt5.QtCore import pyqtSignal as Signal
-from PyQt5.QtGui import QFont, QIcon
 
 app = QApplication(sys.argv)
 gui = UpdaterGUI()

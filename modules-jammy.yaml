@@ -79,7 +79,7 @@ rasom:
     description: Underwater robotics
     apt: [libopenscenegraph-dev, libfftw3-dev, libxml++2.6-dev, ignition-fortress]
     ros2:
-        git: [oKermorgant:coral, CentraleNantesROV:floatgen, ros-ign]
+        git: [oKermorgant:coral, CentraleNantesROV:floatgen]
         
 #integ: 
     #description: Integration project
