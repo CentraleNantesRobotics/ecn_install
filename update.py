@@ -129,10 +129,7 @@ class Sudo:
         
         # enable OSRF repos if needed
         ros1_specs = (f'ros-{ros1}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros-latest.list', 'http://packages.ros.org/ros/ubuntu')
-        if ros2 == 'foxy':
-            ros2_specs = (f'ros-{ros2}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros2-latest.list', 'http://packages.ros.org/ros2/ubuntu')
-        else:
-            ros2_specs = (f'ros-{ros2}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros2-testing.list', 'http://packages.ros.org/ros2-testing/ubuntu')
+        ros2_specs = (f'ros-{ros2}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros2-latest.list', 'http://packages.ros.org/ros2/ubuntu')
         ign_specs = (f'ignition-', 'https://packages.osrfoundation.org/gazebo.gpg', 'gazebo-latest.list', 'http://packages.ros.org/ros2/ubuntu')
         
         refresh_src = False
@@ -142,9 +139,9 @@ class Sudo:
             if not any(pkg.startswith(start) for pkg in pkgs):
                 continue
             
-            if distro == 'jammy' and start == f'ros-{ros1}':
-                # trying to install ROS 1 packages on Jammy
-                print('ROS 1 is not available on Ubuntu 22.04, current install needs ' + ' '.join(pkg for pkg in pkgs if pkg.startswith(start)))
+            if distro != 'focal' and start == f'ros-{ros1}':
+                # trying to install ROS 1 packages on 22.04+
+                print('ROS 1 is not available on Ubuntu 22.04 or later, current install needs ' + ' '.join(pkg for pkg in pkgs if pkg.startswith(start)))
                 sys.exit(0)
             
             key_file = '/etc/apt/trusted.gpg.d/' + os.path.basename(key_url)
@@ -594,10 +591,25 @@ class Module:
             
 with open(get_file(f'modules-{distro}.yaml')) as f:
     info = yaml.safe_load(f)
+
+# erase disabled modules
+disable = []
+if 'disable' in info:    
+    disabled = info['disable']
+    info.pop('disable')
     
-Depend.init_folders(info['lib_folder'] if 'lib_folder' in info else '/opt/local_ws')
+groups = [key for key in info if isinstance(info[key], list)]
+
+for mod in disable:
+    if mod in info:
+        info.pop(mod)
+    for group in groups:
+        if mod in info[group]:
+            info[group].pop(mod)
+    
+Depend.init_folders(info['lib_folder'] if 'lib_folder' in info else '/opt/ecn')
 modules = dict((name, Module(name, config)) for name, config in info.items() if isinstance(config, dict))
-groups = dict(((name, config) for name, config in info.items() if isinstance(config, list)))
+groups = dict((group, info[group]) for group in groups)
 
 for module in modules.values():
     module.sync_depends(modules)
