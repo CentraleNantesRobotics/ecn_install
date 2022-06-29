@@ -4,12 +4,31 @@ import sys
 import os
 import shlex
 import time
-from shutil import rmtree
+from shutil import rmtree, copytree
 from threading import Thread
 import re
 from subprocess import check_output, PIPE, Popen, DEVNULL
+import argparse
 
 base_path = os.path.dirname(os.path.abspath(__file__))
+
+parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.description = 'Updater for ECN / ROS virtual machine.'
+
+parser.add_argument('-u', metavar='module', type=str, nargs='+', help='Which modules to upgrade (all installed, if empty)', default=())
+parser.add_argument('-t', '--test', action='store_true', default=False, help='Run in interactive mode (from a Python console)')
+parser.add_argument('-a', '--all', action='store_true', default=False, help='Install all available modules')
+parser.add_argument('-c', '--clean', action='store_true', default=False, help='Clean listed modules that are not required')
+parser.add_argument('-f', '--force_compile', action='store_true', default=False, help='Force recompilation of ROS workspaces')
+parser.add_argument('-g', '--force_git', action='store_true', default=False, help='Force git pull on suitable folders')
+parser.add_argument('-p', '--poweroff', action='store_true', default=False, help='Poweroff after installation / upgrade')
+parser.add_argument('-s', '--skel', action='store_true', default=False, help="Sync system-wide skeleton")
+
+# add empty space after -u if no modules
+if '-u' in sys.argv:
+    sys.argv.insert(sys.argv.index('-u')+1, '')
+
+args = parser.parse_args()
 
 class Display:
     
@@ -191,7 +210,7 @@ class Sudo:
         
 poweroff = False
 
-if '--poweroff' in sys.argv:
+if args.poweroff:
     r = input('Will poweroff computer after update [y/N] ')
     if r in ('Y','y'):
         poweroff = True
@@ -332,7 +351,7 @@ class Depend:
         run('git fetch',cwd=base_dir)
         git_status = run('git status', cwd=base_dir)[1]
         
-        if 'behind' not in git_status and '-g' not in sys.argv:
+        if 'behind' not in git_status and not args.force_git:
             return Status.INSTALLED
         return Status.OLD        
     
@@ -532,10 +551,9 @@ class Module:
         
         self.status = min(dep.status for dep in self.all_deps())
         
-        autoclean = '-r' in sys.argv
         if 'description' in self.config:
             # auto clean deps if module is not here
-            self.configure(Action.REMOVE if (self.status == Status.ABSENT and autoclean) else Action.KEEP)
+            self.configure(Action.REMOVE if (self.status == Status.ABSENT and args.clean) else Action.KEEP)
         
     def sync_depends(self, modules):
                 
@@ -626,6 +644,29 @@ def perform_update(action = None, poweroff=False):
             
     if sudo.passwd is None:
         return
+    
+    # install skeleton if ros_management does not appear in bashrc (first run)
+    skel = f'{base_path}/skel/{distro}'
+    bashrc = os.environ['HOME'] + '/.bashrc'
+    with open(bashrc) as f:
+        ok = 'ros_management_tools' in f.read()
+    
+    if not ok:
+        copytree(skel + '/', os.environ['HOME'], dirs_exist_ok = True)
+      
+    # system skeleton, pointless in VM but useful in desktop computers
+    if args.skel:
+        sudo.run(f'rsync -avr {skel}/ /etc/skel', show=True)
+        # update monitor name from VM to actual computer
+        xfce_desktop = '/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml'
+        if os.path.exists(xfce_desktop):
+            monitor = None
+            for line in run('xrandr --query'):
+                if ' connected ' in line:
+                    monitor = line[:line.index(' connected ')].strip()
+                    break
+            if monitor is not None:
+                sudo.run('sed -i "s/monitorVirtual1/monitor{monitor}/" {xfce_desktop}')    
                         
     # remove old ones
     pkgs = [dep.remove() for dep in Module.depends]
@@ -658,7 +699,7 @@ def perform_update(action = None, poweroff=False):
     need_chmod = False
     updated = [dep.update() for dep in to_install[Source.GIT_ROS] + to_install[Source.GIT_ROS2]]
     # recompile ros1ws    
-    if Source.GIT_ROS in updated or ('-f' in sys.argv and os.path.exists(Depend.folders[Source.GIT_ROS])):
+    if Source.GIT_ROS in updated or (args.force_compile and os.path.exists(Depend.folders[Source.GIT_ROS])):
         if not os.path.exists(f'{Depend.folders[Source.GIT_ROS]}/.catkin_tools'):
             # purge colcon install
             for folder in ('build','install','devel','log'):
@@ -670,7 +711,7 @@ def perform_update(action = None, poweroff=False):
         need_chmod = True
 
     # recompile ros2ws
-    if Source.GIT_ROS2 in updated or ('-f' in sys.argv and os.path.exists(Depend.folders[Source.GIT_ROS2])):
+    if Source.GIT_ROS2 in updated or (args.force_compile and os.path.exists(Depend.folders[Source.GIT_ROS2])):
         run([f'bash -c -i "source /opt/ros/{ros2}/setup.bash && IGNITION_VERSION=fortress colcon build --symlink-install --continue-on-error"',f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]}'], cwd=Depend.folders[Source.GIT_ROS2], show=True)
         need_chmod = True
     
@@ -690,12 +731,13 @@ def perform_update(action = None, poweroff=False):
         Display.stop()
     
     
-if '-t' in sys.argv:
+if args.test:
     # to test things
     Display.stop()
     
-if '-u' in sys.argv:
-    to_update = [mod for mod in modules if mod in sys.argv]
+if type(args.u) == list:
+    # '-u' was given
+    to_update = [mod for mod in modules if mod in args.u]
 
     if len(to_update) == 0:
         # update all existing ones
@@ -706,7 +748,7 @@ if '-u' in sys.argv:
             
     perform_update(poweroff=poweroff)
         
-if '-a' in sys.argv:
+if args.all:
     # install / update all modules
     perform_update(Action.INSTALL,poweroff=poweroff)
 

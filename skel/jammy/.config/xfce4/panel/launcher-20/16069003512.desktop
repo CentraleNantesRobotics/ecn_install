@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Qt Creator for ROS2
+Comment=
+Exec=bash -i -c "ros2ws && qtcreator %F"
+Icon=/opt/local_ws/ros2.png
+Path=
+Terminal=false
+StartupNotify=false

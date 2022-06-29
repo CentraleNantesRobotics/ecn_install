@@ -16,13 +16,16 @@ lib_folder: /opt/ecn
     #ros:
         #apt: [desktop, joint-state-publisher,robot-localization,vision-opencv,gazebo-ros-pkgs,image-view,compressed-image-transport,amcl,control-toolbox,kdl-parser-py,slider-publisher]
     #mod: [ros12]
+    
+baxter:
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ros_baxter_1.1.0.deb']
         
 ros2:
     ros2:
         apt: [desktop,slider-publisher,simple-launch,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,compressed-image-transport,ament-cmake, urdfdom-py]
-    apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat]
-    git: [oKermorgant:ros_management_tools]
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=qtcreator-ros_1.0.1.deb']
+    apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat,python3-rospkg]
+    git: [oKermorgant:ros_management_tools,CentraleNantesRobotics:turtlebot3-description:ros2]
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ecn-ros_1.1.0.deb']
     
 visp:
     apt: [libvisp-dev]
@@ -45,17 +48,18 @@ mapsim:
     
 # special module that always wants it dependencies to be installed
 base: 
-    apt: [curl, geany, git, qtcreator, openssh-server, ipython3, python3-matplotlib, python3-scipy, python3-sympy, build-essential, cmake]
+    apt: [curl, geany, git, qtcreator, openssh-server, ipython3, python3-matplotlib, python3-scipy, python3-sympy, build-essential, cmake, xfce4-xkb-plugin]
     
 # special module that always wants its dependencies to be removed
 # will be removed unless required by other modules
 cleanup:
     git: [lagadic:visp]
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=qtcreator-ros_1.0.1.deb']
     
 # main module definitions
 arpro:
     description: 'Advanced programming / C++'
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=duels_3.4.1.deb']
+    #deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=duels_3.4.1.deb']
     apt: [python3-pygame, libzmq3-dev, python3-zmq,libyaml-cpp-dev, python3-yaml]
     
 manip:
@@ -68,15 +72,14 @@ manip:
     
 sofar:
     description: Software architecture / ROS
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ros_baxter_1.1.0.deb']
+    mod: [baxter]
     ros2: 
         apt: [turtlebot3-description]
         git: [CentraleNantesRobotics:baxter_common_ros2,CentraleNantesRobotics:baxter_simple_sim:ros2]
     
 midwa:
     description: Middleware / ROS 2
-    mod: [mapsim]
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ros_baxter_1.1.0.deb']
+    mod: [mapsim, baxter]
     ros2: 
         apt: [turtlebot3-description]
         git: [CentraleNantesRobotics:baxter_common_ros2,CentraleNantesRobotics:baxter_simple_sim:ros2]

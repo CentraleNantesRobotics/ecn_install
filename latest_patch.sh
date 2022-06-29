@@ -6,3 +6,4 @@ git pull
 
 # module dependencies
 python3 ./update.py "$@" 
+cd ~

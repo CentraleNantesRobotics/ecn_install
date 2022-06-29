@@ -1,0 +1,19 @@
+[Desktop Entry]
+Comment=QtCreator configured for ROS 2 workspaces
+Exec=bash -i -c "ros2ws && qtcreator %F"
+GenericName=QtCreator configured for ROS 2 workspaces
+Icon=/opt/ecn/ros2.png
+MimeType=text/x-c++src;text/x-c++hdr;application/x-designer;
+Name=Qt Creator for ROS2
+NoDisplay=false
+StartupNotify=true
+StartupWMClass=qtcreator
+Terminal=0
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-StartupNotify=true
+X-KDE-SubstituteUID=false
+X-KDE-Username=
+X-XFCE-Source=file:///usr/share/applications/qtcreator-ros2.desktop
