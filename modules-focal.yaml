@@ -4,7 +4,7 @@ M1 CORO: [arpro,sofar,manip,covis]
 M2 CORO-IMARO: [tbc,amoro]
 
 # where git-based packages will be downloaded
-# ros packages will be in lib_folder/ros and lib_folder/ros2
+# ros packages will be in lib_folder/ros1 and lib_folder/ros2
 lib_folder: /opt/ecn
 
 # hidden modules (without description) others may depend on 

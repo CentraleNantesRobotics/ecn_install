@@ -712,7 +712,7 @@ def perform_update(action = None, poweroff=False):
 
     # recompile ros2ws
     if Source.GIT_ROS2 in updated or (args.force_compile and os.path.exists(Depend.folders[Source.GIT_ROS2])):
-        run([f'bash -c -i "source /opt/ros/{ros2}/setup.bash && IGNITION_VERSION=fortress colcon build --symlink-install --continue-on-error"',f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]}'], cwd=Depend.folders[Source.GIT_ROS2], show=True)
+        run([f'bash -c -i "source /opt/ros/{ros2}/setup.bash && IGNITION_VERSION=fortress colcon build --symlink-install --continue-on-error --cmake-args -DROS1_BAXTER_WS:={Depend.folders[Source.GIT_ROS]}"',f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]}'], cwd=Depend.folders[Source.GIT_ROS2], show=True)
         need_chmod = True
     
     if need_chmod:
