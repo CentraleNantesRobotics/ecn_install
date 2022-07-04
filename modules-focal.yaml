@@ -5,15 +5,9 @@ M2 CORO-IMARO: [tbc,amoro]
 
 # where git-based packages will be downloaded
 # ros packages will be in lib_folder/ros and lib_folder/ros2
-lib_folder: /opt/local_ws
+lib_folder: /opt/ecn
 
 # hidden modules (without description) others may depend on 
-
-#plankton:
-    #ros2:
-        #git: [oKermorgant:Plankton,CentraleNantesROV:bluerov2_plankton,CentraleNantesROV:iauv_control,oKermorgant:pose_to_tf]
-        #apt: [gazebo-ros-pkgs]
-    #apt: [gazebo11, libgazebo11-dev]
 
 ros12:
     git: [oKermorgant:ros_management_tools]
