@@ -649,10 +649,8 @@ def perform_update(action = None, poweroff=False):
     skel = f'{base_path}/skel/{distro}'
     bashrc = os.environ['HOME'] + '/.bashrc'
     with open(bashrc) as f:
-        ok = 'ros_management_tools' in f.read()
-    
-    if not ok:
-        copytree(skel + '/', os.environ['HOME'], dirs_exist_ok = True)
+        if 'ros_management_tools' not in f.read():
+            copytree(skel + '/', os.environ['HOME'], dirs_exist_ok = True)
       
     # system skeleton, pointless in VM but useful in desktop computers
     if args.skel:
@@ -667,6 +665,11 @@ def perform_update(action = None, poweroff=False):
                     break
             if monitor is not None:
                 sudo.run('sed -i "s/monitorVirtual1/monitor{monitor}/" {xfce_desktop}')    
+                
+    # wallpaper
+    wp = [f for f in os.listdir(base_path + '/images/') if ros2 in f][0]
+    if not os.path.exists(f'{Depend.folders[Source.GIT]}/{wp}'):
+        sudo.run(f'cp {base_path}/images/{wp} {Depend.folders[Source.GIT]}')
                         
     # remove old ones
     pkgs = [dep.remove() for dep in Module.depends]
@@ -777,7 +780,7 @@ class UpdaterGUI(QWidget):
     def __init__(self):
         super().__init__()
                 
-        self.setWindowIcon(QIcon(get_file('images/ecn.png')))
+        self.setWindowIcon(QIcon(get_file('images/ecn-rob.png')))
         self.setWindowTitle('Virtual Machine updater')                           
                 
         # build GUI        
