@@ -664,7 +664,7 @@ def perform_update(action = None, poweroff=False):
                 monitor = [elem for elem in config.split('/') if 'monitor' in elem]
                 
                 if len(monitor):
-                    sudo.run('sed -i "s/monitorVirtual1/monitor{monitor[0]}/" {xfce_desktop}')
+                    sudo.run(f'sed -i "s/monitorVirtual1/monitor{monitor[0]}/" {xfce_desktop}')
             except:
                 pass
                    
