@@ -70,7 +70,7 @@ def update_bashrc_geany(home):
             updated = True
         else:
             for ros in ('1','2'):
-                if line == f'ros{ros}ws':
+                if line.startswith(f'ros{ros}ws'):
                     content[i] = ''
                     updated = True
     
