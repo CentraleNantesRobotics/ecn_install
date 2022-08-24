@@ -657,15 +657,17 @@ def perform_update(action = None, poweroff=False):
         sudo.run(f'rsync -avr {skel}/ /etc/skel', show=True)
         # update monitor name from VM to actual computer
         xfce_desktop = '/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml'
+        
         if os.path.exists(xfce_desktop):
-            monitor = None
-            for line in run('xrandr --query'):
-                if ' connected ' in line:
-                    monitor = line[:line.index(' connected ')].strip()
-                    break
-            if monitor is not None:
-                sudo.run('sed -i "s/monitorVirtual1/monitor{monitor}/" {xfce_desktop}')    
+            try:
+                config = run('xfconf-query -c xfce4-desktop -l')[0]
+                monitor = [elem for elem in config.split('/') if 'monitor' in elem]
                 
+                if len(monitor):
+                    sudo.run('sed -i "s/monitorVirtual1/monitor{monitor[0]}/" {xfce_desktop}')
+            except:
+                pass
+                   
     # wallpaper
     wp = [f for f in os.listdir(base_path + '/images/') if ros2 in f][0]
     if not os.path.exists(f'{Depend.folders[Source.GIT]}/{wp}'):
