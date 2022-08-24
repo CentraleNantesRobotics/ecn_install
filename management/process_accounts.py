@@ -66,13 +66,19 @@ def update_bashrc_geany(home):
     for i,line in enumerate(content):
         line = line.split('#')[0].strip()
         if line.startswith('source') and line.endswith('ros_management.bash'):
-            content[i] = line + ' -k -p' + ros_default
+            line = line + ' -k -p' + ros_default
             updated = True
         else:
             for ros in ('1','2'):
                 if line.startswith(f'ros{ros}ws'):
-                    content[i] = ''
+                    line = ''
                     updated = True
+        if '/opt/local_ws' in line:
+            line = line.replace('/opt/local_ws', '/opt/ecn')
+            updated = True
+            
+        if updated:
+            content[i] = line       
     
     if updated:
         print(f'Updating {bashrc}')
