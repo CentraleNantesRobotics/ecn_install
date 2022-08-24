@@ -5,7 +5,8 @@ import os
 from shutil import rmtree, copy
 from time import localtime
 from inspect import getsource
-from subprocess import run
+from subprocess import run, check_output
+import shlex
 
 user_dirs = ['/home','/user/eleves']
 base_dir = os.path.dirname(__file__)
@@ -13,6 +14,9 @@ base_dir = os.path.dirname(__file__)
 def msg_exit(msg):
     print(msg)
     sys.exit(0)
+    
+def get_output(cmd):
+    return check_output(shlex.split(cmd)).decode('utf-8').splitlines()
     
 def remove_with_info(folder):
     if '-r' in sys.argv:
@@ -70,7 +74,7 @@ def update_bashrc_geany(home):
             updated = True
         else:
             for ros in ('1','2'):
-                if line.startswith(f'ros{ros}ws'):
+                if line == f'ros{ros}ws':
                     line = ''
                     updated = True
         if '/opt/local_ws' in line:
@@ -88,9 +92,10 @@ def update_bashrc_geany(home):
     # also updates geany configuration    
     geany_conf = ['.config/geany/geany.conf', '.config/geany/filedefs/filetypes.common']
     updated = False
+    distro = get_output(['lsb_release', '-cs')[0]
     for conf in geany_conf:
         dst = f'{home}/{conf}'
-        src = f'{base_dir}/../skel/{conf}'
+        src = f'{base_dir}/../skel/{distro}/{conf}'
         if not os.path.exists(dst):
             print(f'Creating {dst}')
             updated = True
