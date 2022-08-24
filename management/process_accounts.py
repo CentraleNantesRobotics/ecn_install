@@ -92,7 +92,7 @@ def update_bashrc_geany(home):
     # also updates geany configuration    
     geany_conf = ['.config/geany/geany.conf', '.config/geany/filedefs/filetypes.common']
     updated = False
-    distro = get_output(['lsb_release', '-cs')[0]
+    distro = get_output('lsb_release -cs')[0]
     for conf in geany_conf:
         dst = f'{home}/{conf}'
         src = f'{base_dir}/../skel/{distro}/{conf}'
