@@ -63,13 +63,15 @@ class Display:
     def blit():
         
         animations = ['◜◝◞◟','◣◤◥◢','▤▥▦▧▨▩', '▲►▼◄', '/-\\|']        
+        done_smb = '✓'
+        
         #animation = choice(animations)
         animation = animations[-1]
         idx = 0
         prev_cmd = ''
         while Display.running: 
             if prev_cmd != Display.cmd and prev_cmd != '':
-                print(prev_cmd, '✓')
+                print(prev_cmd, done_smb)
                 #animation = choice(animations)
                 idx = 0
                 

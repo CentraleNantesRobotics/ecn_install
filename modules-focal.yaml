@@ -12,7 +12,7 @@ lib_folder: /opt/ecn
 ros12:
     git: [oKermorgant:ros_management_tools]
     apt: [python3-rospkg]
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=qtcreator-ros_1.0.1.deb']
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ecn-ros_1.1.1.deb']
 
 ros:
     ros:
