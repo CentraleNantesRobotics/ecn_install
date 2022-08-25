@@ -750,6 +750,8 @@ if type(args.u) == list:
                 
     for mod in to_update:
         modules[mod].configure(Action.INSTALL)
+        
+    print(f'Will update / install the following modules: {to_update}')
             
     perform_update(poweroff=poweroff)
         
