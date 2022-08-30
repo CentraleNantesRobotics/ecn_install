@@ -44,18 +44,19 @@ def clean_accounts(home):
             if st_year < year-2:
                 # just remove this folder, user is from LDAP
                 remove_with_info(home)
-                return
+                return False
     
     ros_cache = f'{home}/.ros/log'
     if os.path.exists(ros_cache):
         remove_with_info(ros_cache)
+    return True
         
 def update_bashrc_geany(home):
     '''
     Update .bashrc file for ros_management_tools
     '''
     bashrc = f'{home}/.bashrc'
-    if not os.path.exists(bashrc): return
+    if not os.path.exists(bashrc): return False
     
     with open(bashrc) as f:
         content = f.read().splitlines()
@@ -83,7 +84,7 @@ def update_bashrc_geany(home):
             
         if updated:
             content[i] = line       
-    
+            
     if updated:
         print(f'Updating {bashrc}')
         with open(bashrc, 'w') as f:
@@ -100,15 +101,18 @@ def update_bashrc_geany(home):
             print(f'Creating {dst}')
             updated = True
             os.makedirs(os.path.dirname(dst), exist_ok=True)
-            copy(src, dst)    
-    
-    if updated or '-f' in sys.argv:
-        user = os.path.basename(home)
-        run(['chown',user,f'{home}/.config/geany', '-R'])
-    
+            copy(src, dst)
+            
+    return updated or '-f' in sys.argv:
+        
+def sync_skel(home):
+    src = '.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml'
+    copy(f'/etc/skel/{src}', f'{home}/{src}')
+    return True    
 
 #fct_called = clean_accounts
-fct_called = update_bashrc_geany
+#fct_called = update_bashrc_geany
+fct_called = sync_skel
     
 print('Will execute following function on user accounts:\n')
 
@@ -123,4 +127,10 @@ for home in user_dirs:
         for sub in os.listdir(home):
             abs_home = f'{home}/{sub}'
             if os.path.isdir(abs_home):
-                fct_called(abs_home)
+                if fct_called(abs_home):
+                    user = os.path.basename(abs_home)
+                    run(['chown',user,f'{abs_home}/.config/geany', '-R'])      
+
+    
+
+
