@@ -40,6 +40,7 @@ def align_ownership(home):
     except:
         # user does not exist
         remove_with_info(home)
+    return False
 
 def clean_accounts(home):
     '''
@@ -126,6 +127,9 @@ def sync_skel(home):
 #fct_called = clean_accounts
 #fct_called = update_bashrc_geany
 fct_called = sync_skel
+
+if '--ownership' in sys.argv:
+    fct_called = align_ownership
     
 print('Will execute following function on user accounts:\n')
 
