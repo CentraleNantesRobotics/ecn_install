@@ -23,7 +23,7 @@ def remove_with_info(folder):
         print('Removing ' + folder)
         rmtree(folder)
     else:
-        print('Would remove ' + folder)
+        print('Would remove ' + folder + ' (use with -r to remove)')
         
 
 if os.environ['USER'] != 'root':
@@ -31,6 +31,15 @@ if os.environ['USER'] != 'root':
 
 year = localtime().tm_year
 
+
+def align_ownership(home):
+    user = os.path.basename(abs_home)
+    try:
+        get_output(f'id -u {user}')
+        run(['chown',user,f'{home}', '-R'])
+    except:
+        # user does not exist
+        remove_with_info(home)
 
 def clean_accounts(home):
     '''
@@ -106,9 +115,13 @@ def update_bashrc_geany(home):
     return updated or '-f' in sys.argv
         
 def sync_skel(home):
-    src = '.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml'
-    copy(f'/etc/skel/{src}', f'{home}/{src}')
-    return True    
+    src = '.config/xfce4/xfconf/xfce-perchannel-xml'
+    dst = f'{home}/{src}'
+    if not os.path.exists(dst): 
+        return False
+    
+    copy(f'/etc/skel/{src}/xfce4-desktop.xml', dst)
+    return True
 
 #fct_called = clean_accounts
 #fct_called = update_bashrc_geany
@@ -128,8 +141,8 @@ for home in user_dirs:
             abs_home = f'{home}/{sub}'
             if os.path.isdir(abs_home):
                 if fct_called(abs_home):
-                    user = os.path.basename(abs_home)
-                    run(['chown',user,f'{abs_home}/.config/geany', '-R'])      
+                    align_ownership(abs_home)
+                    
 
     
 
