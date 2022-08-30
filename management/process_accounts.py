@@ -103,7 +103,7 @@ def update_bashrc_geany(home):
             os.makedirs(os.path.dirname(dst), exist_ok=True)
             copy(src, dst)
             
-    return updated or '-f' in sys.argv:
+    return updated or '-f' in sys.argv
         
 def sync_skel(home):
     src = '.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml'
