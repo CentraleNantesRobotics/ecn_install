@@ -153,7 +153,7 @@ export PS1="\[\e[1;34m\]\w\[\e[0m\]$ "
 ros1_workspaces="/opt/ros/noetic /opt/ecn/ros1 ~/ros"
 ros2_workspaces="/opt/ros/foxy /opt/ecn/ros2 ~/ros2"
 # activate ROS 1 by default
-source /opt/ecn/ros_management_tools/ros_management.bash -p -k -ros1
+source /opt/ecn/ros_management_tools/ros_management.bash -p -k -ros1 -lo
 
 # RViz2 display bug
 export LC_NUMERIC="en_US.UTF-8"

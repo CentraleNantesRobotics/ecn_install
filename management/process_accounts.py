@@ -36,26 +36,22 @@ def align_ownership(home):
     user = os.path.basename(abs_home)
     try:
         get_output(f'id -u {user}')
+        
+        # remove students if very old profile
+        if user[-4:].isdigit() and int(user[-4:]) < year-2:
+            raise Exception('I want to go to except: block')
+        
         run(['chown',user,f'{home}', '-R'])
+        return False
     except:
         # user does not exist
         remove_with_info(home)
     return False
 
-def clean_accounts(home):
+def clean_ros_logs(home):
     '''
-    Remove ROS logs and old student accounts (< year-2)
-    '''    
-    # try to get student year, if any
-    if '-s' in sys.argv:
-        name = os.path.basename(home)
-        if name[-4:].isdigit():
-            st_year = int(name[-4:])
-            if st_year < year-2:
-                # just remove this folder, user is from LDAP
-                remove_with_info(home)
-                return False
-    
+    Remove ROS logs
+    '''        
     ros_cache = f'{home}/.ros/log'
     if os.path.exists(ros_cache):
         remove_with_info(ros_cache)
@@ -70,19 +66,22 @@ def update_bashrc_geany(home):
     
     with open(bashrc) as f:
         content = f.read().splitlines()
-    
-    ros_default = ''
+        
+    ros_default = '-ros1'
     if any([line.startswith('ros1ws') for line in content]):
-        ros_default = ' -ros1'
+        ros_default = '-ros1'
     elif any([line.startswith('ros2ws') for line in content]):
-        ros_default = ' -ros2'    
+        ros_default = '-ros2'    
         
     updated = False
     for i,line in enumerate(content):
         line = line.split('#')[0].strip()
         if line.startswith('source') and line.endswith('ros_management.bash'):
-            line = line + ' -k -p' + ros_default
+            line = f'{line} -k -p {ros_default} -lo' 
             updated = True
+        elif line.startswith('source') and 'ros_management.bash' in line and '-lo' not in line:
+            line += ' -lo'
+            updated = True            
         else:
             for ros in ('1','2'):
                 if line == f'ros{ros}ws':
@@ -108,14 +107,14 @@ def update_bashrc_geany(home):
         dst = f'{home}/{conf}'
         src = f'{base_dir}/../skel/{distro}/{conf}'
         if not os.path.exists(dst):
-            print(f'Creating {dst}')
+            print(f'   Creating {dst}')
             updated = True
             os.makedirs(os.path.dirname(dst), exist_ok=True)
             copy(src, dst)
             
     return updated or '-f' in sys.argv
         
-def sync_skel(home):
+def sync_desktop(home):
     src = '.config/xfce4/xfconf/xfce-perchannel-xml'
     dst = f'{home}/{src}'
     if not os.path.exists(dst): 
@@ -124,12 +123,14 @@ def sync_skel(home):
     copy(f'/etc/skel/{src}/xfce4-desktop.xml', dst)
     return True
 
-#fct_called = clean_accounts
-#fct_called = update_bashrc_geany
-fct_called = sync_skel
+fct_called = update_bashrc_geany
+#fct_called = sync_sdesktop
 
 if '--ownership' in sys.argv:
     fct_called = align_ownership
+    
+if '--roslog' in sys.argv:
+    fct_called = clean_ros_logs
     
 print('Will execute following function on user accounts:\n')
 

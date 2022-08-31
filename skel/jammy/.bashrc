@@ -136,7 +136,7 @@ ros1_workspaces="/opt/ros/noetic"
 ros2_workspaces="/opt/ros/humble /opt/ecn/ros2 ~/ros2"
 # activate ROS 2 by default
 if [[ -f /opt/ecn/ros_management_tools/ros_management.bash ]]; then
-    source /opt/ecn/ros_management_tools/ros_management.bash -p -k -ros2
+    source /opt/ecn/ros_management_tools/ros_management.bash -p -k -ros2 -lo
     # QtCreator configure shortcut
     alias gqt=/opt/ecn/ros_management_tools/qtcreator/qtcreator_gen_config.py
 fi
