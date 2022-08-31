@@ -137,7 +137,7 @@ def sync_skel(home):
         distro = get_output('lsb_release -cs')[0]
         local_skel = f'{base_dir}/../skel/{distro}'
         print('Sync global skel from',local_skel)
-        run('rsync -avr {local_skel}/ /etc/skel', show=True)
+        run('rsync -avr {local_skel}/ /etc/skel')
         
         # ensure correct monitor
         run('sed -i "s/monitorVirtual1/monitorDVI-I-1/" /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml')
