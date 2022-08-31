@@ -5,7 +5,7 @@ import os
 from shutil import rmtree, copy
 from time import localtime
 from inspect import getsource
-from subprocess import run, check_output
+import subprocess
 import shlex
 
 user_dirs = ['/home','/user/eleves']
@@ -15,8 +15,11 @@ def msg_exit(msg):
     print(msg)
     sys.exit(0)
     
+def run(cmd):
+    subprocess.run(shlex.split(cmd))
+    
 def get_output(cmd):
-    return check_output(shlex.split(cmd)).decode('utf-8').splitlines()
+    return subprocess.check_output(shlex.split(cmd)).decode('utf-8').splitlines()
     
 def remove_with_info(folder):
     if '-r' in sys.argv:
@@ -31,17 +34,23 @@ if os.environ['USER'] != 'root':
 
 year = localtime().tm_year
 
+skipped = ['C2SYS2E', 'mbride', 'tech', 'ecx', 'ITII-SEC', 'adminstr']
+
 
 def align_ownership(home):
+    '''
+    Restore ownership of home folders
+    Delete folders for non-existing users
+    '''
     user = os.path.basename(abs_home)
     try:
         get_output(f'id -u {user}')
         
         # remove students if very old profile
         if user[-4:].isdigit() and int(user[-4:]) < year-2:
-            raise Exception('I want to go to except: block')
+            raise Exception('I want to go to except block')
         
-        run(['chown',user,f'{home}', '-R'])
+        run(f'chown {user} {home} -R')
         return False
     except:
         # user does not exist
@@ -57,9 +66,12 @@ def clean_ros_logs(home):
         remove_with_info(ros_cache)
     return True
         
+        
 def update_bashrc_geany(home):
     '''
-    Update .bashrc file for ros_management_tools
+    Update .bashrc file for latest ros_management_tools syntax
+    Change paths from local_ws to ecn
+    Create the geany file for underscore bug
     '''
     bashrc = f'{home}/.bashrc'
     if not os.path.exists(bashrc): return False
@@ -99,7 +111,7 @@ def update_bashrc_geany(home):
         with open(bashrc, 'w') as f:
             f.write('\n'.join(content))
         
-    # also updates geany configuration    
+    # also updates geany configuration
     geany_conf = ['.config/geany/geany.conf', '.config/geany/filedefs/filetypes.common']
     updated = False
     distro = get_output('lsb_release -cs')[0]
@@ -114,17 +126,35 @@ def update_bashrc_geany(home):
             
     return updated or '-f' in sys.argv
         
-def sync_desktop(home):
-    src = '.config/xfce4/xfconf/xfce-perchannel-xml'
-    dst = f'{home}/{src}'
-    if not os.path.exists(dst): 
-        return False
+def sync_skel(home):
+    '''
+    Sync skeleton from repo
+    forward XFCE part to all users
+    '''
     
-    copy(f'/etc/skel/{src}/xfce4-desktop.xml', dst)
+    if not getattr(sync_skel, 'done', False):        
+        # sync global skeleton
+        local_skel = f'{base_dir}/../skel/{distro}'
+        print('Sync global skel from',local_skel)
+        run('rsync -avr {local_skel}/ /etc/skel', show=True)
+        
+        # ensure correct monitor
+        run('sed -i "s/monitorVirtual1/monitorDVI-I-1/" /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml')
+        
+        # ensure fr keyboard by default
+        run('sed -i "s/us,fr/fr,us/" /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/keyboard-layout.xml')
+        
+        sync_skel.done = True        
+        
+    # sync for this user
+    run(f'rsync -avr /etc/skel/.config/xfce4 {home}/config/')
     return True
 
 fct_called = update_bashrc_geany
 #fct_called = sync_desktop
+
+if '--skel' in sys.argv:
+    fct_called = sync_skel
 
 if '--ownership' in sys.argv:
     fct_called = align_ownership
@@ -134,7 +164,7 @@ if '--roslog' in sys.argv:
     
 print('Will execute following function on user accounts:\n')
 
-print(getsource(fct_called))
+print(fct_called.__doc__)
 
 r = input('\nConfirm [Y/n] ')
 if r in ('n','N'):
@@ -144,11 +174,11 @@ for home in user_dirs:
     if os.path.exists(home):
         for sub in os.listdir(home):
             abs_home = f'{home}/{sub}'
+            user = os.path.basename(abs_home)
+            
+            if user in skipped: continue
+        
             if os.path.isdir(abs_home):
                 if fct_called(abs_home):
                     align_ownership(abs_home)
                     
-
-    
-
-

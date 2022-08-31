@@ -1,0 +1,20 @@
+[Desktop Entry]
+Categories=Development;IDE;Qt;
+Comment=QtCreator configured for ROS 1 workspaces
+Exec=bash -i -c "ros1ws nohistory && qtcreator %F"
+GenericName=QtCreator configured for ROS 1 workspaces
+Icon=/opt/ecn/ros.png
+MimeType=text/x-qml;text/x-cmake;text/x-c++src;text/x-c++hdr;application/x-designer;
+Name=Qt Creator for ROS 1
+NoDisplay=false
+Path=
+StartupNotify=true
+StartupWMClass=qtcreator
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=
+X-XFCE-Source=file:///usr/share/applications/qtcreator-ros.desktop

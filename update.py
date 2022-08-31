@@ -22,7 +22,6 @@ parser.add_argument('-c', '--clean', action='store_true', default=False, help='C
 parser.add_argument('-f', '--force_compile', action='store_true', default=False, help='Force recompilation of ROS workspaces')
 parser.add_argument('-g', '--force_git', action='store_true', default=False, help='Force git pull on suitable folders')
 parser.add_argument('-p', '--poweroff', action='store_true', default=False, help='Poweroff after installation / upgrade')
-parser.add_argument('-s', '--skel', action='store_true', default=False, help="Sync system-wide skeleton")
 
 # add empty space after -u if no modules
 if '-u' in sys.argv:
@@ -652,23 +651,7 @@ def perform_update(action = None, poweroff=False):
     bashrc = os.environ['HOME'] + '/.bashrc'
     with open(bashrc) as f:
         if 'ros_management_tools' not in f.read():
-            copytree(skel + '/', os.environ['HOME'], dirs_exist_ok = True)
-      
-    # system skeleton, pointless in VM but useful in desktop computers
-    if args.skel:
-        sudo.run(f'rsync -avr {skel}/ /etc/skel', show=True)
-        # update monitor name from VM to actual computer
-        xfce_desktop = '/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml'
-        
-        if os.path.exists(xfce_desktop):
-            try:
-                config = run('xfconf-query -c xfce4-desktop -l')[0]
-                monitor = [elem for elem in config.split('/') if 'monitor' in elem]
-                
-                if len(monitor):
-                    sudo.run(f'sed -i "s/monitorVirtual1/monitor{monitor[0]}/" {xfce_desktop}')
-            except:
-                pass
+            copytree(skel + '/', os.environ['HOME'], dirs_exist_ok = True)    
                    
     # wallpaper
     wp = [f for f in os.listdir(base_path + '/images/') if ros2 in f][0]
