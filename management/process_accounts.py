@@ -130,7 +130,6 @@ def sync_skel(home):
     '''
     Sync skeleton from repo
     forward XFCE part to all users
-    also forward bashrc if -bashrc
     '''
     
     if not getattr(sync_skel, 'done', False):        
@@ -151,6 +150,7 @@ def sync_skel(home):
     if os.path.exists(f'{home}/config/xfce4'):
         run(f'rm -rf {home}/config')
     # sync for this user
+    print(f'Sync xfce skel to {home}')
     run(f'rsync -avrq /etc/skel/.config/xfce4 {home}/.config/')    
         
     return True
