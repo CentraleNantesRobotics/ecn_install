@@ -116,7 +116,7 @@ def update_bashrc_geany(home):
     updated = False
     distro = get_output('lsb_release -cs')[0]
     for conf in geany_conf:
-        dst = f'{home}/{conf}'
+        dst = f'{home}/{conf}'        
         src = f'{base_dir}/../skel/{distro}/{conf}'
         if not os.path.exists(dst):
             print(f'   Creating {dst}')
@@ -134,6 +134,7 @@ def sync_skel(home):
     
     if not getattr(sync_skel, 'done', False):        
         # sync global skeleton
+        distro = get_output('lsb_release -cs')[0]
         local_skel = f'{base_dir}/../skel/{distro}'
         print('Sync global skel from',local_skel)
         run('rsync -avr {local_skel}/ /etc/skel', show=True)
