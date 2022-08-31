@@ -124,7 +124,7 @@ def sync_desktop(home):
     return True
 
 fct_called = update_bashrc_geany
-#fct_called = sync_sdesktop
+#fct_called = sync_desktop
 
 if '--ownership' in sys.argv:
     fct_called = align_ownership
