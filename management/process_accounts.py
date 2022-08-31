@@ -47,13 +47,13 @@ def align_ownership(home):
         get_output(f'id -u {user}')
         
         # remove students if very old profile
-        if user[-4:].isdigit() and int(user[-4:]) < year-2:
-            raise Exception('I want to go to except block')
+        #if user[-4:].isdigit() and int(user[-4:]) < year-2:
+        #    raise Exception('I want to go to except block')
         
         run(f'chown {user} {home} -R')
         return False
     except:
-        # user does not exist
+        # user does not exist anymore (out of LDAP)
         remove_with_info(home)
     return False
 
@@ -130,6 +130,7 @@ def sync_skel(home):
     '''
     Sync skeleton from repo
     forward XFCE part to all users
+    also forward bashrc if -bashrc
     '''
     
     if not getattr(sync_skel, 'done', False):        
@@ -137,7 +138,7 @@ def sync_skel(home):
         distro = get_output('lsb_release -cs')[0]
         local_skel = f'{base_dir}/../skel/{distro}'
         print('Sync global skel from',local_skel)
-        run('rsync -avr {local_skel}/ /etc/skel')
+        run(f'rsync -avrq {local_skel}/ /etc/skel')
         
         # ensure correct monitor
         run('sed -i "s/monitorVirtual1/monitorDVI-I-1/" /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml')
@@ -150,7 +151,8 @@ def sync_skel(home):
     if os.path.exists(f'{home}/config/xfce4'):
         run(f'rm -rf {home}/config')
     # sync for this user
-    run(f'rsync -avr /etc/skel/.config/xfce4 {home}/.config/')
+    run(f'rsync -avrq /etc/skel/.config/xfce4 {home}/.config/')    
+        
     return True
 
 fct_called = update_bashrc_geany
