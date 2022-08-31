@@ -147,8 +147,10 @@ def sync_skel(home):
         
         sync_skel.done = True        
         
+    if os.path.exists(f'{home}/config/xfce4'):
+        run(f'rm -rf {home}/config')
     # sync for this user
-    run(f'rsync -avr /etc/skel/.config/xfce4 {home}/config/')
+    run(f'rsync -avr /etc/skel/.config/xfce4 {home}/.config/')
     return True
 
 fct_called = update_bashrc_geany
