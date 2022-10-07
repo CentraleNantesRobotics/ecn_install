@@ -405,6 +405,8 @@ class Depend:
         # install if not ROS
         if self.src == Source.GIT and os.path.exists(base_dir + '/CMakeLists.txt'):
             build_dir = base_dir + '/build'
+            if os.path.exists(build_dir):
+                run(f' rm -rf {build_dir}', show=False)
             Display.msg(f'Compiling + installing {base_dir}')
             run(f'mkdir -p {build_dir}',show=False)
             run('cmake {} ..'.format(self.cmake),cwd=build_dir,show=False)            

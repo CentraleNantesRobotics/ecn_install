@@ -145,7 +145,7 @@ def sync_skel(home):
         # ensure fr keyboard by default
         run('sed -i "s/us,fr/fr,us/" /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/keyboard-layout.xml')
         
-        sync_skel.done = True        
+        sync_skel.done = True
         
     if os.path.exists(f'{home}/config/xfce4'):
         run(f'rm -rf {home}/config')
