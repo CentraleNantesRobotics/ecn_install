@@ -58,7 +58,7 @@ cleanup:
 # main module definitions
 arpro:
     description: 'Advanced programming / C++'
-    #deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=duels_3.4.1.deb']
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=duels_4.0.1.deb']
     apt: [python3-pygame, libzmq3-dev, python3-zmq,libyaml-cpp-dev, python3-yaml]
     
 manip:
