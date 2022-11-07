@@ -16,6 +16,7 @@ parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFo
 parser.description = 'Updater for ECN / ROS virtual machine.'
 
 parser.add_argument('-u', metavar='module', type=str, nargs='+', help='Which modules to upgrade (all installed, if empty)', default=())
+parser.add_argument('-n', '--no_upgrade', action='store_true', default=False, help='Does not perform apt upgrade')
 parser.add_argument('-t', '--test', action='store_true', default=False, help='Run in interactive mode (from a Python console)')
 parser.add_argument('-a', '--all', action='store_true', default=False, help='Install all available modules')
 parser.add_argument('-c', '--clean', action='store_true', default=False, help='Clean listed modules that are not required')
@@ -674,7 +675,7 @@ def perform_update(action = None, poweroff=False):
         sudo.apt_install(pkgs)
     
     # global ones
-    if len(Depend.packages_old):
+    if len(Depend.packages_old) and not args.no_upgrade:
         sudo.run('apt upgrade -qy')
         sudo.run('apt autoremove --purge -qy')
     
