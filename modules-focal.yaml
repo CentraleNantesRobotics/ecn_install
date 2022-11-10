@@ -70,6 +70,7 @@ arpro:
 manip:
     description: Robot modeling and control
     mod: [visp_ros1, ros]
+    apt: [python-is-python3]
         
 planif:
     description: Robot planning and control
