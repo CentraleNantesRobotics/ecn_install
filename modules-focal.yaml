@@ -17,6 +17,7 @@ ros12:
 ros:
     ros:
         apt: [desktop, joint-state-publisher,robot-localization,vision-opencv,gazebo-ros-pkgs,image-view,compressed-image-transport,amcl,control-toolbox,kdl-parser-py,slider-publisher]
+    apt: [python3-catkin-tools]
     mod: [ros12]
         
 ros2:
