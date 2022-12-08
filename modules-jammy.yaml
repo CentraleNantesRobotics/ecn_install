@@ -89,6 +89,11 @@ rasom:
     ros2:
         git: [oKermorgant:coral, CentraleNantesROV:floatgen]
         apt: [ros-ign-bridge, ros-ign-gazebo]
+
+avg:
+    description: 'Advanced Visual Geometry'
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=pycharm_2021.2.1.deb']
+    apt: [python3-opencv,python3-open3d]
         
 #integ: 
     #description: Integration project
