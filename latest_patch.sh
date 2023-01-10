@@ -1,9 +1,9 @@
 #!/bin/bash
 
-cd ~/.ecn_install
+base_dir=$(dirname $(realpath $0))
+
 echo "Refreshing patches..."
-git pull
+(cd $base_dir && git pull)
 
 # module dependencies
-python3 ./update.py "$@" 
-cd ~
+(cd $base_dir && python3 update.py "$@")
