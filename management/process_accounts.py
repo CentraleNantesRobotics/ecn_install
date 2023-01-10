@@ -1,26 +1,32 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
+# admin script to perform some task on all users
+# mostly used to synchronise stuff in their .bashrc for ROS or other similar configuration
 
 import sys
 import os
 from shutil import rmtree, copy
 from time import localtime
-from inspect import getsource
 import subprocess
 import shlex
 
 user_dirs = ['/home','/user/eleves']
 base_dir = os.path.dirname(__file__)
 
+
 def msg_exit(msg):
     print(msg)
     sys.exit(0)
     
+
 def run(cmd):
     subprocess.run(shlex.split(cmd))
     
+
 def get_output(cmd):
     return subprocess.check_output(shlex.split(cmd)).decode('utf-8').splitlines()
     
+
 def remove_with_info(folder):
     if '-r' in sys.argv:
         print('Removing ' + folder)
