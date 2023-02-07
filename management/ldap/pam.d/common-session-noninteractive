@@ -26,6 +26,6 @@ session	required			pam_permit.so
 # See "man pam_umask".
 session optional			pam_umask.so
 # and here are more per-package modules (the "Additional" block)
-session	required	pam_unix.so 
+session	required	pam_unix.so
 session	[success=ok default=ignore]	pam_ldap.so minimum_uid=1000
 # end of pam-auth-update config

@@ -46,7 +46,7 @@ session [success=ok ignore=ignore module_unknown=ignore default=bad] pam_selinux
 # This module parses environment configuration file(s)
 # and also allows you to use an extended config
 # file /etc/security/pam_env.conf.
-# 
+#
 # parsing /etc/environment needs "readenv=1"
 session       required   pam_env.so readenv=1
 # locale variables are also kept into /etc/default/locale in etch
@@ -82,11 +82,11 @@ session    required   pam_limits.so
 session    optional   pam_lastlog.so
 
 # Prints the status of the user's mailbox upon successful login
-# (Replaces the `MAIL_CHECK_ENAB' option from login.defs). 
+# (Replaces the `MAIL_CHECK_ENAB' option from login.defs).
 #
 # This also defines the MAIL environment variable
 # However, userdel also needs MAIL_DIR and MAIL_FILE variables
-# in /etc/login.defs to make sure that removing a user 
+# in /etc/login.defs to make sure that removing a user
 # also removes the user's mail spool file.
 # See comments in /etc/login.defs
 session    optional   pam_mail.so standard

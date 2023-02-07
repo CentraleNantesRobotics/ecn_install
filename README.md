@@ -24,5 +24,5 @@ The `update.py` is used to keep the Virtual Machine up to date. Run it without a
   - `update.py -u` will update all installed modules
   - `update.py -u arpro` will only update arpro
   - `update.py -a` will install all dependencies for all labs (Robotics major / M1 CORO-IMARO / M2 CORO-IMARO)
-    
+
 In the lab dependencies, system-wide overlays are installed at `/opt/ecn/ros1` and `/opt/ecn/ros2`. They should be sourced in your `.bashrc` if you use this system on a native Ubuntu OS.

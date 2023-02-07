@@ -96,11 +96,14 @@ class Display:
         print('All set!')
         if exit:
             sys.exit(0)
+
         
 Display.init()
 
+
 def get_file(name):
     return base_path + '/' + name
+
 
 def run(cmd, cwd=None,show=False):
     if show:
@@ -110,12 +113,14 @@ def run(cmd, cwd=None,show=False):
     out = check_output(shlex.split(cmd), stderr=PIPE, cwd=cwd).decode('utf-8').splitlines()
     return out
 
+
 distro = run('lsb_release -cs')[0]
 ros1 = 'noetic'
 ros2 = 'foxy' if distro == 'focal' else 'humble'
 
+
 class Sudo:
-    def __init__(self,gui=False):        
+    def __init__(self,gui=False):
         print('Retrieving system state...')
         if os.uname()[1] in ('ecn-focal', 'ecn-jammy'):
             self.passwd = 'ecn'.encode()
@@ -123,7 +128,7 @@ class Sudo:
             self.passwd = None
             ask_passwd = True
             import getpass
-            while ask_passwd:                    
+            while ask_passwd:
                 self.passwd = getpass.getpass('Enter admin password: ').encode()
                 # check passwd
                 proc = Popen(['sudo','-S','-l'],stdin=PIPE,stdout=PIPE,stderr=PIPE)
@@ -218,15 +223,19 @@ if args.poweroff:
         poweroff = True
         
 sudo = Sudo()
+
                     
 def src_type(src, dst):
     return '_'.join([src,dst]).upper().strip('_')
 
+
 class Enum(object):
     def __init__(self, *keys):
         self.__dict__.update(dict([(key.upper(), i) for i,key in enumerate(keys)]))
+
     def values(self):
         return self.__dict__.values()
+
 
 Action = Enum('Remove', 'Keep', 'Install')
 Source = Enum(*([src_type(src,dst) for src in ('apt','deb','git') for dst in ('', 'ros', 'ros2')]))
@@ -424,8 +433,8 @@ class Depend:
             if os.path.exists(path):
                 sudo.run(f'rm -rf {path}',show=False)
         
-        installed_files = []        
-        if self.src == Source.GIT:            
+        installed_files = []
+        if self.src == Source.GIT:
             manifest = base_dir + '/build/install_manifest.txt'
         
             if os.path.exists(manifest):
@@ -548,12 +557,16 @@ class Module:
             self.configure(special_modules[name])
         
     def check_status(self, pending = False):
-        
-        if pending:
+
+        if len(self.all_deps()) == 0:
+            self.status = Status.INSTALLED
+            if pending:
+                return self.status
+        elif pending:
             self.status = min(dep.pending_status() for dep in self.all_deps())
-            return self.status      
-        
-        self.status = min(dep.status for dep in self.all_deps())
+            return self.status
+        else:
+            self.status = min(dep.status for dep in self.all_deps())
         
         if 'description' in self.config:
             # auto clean deps if module is not here
@@ -565,7 +578,7 @@ class Module:
             for name in self.config.pop('mod'):
                 for level,deps in modules[name].sync_depends(modules).items():
                     self.add_depends(deps, level+1)
-            self.check_status()       
+            self.check_status()
         return self.deps
     
     def all_deps(self):
