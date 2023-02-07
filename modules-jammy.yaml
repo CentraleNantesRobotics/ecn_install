@@ -18,7 +18,7 @@ lib_folder: /opt/ecn
     #mod: [ros12]
     
 baxter:
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ros_baxter_1.1.2.deb']
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ros_baxter_jammy_1.2.0.deb']
         
 ros2:
     ros2:
