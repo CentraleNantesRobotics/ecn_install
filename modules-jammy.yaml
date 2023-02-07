@@ -23,8 +23,9 @@ baxter:
 ros2:
     ros2:
         apt: [desktop,slider-publisher,simple-launch,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,compressed-image-transport,ament-cmake, urdfdom-py]
+        git: [CentraleNantesRobotics:turtlebot3_description:ros2]
     apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat,python3-rospkg]
-    git: [oKermorgant:ros_management_tools,CentraleNantesRobotics:turtlebot3_description:ros2]
+    git: [oKermorgant:ros_management_tools]
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ecn-ros_1.1.2.deb']
 
 visp:
