@@ -30,6 +30,7 @@ if '-u' in sys.argv:
 
 args = parser.parse_args()
 
+
 class Display:
     
     user = os.environ['USER']
@@ -38,7 +39,7 @@ class Display:
     cmd = ''
     delay = 0.2
     @staticmethod
-    def init():        
+    def init():
         Display.user_offset = max(4, len(Display.user)) + 3 - len(Display.user)
         Display.sudo_offset = max(4, len(Display.user)) - 1
         # run blit thread
@@ -57,12 +58,12 @@ class Display:
         if type(cmd) == list:
             Display.cmd = [Display.to_msg(cmd[0],sudo), Display.to_msg(' ↪ ' + cmd[1],sudo)]
         else:
-            Display.cmd = Display.to_msg(cmd, sudo)        
+            Display.cmd = Display.to_msg(cmd, sudo)
         
     @staticmethod
     def blit():
         
-        animations = ['◜◝◞◟','◣◤◥◢','▤▥▦▧▨▩', '▲►▼◄', '/-\\|']        
+        animations = ['◜◝◞◟','◣◤◥◢','▤▥▦▧▨▩', '▲►▼◄', '/-\\|']
         done_smb = '✓'
         
         #animation = choice(animations)
@@ -82,7 +83,7 @@ class Display:
                 print(Display.cmd, animation[idx], end="\r")
                 idx = (idx+1) % len(animation)
             prev_cmd = Display.cmd
-            time.sleep(Display.delay) 
+            time.sleep(Display.delay)
             
     @staticmethod
     def endl():
@@ -156,7 +157,7 @@ class Sudo:
         # enable OSRF repos if needed
         ros1_specs = (f'ros-{ros1}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros-latest.list', 'http://packages.ros.org/ros/ubuntu')
         ros2_specs = (f'ros-{ros2}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros2-latest.list', 'http://packages.ros.org/ros2/ubuntu')
-        ign_specs = (f'ignition-', 'https://packages.osrfoundation.org/gazebo.gpg', 'gazebo-latest.list', 'http://packages.osrfoundation.org/gazebo/ubuntu-stable')
+        ign_specs = ('ignition-', 'https://packages.osrfoundation.org/gazebo.gpg', 'gazebo-latest.list', 'http://packages.osrfoundation.org/gazebo/ubuntu-stable')
         
         refresh_src = False
         
@@ -246,6 +247,7 @@ status = {Status.ABSENT: 'Not installed', Status.OLD: 'Needs update', Status.INS
 
 special_modules = {'cleanup': Action.REMOVE, 'base': Action.INSTALL}
 
+
 class Depend:
     
     packages = {}
@@ -262,7 +264,7 @@ class Depend:
         self.cmake = ''
         
     def cmake_flag(self, flag):
-        if self.cmake  == '':
+        if self.cmake == '':
             self.cmake = flag
         
     def need_install(self):
@@ -272,13 +274,21 @@ class Depend:
         return self.result == Action.REMOVE and self.status != Status.ABSENT
         
     def keep_apt(self):
-        return self.status != Status.ABSENT and self.result != Action.REMOVE and self.src == Source.APT           
+        return self.status != Status.ABSENT and self.result != Action.REMOVE and self.src == Source.APT
     
     @staticmethod
     def init_folders(folder):
-        Depend.folders = {Source.GIT: folder, 
-               Source.GIT_ROS: folder+'/ros1', 
+        Depend.folders = {Source.GIT: folder,
+               Source.GIT_ROS: folder+'/ros1',
                Source.GIT_ROS2: folder+'/ros2'}
+
+    @staticmethod
+    def split_deb(src):
+        pkg,ver_ext = os.path.basename(src.split('=')[-1]).split('_',1)
+        pkg = pkg.split('[')[0]
+        ver = re.search('[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9])?',ver_ext)
+        ver = ver_ext[ver.start():ver.end()]
+        return pkg,ver
         
     @staticmethod
     def resolve(pkg, src):
@@ -309,7 +319,7 @@ class Depend:
             return Status.ABSENT
         
         # Action.KEEP
-        return self.status        
+        return self.status
         
     def abs_folder(self):
         pkg = self.pkg.split(':')[1]
@@ -325,7 +335,7 @@ class Depend:
             out = run('apt list --installed',show=True)
             for line in out:
                 if '/' not in line:
-                    continue                
+                    continue
                 pkg,ver,_ = line.split(' ',2)
                 pkg = pkg[:pkg.find('/')]
                 Depend.packages[pkg] = ver
@@ -335,7 +345,7 @@ class Depend:
                 if '/' not in line:
                     continue
                 pkg,_ = line.split(' ',1)
-                Depend.packages_old.append(pkg[:pkg.find('/')])                    
+                Depend.packages_old.append(pkg[:pkg.find('/')])
         
         if self.src == Source.APT:
             if self.pkg not in Depend.packages:
@@ -344,11 +354,8 @@ class Depend:
                 return Status.OLD
             return Status.INSTALLED
         
-        if self.src == Source.DEB:  # package_X.X.X*.deb
-            pkg,ver_ext = os.path.basename(self.pkg.split('=')[-1]).split('_',1)
-            
-            ver = re.search('[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9])?',ver_ext)
-            ver = ver_ext[ver.start():ver.end()]
+        if self.src == Source.DEB:  # package[distro]_X.X.X*.deb
+            pkg,ver = Depend.split_deb(self.pkg)
             if pkg in Depend.packages:
                 return Status.INSTALLED if Depend.packages[pkg] >= ver else Status.OLD
             return Status.ABSENT
@@ -364,7 +371,7 @@ class Depend:
         
         if 'behind' not in git_status and not args.force_git:
             return Status.INSTALLED
-        return Status.OLD        
+        return Status.OLD
     
     def update(self):
         
@@ -419,7 +426,7 @@ class Depend:
                 run(f' rm -rf {build_dir}', show=False)
             Display.msg(f'Compiling + installing {base_dir}')
             run(f'mkdir -p {build_dir}',show=False)
-            run('cmake {} ..'.format(self.cmake),cwd=build_dir,show=False)            
+            run('cmake {} ..'.format(self.cmake),cwd=build_dir,show=False)
             sudo.run('make install -j4', cwd=build_dir, show=False)
             
         return self.src
@@ -494,13 +501,13 @@ class Depend:
         if self.src == Source.APT:
             return self.pkg
         if self.src == Source.DEB:
-            return os.path.basename(self.pkg.split('=')[-1]).split('_',1)[0]
+            return Depend.split_deb(self.pkg)[0]
         
-        # git packages are removed right here        
+        # git packages are removed right here
         ros_pkgs = self.uninstall()
         
         # also remove build artefacts and source
-        base_dir = self.abs_folder()                                        
+        base_dir = self.abs_folder()
                         
         if self.src in (Source.GIT_ROS, Source.GIT_ROS2):
                     

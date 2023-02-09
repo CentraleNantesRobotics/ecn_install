@@ -18,7 +18,7 @@ lib_folder: /opt/ecn
     #mod: [ros12]
 
 baxter:
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ros_baxter_jammy_1.2.0.deb']
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ros-baxter[community]_1.2.1.deb']
 
 ros2:
     ros2:
@@ -59,7 +59,7 @@ cleanup:
 # main module definitions
 arpro:
     description: 'Advanced programming / C++'
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=duels_jammy_4.0.4.deb']
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=duels[jammy]_4.0.4.deb']
     apt: [python3-pygame, libzmq3-dev, python3-zmq,libyaml-cpp-dev, python3-yaml]
 
 manip:
