@@ -1,5 +1,5 @@
 # student groups
-OD Robotique: [arpro, rasom, midwa, planif,covis,integ]
+OD Robotique: [arpro, rasom, midwa, planif,covis]
 M1 CORO: [arpro,sofar,manip,covis]
 M2 CORO-IMARO: [tbc,amoro]
 
@@ -19,6 +19,11 @@ lib_folder: /opt/ecn
 
 baxter:
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ros-baxter[community]_1.2.1.deb']
+
+gazebo:
+    ros2:
+        git: [gazebosim:ros_gz:humble]
+    apt: [gz-garden]
 
 ros2:
     ros2:
@@ -101,11 +106,9 @@ avg:
     #ros:
         #apt: [position-controllers, velocity-controllers, effort-controllers, joint-state-controller, gazebo-ros-control, control-toolbox,visp]
 
-#tbc:
-    #description: Task-based control
-    #mod: [coppeliasim,log2plot]
-    #ros:
-        #git: [RethinkRobotics:baxter_common]
+tbc:
+    description: Task-based control
+    mod: [log2plot]
 
 amoro:
     description: Advanced Modeling of Robots

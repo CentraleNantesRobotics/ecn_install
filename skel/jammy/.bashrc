@@ -134,6 +134,8 @@ export PS1="\[\e[1;34m\]\w\[\e[0m\]$ "
 
 ros1_workspaces="/opt/ros/noetic"
 ros2_workspaces="/opt/ros/humble /opt/ecn/ros2 ~/ros2"
+export GZ_VERSION=garden
+
 # activate ROS 2 by default
 if [[ -f /opt/ecn/ros_management_tools/ros_management.bash ]]; then
     source /opt/ecn/ros_management_tools/ros_management.bash -p -k -ros2 -lo

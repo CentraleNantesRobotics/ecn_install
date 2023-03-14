@@ -118,6 +118,7 @@ def run(cmd, cwd=None,show=False):
 distro = run('lsb_release -cs')[0]
 ros1 = 'noetic'
 ros2 = 'foxy' if distro == 'focal' else 'humble'
+gz = 'fortress' if distro == 'focal' else 'garden'
 
 
 class Sudo:
@@ -158,10 +159,11 @@ class Sudo:
         ros1_specs = (f'ros-{ros1}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros-latest.list', 'http://packages.ros.org/ros/ubuntu')
         ros2_specs = (f'ros-{ros2}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros2-latest.list', 'http://packages.ros.org/ros2/ubuntu')
         ign_specs = ('ignition-', 'https://packages.osrfoundation.org/gazebo.gpg', 'gazebo-latest.list', 'http://packages.osrfoundation.org/gazebo/ubuntu-stable')
+        gz_specs = ('gz-garden', 'https://packages.osrfoundation.org/gazebo.gpg', 'gazebo-latest.list', 'http://packages.osrfoundation.org/gazebo/ubuntu-stable')
         
         refresh_src = False
         
-        for start, key_url, repo_file, repo_url in (ros1_specs, ros2_specs, ign_specs):
+        for start, key_url, repo_file, repo_url in (ros1_specs, ros2_specs, ign_specs, gz_specs):
             
             if not any(pkg.startswith(start) for pkg in pkgs):
                 continue
@@ -456,7 +458,7 @@ class Depend:
                     with open(root + '/package.xml') as f:
                         xml = f.read()
                         pkgs.append(xml[xml.find('<name>')+6:xml.find('</name>')].strip())
-                    subdirs = []
+                    subdirs[:] = []
                     
             if self.src == Source.GIT_ROS:
                 for pkg in pkgs:
@@ -527,6 +529,7 @@ class Depend:
         sudo.run(f'rm -rf {base_dir}',show=False)
             
         return None
+
 
 class Module:
     
@@ -617,7 +620,7 @@ class Module:
                 sub = self.config
                 
             if src not in sub:
-                continue            
+                continue
             
             for pkg in sub[src]:
                 self.add_depend(pkg, getattr(Source, key))
@@ -627,16 +630,17 @@ class Module:
     
     def configure(self, action):
         if self.name in special_modules:
-            action = special_modules[self.name]     
+            action = special_modules[self.name]
         for dep in self.all_deps():
             dep.configure(self.name, action)
             
+
 with open(get_file(f'modules-{distro}.yaml')) as f:
     info = yaml.safe_load(f)
 
 # erase disabled modules
 disable = []
-if 'disable' in info:    
+if 'disable' in info:
     disabled = info['disable']
     info.pop('disable')
     
@@ -657,6 +661,7 @@ for module in modules.values():
     module.sync_depends(modules)
     module.check_status()
 
+
 def perform_update(action = None, poweroff=False):
     '''
     Final action
@@ -674,7 +679,7 @@ def perform_update(action = None, poweroff=False):
     bashrc = os.environ['HOME'] + '/.bashrc'
     with open(bashrc) as f:
         if 'ros_management_tools' not in f.read():
-            copytree(skel + '/', os.environ['HOME'], dirs_exist_ok = True)    
+            copytree(skel + '/', os.environ['HOME'], dirs_exist_ok = True)
                    
     # wallpaper
     wp = [f for f in os.listdir(base_path + '/images/') if ros2 in f][0]
@@ -711,7 +716,7 @@ def perform_update(action = None, poweroff=False):
     # ros ws
     need_chmod = False
     updated = [dep.update() for dep in to_install[Source.GIT_ROS] + to_install[Source.GIT_ROS2]]
-    # recompile ros1ws    
+    # recompile ros1ws
     if Source.GIT_ROS in updated or (args.force_compile and os.path.exists(Depend.folders[Source.GIT_ROS])):
         if not os.path.exists(f'{Depend.folders[Source.GIT_ROS]}/.catkin_tools'):
             # purge colcon install
@@ -725,7 +730,7 @@ def perform_update(action = None, poweroff=False):
 
     # recompile ros2ws
     if Source.GIT_ROS2 in updated or (args.force_compile and os.path.exists(Depend.folders[Source.GIT_ROS2])):
-        run([f'bash -c -i "source /opt/ros/{ros2}/setup.bash && IGNITION_VERSION=fortress colcon build --symlink-install --continue-on-error"',f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]}'], cwd=Depend.folders[Source.GIT_ROS2], show=True)
+        run([f'bash -c -i "source /opt/ros/{ros2}/setup.bash && IGNITION_VERSION={gz} colcon build --symlink-install --continue-on-error"',f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]}'], cwd=Depend.folders[Source.GIT_ROS2], show=True)
         need_chmod = True
     
     if need_chmod:
@@ -742,12 +747,15 @@ def perform_update(action = None, poweroff=False):
         sudo.run('poweroff')
     else:
         Display.stop()
-    
+
+
+if __name__ != '__main__':
+    sys.exit(0)
     
 if args.test:
     # to test things
     Display.stop()
-    
+
 if type(args.u) == list:
     # '-u' was given
     to_update = [mod for mod in modules if mod in args.u]
@@ -762,12 +770,15 @@ if type(args.u) == list:
     print(f'Will update / install the following modules: {", ".join(to_update)}')
             
     perform_update(poweroff=poweroff)
+
+
         
 if args.all:
     # install / update all modules
     perform_update(Action.INSTALL,poweroff=poweroff)
 
-sys._excepthook = sys.excepthook 
+sys._excepthook = sys.excepthook
+
 def exception_hook(exctype, value, traceback):
     print(exctype, value, traceback)
     sys._excepthook(exctype, value, traceback) 
@@ -793,13 +804,10 @@ class UpdaterGUI(QWidget):
         super().__init__()
                 
         self.setWindowIcon(QIcon(get_file('images/ecn-rob.png')))
-        self.setWindowTitle('Virtual Machine updater')                           
+        self.setWindowTitle('Virtual Machine updater')
                 
-        # build GUI        
-        sliderUpdateTrigger = Signal()
+        # build GUI
         layout = QVBoxLayout(self)
-        
-        gridlayout = QGridLayout()
         font = Font()
         
         # top bar = groups
@@ -811,15 +819,13 @@ class UpdaterGUI(QWidget):
         for group in groups:
                         
             groups_layout.addSpacing(10)
-            group_layout = QHBoxLayout()
             groups[group] = {'cb': QCheckBox(self), 'modules': groups[group]}
             groups[group]['cb'].setText(group)
             groups[group]['cb'].setFont(font)
             groups_layout.addWidget(groups[group]['cb'])
             groups[group]['cb'].clicked.connect(self.group_update)
-                        
-            
-        layout.addLayout(groups_layout)  
+
+        layout.addLayout(groups_layout)
         layout.addSpacing(10)
         
         mod_layout = QGridLayout()
@@ -833,7 +839,7 @@ class UpdaterGUI(QWidget):
                 mod_layout.addItem(spacer, i, 2)
                 
                 label = QLabel(status[module.status], self)
-                label.setFont(font)            
+                label.setFont(font)
                 mod_layout.addWidget(label, i, 3)
                 
                 module.menu = QComboBox(self)
@@ -853,7 +859,7 @@ class UpdaterGUI(QWidget):
             if all(modules[name].status != Status.ABSENT for name in group['modules']):
                 group['cb'].setChecked(True)
                             
-        layout.addLayout(mod_layout)        
+        layout.addLayout(mod_layout)
         layout.addSpacing(10)
         
         confirm_layout = QHBoxLayout()
@@ -862,7 +868,7 @@ class UpdaterGUI(QWidget):
         ok_btn.clicked.connect(self.perform)
         cancel_btn = QPushButton('Cancel')
         cancel_btn.setFont(font)
-        cancel_btn.clicked.connect(self.close)        
+        cancel_btn.clicked.connect(self.close)
         confirm_layout.addWidget(ok_btn)
         confirm_layout.addWidget(cancel_btn)
         layout.addLayout(confirm_layout)
@@ -889,7 +895,6 @@ class UpdaterGUI(QWidget):
                 module.menu.setCurrentIndex(Action.INSTALL)
             else:
                 module.menu.setCurrentIndex(Action.KEEP)
-                
 
 app = QApplication(sys.argv)
 gui = UpdaterGUI()
