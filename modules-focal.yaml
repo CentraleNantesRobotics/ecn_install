@@ -62,7 +62,7 @@ cleanup:
         git: [CentraleNantesRobotics:baxter_simple_sim,CentraleNantesRobotics:baxter_common,CentraleNantesRobotics:baxter_interface,CentraleNantesRobotics:baxter_tools]
 
 baxter:
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ros-baxter[noetic]_1.2.1.deb']
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ros-baxter[noetic]_1.2.2.deb']
 
 # main module definitions
 arpro:
