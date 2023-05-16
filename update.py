@@ -733,7 +733,7 @@ def perform_update(action = None, poweroff=False):
     if Source.GIT_ROS2 in updated or (args.force_compile and os.path.exists(Depend.folders[Source.GIT_ROS2])):
 
         # forget about baxter bridge which is tedious to compile
-        baxter_bridge = f'/opt/ros/{ros2}/src/baxter_common_ros2/baxter_bridge'
+        baxter_bridge = f'{Depend.folders[Source.GIT_ROS2]}/src/baxter_common_ros2/baxter_bridge'
         bridge_ignored = baxter_bridge + '/COLCON_IGNORE'
         if using_vm and os.path.exists(baxter_bridge) and not os.path.exists(bridge_ignored):
             run('touch ' + bridge_ignored)
