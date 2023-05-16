@@ -119,12 +119,13 @@ distro = run('lsb_release -cs')[0]
 ros1 = 'noetic'
 ros2 = 'foxy' if distro == 'focal' else 'humble'
 gz = 'fortress' if distro == 'focal' else 'garden'
+using_vm = os.uname()[1] in ('ecn-focal', 'ecn-jammy')
 
 
 class Sudo:
     def __init__(self,gui=False):
         print('Retrieving system state...')
-        if os.uname()[1] in ('ecn-focal', 'ecn-jammy'):
+        if using_vm:
             self.passwd = 'ecn'.encode()
         else:
             self.passwd = None
@@ -432,7 +433,7 @@ class Depend:
             sudo.run('make install -j4', cwd=build_dir, show=False)
             
         return self.src
-    
+
     def uninstall(self):
         
         base_dir = self.abs_folder()
@@ -730,7 +731,15 @@ def perform_update(action = None, poweroff=False):
 
     # recompile ros2ws
     if Source.GIT_ROS2 in updated or (args.force_compile and os.path.exists(Depend.folders[Source.GIT_ROS2])):
-        run([f'bash -c -i "source /opt/ros/{ros2}/setup.bash && IGNITION_VERSION={gz} colcon build --symlink-install --continue-on-error"',f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]}'], cwd=Depend.folders[Source.GIT_ROS2], show=True)
+
+        # forget about baxter bridge which is tedious to compile
+        baxter_bridge = f'/opt/ros/{ros2}/src/baxter_common_ros2/baxter_bridge'
+        bridge_ignored = baxter_bridge + '/COLCON_IGNORE'
+        if using_vm and os.path.exists(baxter_bridge) and not os.path.exists(bridge_ignored):
+            run('touch ' + bridge_ignored)
+        run([f'bash -c -i "source /opt/ros/{ros2}/setup.bash && IGNITION_VERSION={gz} colcon build --symlink-install --continue-on-error"',
+             f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]}'],
+            cwd=Depend.folders[Source.GIT_ROS2], show=True)
         need_chmod = True
     
     if need_chmod:
