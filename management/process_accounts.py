@@ -63,6 +63,7 @@ def align_ownership(home):
         remove_with_info(home)
     return False
 
+
 def clean_ros_logs(home):
     '''
     Remove ROS logs
