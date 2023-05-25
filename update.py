@@ -38,6 +38,7 @@ class Display:
     running = True
     cmd = ''
     delay = 0.2
+
     @staticmethod
     def init():
         Display.user_offset = max(4, len(Display.user)) + 3 - len(Display.user)
@@ -653,6 +654,8 @@ for mod in disable:
     for group in groups:
         if mod in info[group]:
             info[group].pop(mod)
+
+ignore = info['ignore'] if 'ignore' in info and using_vm else []
     
 Depend.init_folders(info['lib_folder'] if 'lib_folder' in info else '/opt/ecn')
 modules = dict((name, Module(name, config)) for name, config in info.items() if isinstance(config, dict))
@@ -661,6 +664,38 @@ groups = dict((group, info[group]) for group in groups)
 for module in modules.values():
     module.sync_depends(modules)
     module.check_status()
+
+
+def extract_cmake_names(path):
+
+    def project_name(line):
+        line = line.lower().split('#')[0]
+        if 'project' in line:
+            start,end = line.index('(')+1, line.index(')')
+            return line[start:end].split()[0]
+        return None
+
+    projects = {}
+
+    for root, dirs, files in os.walk(path):
+        if 'CMakeLists.txt' in files:
+
+            with open(f'{root}/CMakeLists.txt') as cmake:
+                for line in cmake:
+                    proj = project_name(line)
+                    if proj:
+                        projects[root] = proj
+                        break
+    return projects
+
+
+def setup_ignored(root, ros):
+
+    projects = extract_cmake_names(root+'/src')
+    ignore_file = 'CATKIN_IGNORE' if ros == 1 else 'COLCON_IGNORE'
+    for name in projects:
+        if name in ignore:
+            run(f'touch {projects[name]}/{ignore_file}')
 
 
 def perform_update(action = None, poweroff=False):
@@ -726,17 +761,14 @@ def perform_update(action = None, poweroff=False):
                     rmtree(f'{Depend.folders[Source.GIT_ROS]}/{folder}')
                     
             run(f'catkin config --init --extend /opt/ros/{ros1} --install -DCATKIN_ENABLE_TESTING=False --make-args -Wno-dev --cmake-args -DCMAKE_BUILD_TYPE=Release', cwd=Depend.folders[Source.GIT_ROS])
+        setup_ignored(Depend.folders[Source.GIT_ROS], 1)
         run([f'catkin build  --continue-on-failure', f'Compiling ROS 1 auxiliary workspace @ {Depend.folders[Source.GIT_ROS]}'], cwd=Depend.folders[Source.GIT_ROS], show=True)
         need_chmod = True
 
     # recompile ros2ws
     if Source.GIT_ROS2 in updated or (args.force_compile and os.path.exists(Depend.folders[Source.GIT_ROS2])):
 
-        # forget about baxter bridge which is tedious to compile
-        baxter_bridge = f'{Depend.folders[Source.GIT_ROS2]}/src/baxter_common_ros2/baxter_bridge'
-        bridge_ignored = baxter_bridge + '/COLCON_IGNORE'
-        if using_vm and os.path.exists(baxter_bridge) and not os.path.exists(bridge_ignored):
-            run('touch ' + bridge_ignored)
+        setup_ignored(Depend.folders[Source.GIT_ROS2], 2)
         run([f'bash -c -i "source /opt/ros/{ros2}/setup.bash && IGNITION_VERSION={gz} colcon build --symlink-install --continue-on-error"',
              f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]}'],
             cwd=Depend.folders[Source.GIT_ROS2], show=True)
@@ -781,7 +813,6 @@ if type(args.u) == list:
     perform_update(poweroff=poweroff)
 
 
-        
 if args.all:
     # install / update all modules
     perform_update(Action.INSTALL,poweroff=poweroff)

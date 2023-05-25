@@ -3,6 +3,9 @@ OD Robotique: [arpro, rasom, midwa, planif,covis]
 M1 CORO: [arpro,sofar,manip,covis]
 M2 CORO-IMARO: [tbc,amoro]
 
+# CMake packages that should be ignored (not compiled) in the VM
+ignore: [baxter_bridge]
+
 # ignore these modules while porting to ROS 2
 disable: [tbc, rasom]
 
@@ -20,6 +23,11 @@ lib_folder: /opt/ecn
 baxter:
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ros-baxter[community]_1.2.2.deb']
 
+turtle:
+    ros2:
+        apt: [image-transport-plugins]
+        git: [CentraleNantesRobotics:turtlebot3_description:ros2]
+
 gazebo:
     ros2:
         git: [gazebosim:ros_gz:humble]
@@ -27,7 +35,7 @@ gazebo:
 
 ros2:
     ros2:
-        apt: [desktop,slider-publisher,simple-launch,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,compressed-image-transport,ament-cmake, urdfdom-py]
+        apt: [desktop,slider-publisher,simple-launch,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-transport-plugins,ament-cmake, urdfdom-py]
         git: [CentraleNantesRobotics:turtlebot3_description:ros2]
     apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat,python3-rospkg]
     git: [oKermorgant:ros_management_tools]
@@ -79,15 +87,11 @@ sofar:
     description: Software architecture / ROS
     mod: [baxter]
     ros2:
-        apt: [turtlebot3-description]
         git: [CentraleNantesRobotics:baxter_common_ros2,CentraleNantesRobotics:baxter_simple_sim:ros2]
 
 midwa:
     description: Middleware / ROS 2
-    mod: [mapsim, baxter]
-    ros2:
-        apt: [turtlebot3-description]
-        git: [CentraleNantesRobotics:baxter_common_ros2,CentraleNantesRobotics:baxter_simple_sim:ros2]
+    mod: [mapsim, sofar, turtle]
 
 rasom:
     description: Underwater robotics
