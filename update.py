@@ -684,7 +684,7 @@ def extract_cmake_names(path):
                 for line in cmake:
                     proj = project_name(line)
                     if proj:
-                        projects[root] = proj
+                        projects[proj] = root
                         break
     return projects
 
