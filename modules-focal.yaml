@@ -8,7 +8,7 @@ M2 CORO-IMARO: [tbc,amoro,auve]
 lib_folder: /opt/ecn
 
 # CMake packages that should be ignored (not compiled) in the VM
-ignore: [baxter_bridge]
+vm_ignore: [baxter_bridge]
 
 # hidden modules (without description) others may depend on
 

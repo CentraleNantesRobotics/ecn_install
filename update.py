@@ -646,7 +646,7 @@ if 'disable' in info:
     disabled = info['disable']
     info.pop('disable')
     
-groups = [key for key in info if isinstance(info[key], list)]
+groups = [key for key in info if isinstance(info[key], list) and key != 'ignore']
 
 for mod in disable:
     if mod in info:
@@ -655,7 +655,7 @@ for mod in disable:
         if mod in info[group]:
             info[group].pop(mod)
 
-ignore = info['ignore'] if 'ignore' in info and using_vm else []
+ignore = info['vm_ignore'] if 'vm_ignore' in info and using_vm else []
     
 Depend.init_folders(info['lib_folder'] if 'lib_folder' in info else '/opt/ecn')
 modules = dict((name, Module(name, config)) for name, config in info.items() if isinstance(config, dict))
