@@ -646,7 +646,7 @@ if 'disable' in info:
     disabled = info['disable']
     info.pop('disable')
     
-groups = [key for key in info if isinstance(info[key], list) and key != 'ignore']
+groups = [key for key in info if isinstance(info[key], list) and 'ignore' not in key]
 
 for mod in disable:
     if mod in info:
