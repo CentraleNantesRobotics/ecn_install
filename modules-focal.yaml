@@ -59,7 +59,7 @@ duels:
 
 # special module that always wants it dependencies to be installed
 base:
-    apt: [curl, geany, git, qtcreator, libclang-common-8-dev, openssh-server, ipython3, python3-numpy, python3-matplotlib, python3-scipy, python3-sympy, build-essential, cmake]
+    apt: [curl, geany, git, qtcreator, libclang-common-8-dev, openssh-server, ipython3, python3-numpy, python3-matplotlib, python3-scipy, python3-sympy, build-essential, cmake, python3-pip]
 
 # special module that always wants its dependencies to be removed
 # will be removed unless required by other modules
@@ -124,7 +124,8 @@ amoro:
 avg:
     description: 'Advanced Visual Geometry'
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=pycharm_2021.2.1.deb']
-    apt: [python3-opencv,python3-open3d]
+    apt: [python3-opencv]
+    pip: [open3d]
 
 covis:
     description: Computer Vision
@@ -132,4 +133,5 @@ covis:
 
 auve:
     description: Autonomous vehicles (AUV)
-    apt: [ignition-fortress]
+    apt: [ignition-fortress,jupyter,jupyter-notebook,python3-opencv,python3-networkx,python3-osmnx]
+    pip: [open3d,einops,pyquaternion]

@@ -7,7 +7,7 @@ import time
 from shutil import rmtree, copytree
 from threading import Thread
 import re
-from subprocess import check_output, PIPE, Popen, DEVNULL
+from subprocess import check_output, PIPE, Popen, DEVNULL, CalledProcessError
 import argparse
 
 base_path = os.path.dirname(os.path.abspath(__file__))
@@ -243,7 +243,7 @@ class Enum(object):
 
 
 Action = Enum('Remove', 'Keep', 'Install')
-Source = Enum(*([src_type(src,dst) for src in ('apt','deb','git') for dst in ('', 'ros', 'ros2')]))
+Source = Enum(*([src_type(src,dst) for src in ('pip', 'apt','deb','git') for dst in ('', 'ros', 'ros2')]))
 Status = Enum('Absent', 'Old', 'Installed')
 
 actions = {Action.REMOVE: 'Remove', Action.KEEP: 'Keep as it is', Action.INSTALL: 'Install / update'}
@@ -350,6 +350,13 @@ class Depend:
                     continue
                 pkg,_ = line.split(' ',1)
                 Depend.packages_old.append(pkg[:pkg.find('/')])
+
+        if self.src == Source.PIP:
+            try:
+                out = run('pip3 show ' + self.pkg)
+                return Status.INSTALLED
+            except CalledProcessError:
+                return Status.ABSENT
         
         if self.src == Source.APT:
             if self.pkg not in Depend.packages:
@@ -381,6 +388,10 @@ class Depend:
         
         if not self.need_install():
             return None
+
+        if self.src == Source.PIP:
+            sudo.run('pip3 install ' + self.pkg, show=True)
+            return self.src
                 
         if self.src == Source.APT:
             return self.src
@@ -734,7 +745,7 @@ def perform_update(action = None, poweroff=False):
     pkgs = [dep.pkg for dep in to_install[Source.APT]]
     if len(pkgs):
         sudo.apt_install(pkgs)
-    
+
     # global ones
     if len(Depend.packages_old) and not args.no_upgrade:
         sudo.run('apt upgrade -qy')
@@ -744,6 +755,10 @@ def perform_update(action = None, poweroff=False):
     updated = [dep.update() for dep in to_install[Source.DEB]]
     if Source.DEB in updated:
         sudo.run('apt install -qy --fix-broken --fix-missing')
+
+    # pip3-based
+    for dep in to_install[Source.PIP]:
+        dep.update()
             
     # git-based
     for dep in to_install[Source.GIT]:

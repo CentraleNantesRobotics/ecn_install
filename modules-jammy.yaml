@@ -113,6 +113,12 @@ avg:
     #ros:
         #apt: [position-controllers, velocity-controllers, effort-controllers, joint-state-controller, gazebo-ros-control, control-toolbox,visp]
 
+auve:
+    description: Autonomous vehicles (AUVE)
+    apt: [ignition-fortress,jupyter,jupyter-notebook,python3-opencv,python3-networkx,python3-osmnx]
+    pip: [open3d,einops,pyquaternion]
+
+
 tbc:
     description: Task-based control
     mod: [log2plot]
