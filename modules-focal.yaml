@@ -125,7 +125,7 @@ avg:
     description: 'Advanced Visual Geometry'
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=pycharm_2021.2.1.deb']
     apt: [python3-opencv]
-    pip: [open3d]
+    #pip: [open3d]
 
 covis:
     description: Computer Vision
@@ -134,4 +134,4 @@ covis:
 auve:
     description: Autonomous vehicles (AUV)
     apt: [ignition-fortress,jupyter,jupyter-notebook,python3-opencv,python3-networkx,python3-osmnx]
-    pip: [open3d,einops,pyquaternion]
+    #pip: [open3d,einops,pyquaternion]
