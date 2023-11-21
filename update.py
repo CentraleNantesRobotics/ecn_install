@@ -112,9 +112,10 @@ def run(cmd, cwd=None,show=False):
         Display.msg(cmd)
     if type(cmd) == list:
         cmd = cmd[0]
-    out = check_output(shlex.split(cmd), stderr=PIPE, cwd=cwd).decode('utf-8').splitlines()
-    return out
-
+    try:
+        return check_output(shlex.split(cmd), stderr=PIPE, cwd=cwd).decode('utf-8').splitlines()
+    except CalledProcessError:
+        return None
 
 distro = run('lsb_release -cs')[0]
 ros1 = 'noetic'
@@ -243,7 +244,7 @@ class Enum(object):
 
 
 Action = Enum('Remove', 'Keep', 'Install')
-Source = Enum(*([src_type(src,dst) for src in ('pip', 'apt','deb','git') for dst in ('', 'ros', 'ros2')]))
+Source = Enum(*([src_type(src,dst) for src in ('apt','pip','deb','git') for dst in ('', 'ros', 'ros2')]))
 Status = Enum('Absent', 'Old', 'Installed')
 
 actions = {Action.REMOVE: 'Remove', Action.KEEP: 'Keep as it is', Action.INSTALL: 'Install / update'}
@@ -390,7 +391,10 @@ class Depend:
             return None
 
         if self.src == Source.PIP:
-            sudo.run('pip3 install ' + self.pkg, show=True)
+            try:
+                sudo.run('pip3 install ' + self.pkg, show=True)
+            except CalledProcessError:
+                print('Re-run the process after pip3 was installed')
             return self.src
                 
         if self.src == Source.APT:
