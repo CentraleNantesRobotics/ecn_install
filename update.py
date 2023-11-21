@@ -121,6 +121,7 @@ distro = run('lsb_release -cs')[0]
 ros1 = 'noetic'
 ros2 = 'foxy' if distro == 'focal' else 'humble'
 gz = 'fortress' if distro == 'focal' else 'garden'
+GZ = 'IGNITION' if gz == 'fortress' else 'GZ'
 using_vm = os.uname()[1] in ('ecn-focal', 'ecn-jammy')
 
 
@@ -788,7 +789,7 @@ def perform_update(action = None, poweroff=False):
     if Source.GIT_ROS2 in updated or (args.force_compile and os.path.exists(Depend.folders[Source.GIT_ROS2])):
 
         setup_ignored(Depend.folders[Source.GIT_ROS2], 2)
-        run([f'bash -c -i "source /opt/ros/{ros2}/setup.bash && IGNITION_VERSION={gz} colcon build --symlink-install --continue-on-error"',
+        run([f'bash -c -i "source /opt/ros/{ros2}/setup.bash && {GZ}_VERSION={gz} colcon build --symlink-install --continue-on-error"',
              f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]}'],
             cwd=Depend.folders[Source.GIT_ROS2], show=True)
         need_chmod = True
