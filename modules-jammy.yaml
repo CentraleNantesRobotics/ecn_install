@@ -30,6 +30,7 @@ turtle:
 
 gazebo:
     ros2:
+        apt: [ros-gz-bridge, ros-gz-gazebo]
         git: [gazebosim:ros_gz:humble]
     apt: [gz-garden]
 
@@ -98,10 +99,11 @@ midwa:
 
 rasom:
     description: Underwater robotics
-    apt: [libopenscenegraph-dev, libfftw3-dev, libxml++2.6-dev, ignition-fortress]
+    apt: [libopenscenegraph-dev, libfftw3-dev, libxml++2.6-dev]
+    mod: [gazebo]
     ros2:
         git: [oKermorgant:coral, CentraleNantesROV:floatgen]
-        apt: [ros-ign-bridge, ros-ign-gazebo]
+
 
 avg:
     description: 'Advanced Visual Geometry'
