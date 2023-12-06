@@ -685,10 +685,13 @@ for module in modules.values():
 def extract_cmake_names(path):
 
     def project_name(line):
-        line = line.lower().split('#')[0]
-        if 'project' in line:
-            start,end = line.index('(')+1, line.index(')')
-            return line[start:end].split()[0]
+        try:
+            line = line.lower().split('#')[0]
+            if 'project' in line:
+                start,end = line.index('(')+1, line.index(')')
+                return line[start:end].split()[0]
+        except ValueError:
+            pass
         return None
 
     projects = {}
