@@ -58,7 +58,7 @@ log2plot:
 
 mapsim:
     ros2:
-        git: [oKermorgant:map_simulator:ros2,oKermorgant:anchor_msgs,oKermorgant:pose_to_tf]
+        git: [oKermorgant:map_simulator:ros2,oKermorgant:pose_to_tf]
         apt: [navigation2]
 
 duels:
@@ -73,6 +73,8 @@ base:
 # will be removed unless required by other modules
 cleanup:
     deb: []
+    ros2:
+        git: [oKermorgant:anchor_msgs]
 
 # main module definitions
 arpro:
