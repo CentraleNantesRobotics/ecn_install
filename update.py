@@ -537,7 +537,7 @@ class Depend:
                     run(f'catkin clean {pkg}', cwd=Depend.folders[self.src])
                     
             # colcon-based clean
-            for root in ('build','log','logs'):
+            for root in ('build','log','logs','install'):
                 for pkg in ros_pkgs:
                     folder = f'{Depend.folders[self.src]}/{root}/{pkg}'
                     if os.path.exists(folder):
