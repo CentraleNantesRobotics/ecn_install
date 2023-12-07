@@ -359,6 +359,8 @@ class Depend:
                 return Status.INSTALLED
             except CalledProcessError:
                 return Status.ABSENT
+            except FileNotFoundError:
+                return Status.ABSENT
         
         if self.src == Source.APT:
             if self.pkg not in Depend.packages:
@@ -385,7 +387,7 @@ class Depend:
         if 'behind' not in git_status and not args.force_git:
             return Status.INSTALLED
         return Status.OLD
-    
+
     def update(self):
         
         if not self.need_install():
