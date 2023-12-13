@@ -29,10 +29,7 @@ turtle:
         git: [CentraleNantesRobotics:turtlebot3_xacro]
 
 gazebo:
-    ros2:
-        apt: [ros-gz-bridge, ros-gz-gazebo]
-        git: [gazebosim:ros_gz:humble]
-    apt: [gz-garden]
+    apt: [gz-garden,ros-humble-ros-gzgarden]
 
 ros2:
     ros2:

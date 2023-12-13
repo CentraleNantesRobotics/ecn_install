@@ -163,7 +163,7 @@ class Sudo:
         ros1_specs = (f'ros-{ros1}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros-latest.list', 'http://packages.ros.org/ros/ubuntu')
         ros2_specs = (f'ros-{ros2}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros2-latest.list', 'http://packages.ros.org/ros2/ubuntu')
         ign_specs = ('ignition-', 'https://packages.osrfoundation.org/gazebo.gpg', 'gazebo-latest.list', 'http://packages.osrfoundation.org/gazebo/ubuntu-stable')
-        gz_specs = ('gz-garden', 'https://packages.osrfoundation.org/gazebo.gpg', 'gazebo-latest.list', 'http://packages.osrfoundation.org/gazebo/ubuntu-stable')
+        gz_specs = ('gz-', 'https://packages.osrfoundation.org/gazebo.gpg', 'gazebo-latest.list', 'http://packages.osrfoundation.org/gazebo/ubuntu-stable')
         
         refresh_src = False
         
