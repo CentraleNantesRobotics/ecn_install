@@ -21,7 +21,7 @@ lib_folder: /opt/ecn
     #mod: [ros12]
 
 baxter:
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ros-baxter[community]_1.2.2.deb']
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ros-baxter[community]_1.3.1.deb']
 
 turtle:
     ros2:

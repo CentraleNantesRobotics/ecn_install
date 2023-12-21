@@ -15,7 +15,7 @@ vm_ignore: [baxter_bridge]
 ros12:
     git: [oKermorgant:ros_management_tools]
     apt: [python3-rospkg]
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ecn-ros_1.1.2.deb']
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ecn-ros_1.3.1.deb']
 
 ros:
     ros:
