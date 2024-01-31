@@ -108,8 +108,8 @@ def get_file(name):
 
 
 def run(cmd, cwd=None,show=False):
-    #if show:
-        #Display.msg(cmd)
+    if show:
+        Display.msg(cmd)
     if type(cmd) == list:
         cmd = cmd[0]
     try:
