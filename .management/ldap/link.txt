@@ -1,2 +1,0 @@
-https://doc.ubuntu-fr.org/ldap_client
-https://computingforgeeks.com/how-to-configure-ubuntu-as-ldap-client/
