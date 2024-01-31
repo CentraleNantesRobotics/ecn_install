@@ -108,8 +108,8 @@ def get_file(name):
 
 
 def run(cmd, cwd=None,show=False):
-    if show:
-        Display.msg(cmd)
+    #if show:
+        #Display.msg(cmd)
     if type(cmd) == list:
         cmd = cmd[0]
     try:
@@ -124,6 +124,11 @@ ros2 = 'foxy' if distro == 'focal' else 'humble'
 gz = 'fortress' if distro == 'focal' else 'garden'
 GZ = 'IGNITION' if gz == 'fortress' else 'GZ'
 using_vm = os.uname()[1] in ('ecn-focal', 'ecn-jammy')
+
+
+# after 4 years finally some custom hacks are needed
+if using_vm:
+    run(f'{base_path}/vm_update.sh')
 
 
 class Sudo:
