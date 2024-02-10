@@ -110,8 +110,9 @@ rasom:
 
 integ:
     description: Integration project
-    ros:
-        apt: [position-controllers, velocity-controllers, effort-controllers, joint-state-controller, gazebo-ros-control, control-toolbox,visp]
+    ros2:
+        #apt: [position-controllers, velocity-controllers, effort-controllers, joint-state-controller, gazebo-ros-control, control-toolbox,visp]
+        git: [https://github.com/gazebosim/ros_gz:galactic]
 
 tbc:
     description: Task-based control
