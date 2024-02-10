@@ -120,7 +120,7 @@ def run(cmd, cwd=None,show=False):
 
 distro = run('lsb_release -cs')[0]
 ros1 = 'noetic'
-ros2 = 'foxy' if distro == 'focal' else 'humble'
+ros2 = 'galactic' if distro == 'focal' else 'humble'
 gz = 'fortress' if distro == 'focal' else 'garden'
 GZ = 'IGNITION' if gz == 'fortress' else 'GZ'
 using_vm = os.uname()[1] in ('ecn-focal', 'ecn-jammy')
@@ -128,6 +128,8 @@ using_vm = os.uname()[1] in ('ecn-focal', 'ecn-jammy')
 
 # after 4 years finally some custom hacks are needed
 if using_vm:
+    if run('grep foxy .bashrc', cwd=os.environ['HOME']):
+        args.force_compile = True
     run(f'{base_path}/vm_update.sh')
 
 
@@ -785,8 +787,8 @@ def perform_update(action = None, poweroff=False):
     updated = [dep.update() for dep in to_install[Source.GIT_ROS] + to_install[Source.GIT_ROS2]]
     # recompile ros1ws
     if Source.GIT_ROS in updated or (args.force_compile and os.path.exists(Depend.folders[Source.GIT_ROS])):
-        if not os.path.exists(f'{Depend.folders[Source.GIT_ROS]}/.catkin_tools'):
-            # purge colcon install
+        if args.force_compile or not os.path.exists(f'{Depend.folders[Source.GIT_ROS]}/.catkin_tools'):
+            # purge catkin install
             for folder in ('build','install','devel','log'):
                 if os.path.exists(f'{Depend.folders[Source.GIT_ROS]}/{folder}'):
                     rmtree(f'{Depend.folders[Source.GIT_ROS]}/{folder}')
@@ -798,6 +800,10 @@ def perform_update(action = None, poweroff=False):
 
     # recompile ros2ws
     if Source.GIT_ROS2 in updated or (args.force_compile and os.path.exists(Depend.folders[Source.GIT_ROS2])):
+
+        if args.force_compile:
+            root = Depend.folders[Source.GIT_ROS2]
+            run(f'rm -rf {root}/build {root}/install {root}/log')
 
         setup_ignored(Depend.folders[Source.GIT_ROS2], 2)
         run([f'bash -c -i "source /opt/ros/{ros2}/setup.bash && {GZ}_VERSION={gz} colcon build --symlink-install --continue-on-error"',
