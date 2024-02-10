@@ -10,6 +10,5 @@ if [ ! $(grep -c foxy ~/.bashrc) -eq 0 ]; then
     sed -i 's/foxy/galactic/g' ~/.bashrc
     sudo apt purge ros-foxy-*
     sudo apt autoremove --purge
+    sed -i 's/foxy/galactic/g' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 fi
-
-

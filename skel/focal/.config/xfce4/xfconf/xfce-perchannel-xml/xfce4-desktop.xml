@@ -38,7 +38,7 @@
         <property name="workspace0" type="empty">
           <property name="color-style" type="int" value="0"/>
           <property name="image-style" type="int" value="4"/>
-          <property name="last-image" type="string" value="/opt/ecn/noetic-foxy.jpg"/>
+          <property name="last-image" type="string" value="/opt/ecn/noetic-galactic.jpg"/>
           <property name="rgba1" type="array">
             <value type="double" value="0.105882"/>
             <value type="double" value="0.172549"/>

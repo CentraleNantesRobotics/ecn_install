@@ -153,7 +153,8 @@ export PS1="\[\e[1;34m\]\w\[\e[0m\]$ "
 export ROS_LOG_DIR="/tmp"
 
 ros1_workspaces="/opt/ros/noetic /opt/ecn/ros1 ~/ros"
-ros2_workspaces="/opt/ros/foxy /opt/ecn/ros2 ~/ros2"
+ros2_workspaces="/opt/ros/galactic /opt/ecn/ros2 ~/ros2"
+export IGNITION_VERSION=fortress
 export GZ_VERSION=fortress
 
 if [[ -d /opt/ecn/ros_management_tools ]]; then
