@@ -109,10 +109,11 @@ avg:
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=pycharm_2021.2.1.deb']
     apt: [python3-opencv,python3-open3d]
 
-#integ:
-    #description: Integration project
+integ:
+    description: Integration project
     #ros:
         #apt: [position-controllers, velocity-controllers, effort-controllers, joint-state-controller, gazebo-ros-control, control-toolbox,visp]
+    mod: [gazebo]
 
 auve:
     description: Autonomous vehicles (AUVE)
