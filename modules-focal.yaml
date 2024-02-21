@@ -110,7 +110,7 @@ rasom:
 
 integ:
     description: Integration project
-    apt: [libgflags-dev]
+    apt: [libgflags-dev,ignition-fortress]
     ros2:
         #apt: [position-controllers, velocity-controllers, effort-controllers, joint-state-controller, gazebo-ros-control, control-toolbox,visp]
         git: [https://github.com/gazebosim/ros_gz:galactic]
