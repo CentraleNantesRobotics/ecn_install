@@ -143,4 +143,4 @@ auve:
 ropah:
     description: Medical robotics
     ros2:
-        apt: [hardware-interface, controller-interface, moveit-servo]
+        apt: [hardware-interface, controller-interface, moveit-servo, moveit-common,gazebo-ros, controller-manager]
