@@ -387,12 +387,14 @@ class Depend:
                 
         if not os.path.exists(base_dir):
             return Status.ABSENT
-                
+
         # check GIT wrt upstream
         run('git fetch',cwd=base_dir)
-        git_status = run('git status', cwd=base_dir)[1]
+        git_status = run('git status', cwd=base_dir)
+        if git_status is None:
+            return Status.OLD
         
-        if 'behind' not in git_status and not args.force_git:
+        if 'behind' not in git_status[1] and not args.force_git:
             return Status.INSTALLED
         return Status.OLD
 
