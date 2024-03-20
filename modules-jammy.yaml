@@ -101,7 +101,7 @@ rasom:
     apt: [libopenscenegraph-dev, libfftw3-dev, libxml++2.6-dev]
     mod: [gazebo]
     ros2:
-        git: [oKermorgant:coral, CentraleNantesROV:floatgen]
+        git: [oKermorgant:coral, CentraleNantesROV:floatgen, oKermorgant:pose_to_tf, CentraleNantesRobotics:auv_control, CentraleNantesRobotics:thruster_manager]
 
 
 avg:
@@ -111,15 +111,12 @@ avg:
 
 integ:
     description: Integration project
-    #ros:
-        #apt: [position-controllers, velocity-controllers, effort-controllers, joint-state-controller, gazebo-ros-control, control-toolbox,visp]
     mod: [gazebo]
 
 auve:
     description: Autonomous vehicles (AUVE)
     apt: [ignition-fortress,jupyter,jupyter-notebook,python3-opencv,python3-networkx,python3-osmnx]
     pip: [open3d,einops,pyquaternion]
-
 
 tbc:
     description: Task-based control
