@@ -101,7 +101,7 @@ rasom:
     apt: [libopenscenegraph-dev, libfftw3-dev, libxml++2.6-dev]
     mod: [gazebo]
     ros2:
-        git: [oKermorgant:coral, CentraleNantesROV:floatgen, oKermorgant:pose_to_tf, CentraleNantesRobotics:auv_control, CentraleNantesRobotics:thruster_manager]
+        git: [oKermorgant:coral, CentraleNantesROV:floatgen, oKermorgant:pose_to_tf, CentraleNantesROV:auv_control, CentraleNantesROV:thruster_manager]
 
 
 avg:
