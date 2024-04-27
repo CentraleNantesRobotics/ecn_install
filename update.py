@@ -122,13 +122,12 @@ distro = run('lsb_release -cs')[0]
 ros1 = 'noetic'
 if distro == 'focal':
     ros2 = 'galactic'
-    gz = 'fortress'
 elif distro == 'jammy':
     ros2 = 'humble'
-    gz = 'garden'
 elif distro == 'noble':
     ros2 = 'jazzy'
-    gz = 'harmonic'
+
+gz = run(f'grep GZ_VERSION skel/{distro}/.bashrc', cwd=base_path)[0].split('=')[1].strip()
 GZ = 'IGNITION' if gz == 'fortress' else 'GZ'
 using_vm = os.uname()[1] in ('ecn-focal', 'ecn-jammy', 'ecn-noble')
 
