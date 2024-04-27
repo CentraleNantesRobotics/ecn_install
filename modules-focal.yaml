@@ -90,7 +90,7 @@ planif:
 
 sofar:
     description: Software architecture / ROS
-    mod: [ros]
+    mod: [midwa]
 
 midwa:
     description: Middleware / ROS 2

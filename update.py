@@ -120,10 +120,17 @@ def run(cmd, cwd=None,show=False):
 
 distro = run('lsb_release -cs')[0]
 ros1 = 'noetic'
-ros2 = 'galactic' if distro == 'focal' else 'humble'
-gz = 'fortress' if distro == 'focal' else 'garden'
+if distro == 'focal':
+    ros2 = 'galactic'
+    gz = 'fortress'
+elif distro == 'jammy':
+    ros2 = 'humble'
+    gz = 'garden'
+elif distro == 'noble':
+    ros2 = 'jazzy'
+    gz = 'harmonic'
 GZ = 'IGNITION' if gz == 'fortress' else 'GZ'
-using_vm = os.uname()[1] in ('ecn-focal', 'ecn-jammy')
+using_vm = os.uname()[1] in ('ecn-focal', 'ecn-jammy', 'ecn-noble')
 
 
 # after 4 years finally some custom hacks are needed

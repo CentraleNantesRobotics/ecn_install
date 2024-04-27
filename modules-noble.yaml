@@ -31,7 +31,7 @@ turtlebot:
         git: [CentraleNantesRobotics:turtlebot3_xacro]
 
 gazebo:
-    apt: [gz-garden,ros-humble-ros-gzgarden]
+    apt: [gz-harmonic]
 
 ros2:
     ros2:
