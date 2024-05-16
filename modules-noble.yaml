@@ -24,6 +24,8 @@ baxter:
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ros-baxter[community]_1.3.1.deb']
     ros2:
         git: [CentraleNantesRobotics:baxter_common_ros2,CentraleNantesRobotics:baxter_simple_sim:ros2]
+    # TODO install required files from source in /opt/ros/obese
+    # create corresponding package?
 
 turtlebot:
     ros2:
@@ -31,7 +33,7 @@ turtlebot:
         git: [CentraleNantesRobotics:turtlebot3_xacro]
 
 gazebo:
-    apt: [gz-harmonic]
+    apt: [ros-jazzy-ros-gz]
 
 ros2:
     ros2:
@@ -39,10 +41,13 @@ ros2:
         git: [oKermorgant:simple_launch]
     apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat,python3-rospkg]
     git: [oKermorgant:ros_management_tools]
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ecn-ros_1.1.2.deb']
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ecn-ros2_1.1.3.deb']
 
 visp:
     apt: [libvisp-dev]
+
+pycharm:
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=pycharm_2024.1.1.deb']
 
 #coppeliasim:
     #deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=coppeliasim_4.3.0.deb']
@@ -103,10 +108,9 @@ rasom:
     ros2:
         git: [oKermorgant:coral, CentraleNantesROV:floatgen, oKermorgant:pose_to_tf, CentraleNantesROV:auv_control, CentraleNantesROV:thruster_manager]
 
-
 avg:
     description: 'Advanced Visual Geometry'
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=pycharm_2021.2.1.deb']
+    mod: [pycharm]
     apt: [python3-opencv,python3-open3d]
 
 integ:
@@ -130,4 +134,4 @@ amoro:
 
 covis:
     description: Computer Vision
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=pycharm_2021.2.1.deb']
+    mod: [pycharm]

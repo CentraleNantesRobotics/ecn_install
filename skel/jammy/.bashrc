@@ -135,7 +135,7 @@ export PS1="\[\e[1;34m\]\w\[\e[0m\]$ "
 # no logs
 export ROS_LOG_DIR="/tmp"
 
-ros1_workspaces="/opt/ros/noetic"
+ros1_workspaces="/opt/ros/obese"
 ros2_workspaces="/opt/ros/humble /opt/ecn/ros2 ~/ros2"
 export GZ_VERSION=garden
 

@@ -119,14 +119,10 @@ def run(cmd, cwd=None,show=False):
 
 
 distro = run('lsb_release -cs')[0]
-ros1 = 'noetic'
-if distro == 'focal':
-    ros2 = 'galactic'
-elif distro == 'jammy':
-    ros2 = 'humble'
-elif distro == 'noble':
-    ros2 = 'jazzy'
-
+ros1 = run(f'grep ros1_workspaces skel/{distro}/.bashrc', cwd=base_path)[0]
+ros1 = ros1.replace('/',' ').split()[3]
+ros2 = run(f'grep ros2_workspaces skel/{distro}/.bashrc', cwd=base_path)[0]
+ros2 = ros2.replace('/',' ').split()[3]
 gz = run(f'grep GZ_VERSION skel/{distro}/.bashrc', cwd=base_path)[0].split('=')[1].strip()
 GZ = 'IGNITION' if gz == 'fortress' else 'GZ'
 using_vm = os.uname()[1] in ('ecn-focal', 'ecn-jammy', 'ecn-noble')
@@ -186,7 +182,7 @@ class Sudo:
             if not any(pkg.startswith(start) for pkg in pkgs):
                 continue
             
-            if distro != 'focal' and start == f'ros-{ros1}':
+            if start == f'ros-{ros1}' and distro > 'focal':
                 # trying to install ROS 1 packages on 22.04+
                 print('ROS 1 is not available on Ubuntu 22.04 or later, current install needs ' + ' '.join(pkg for pkg in pkgs if pkg.startswith(start)))
                 sys.exit(0)
