@@ -316,6 +316,8 @@ class Depend:
             if not pkg.startswith('http'):
                 owner,repo = pkg.split(':',1)
                 pkg = f'https://github.com/{owner}/{repo}'
+        elif src == Source.DEB:
+            pkg = pkg.replace('[]', f'[{distro}]')
         return pkg, src
         
     def matches(self, pkg, src):
