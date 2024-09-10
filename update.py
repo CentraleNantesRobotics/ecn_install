@@ -16,7 +16,6 @@ parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFo
 parser.description = 'Updater for ECN / ROS virtual machine.'
 
 parser.add_argument('-u', metavar='module', type=str, nargs='+', help='Which modules to upgrade (all installed, if empty)', default=())
-parser.add_argument('-b', '--bashrc', action='store_true', default=False, help='Synchronize ~/.bashrc with default one')
 parser.add_argument('-n', '--no_upgrade', action='store_true', default=False, help='Does not perform apt upgrade')
 parser.add_argument('-t', '--test', action='store_true', default=False, help='Run in interactive mode (from a Python console)')
 parser.add_argument('-a', '--all', action='store_true', default=False, help='Install all available modules')
@@ -128,15 +127,6 @@ gz = run(f'grep GZ_VERSION skel/{distro}/.bashrc', cwd=base_path)[0].split('=')[
 GZ = 'IGNITION' if gz == 'fortress' else 'GZ'
 using_vm = os.uname()[1] in ('ecn-focal', 'ecn-jammy', 'ecn-noble')
 
-
-if args.bashrc:
-    res = input('Will override your .bashrc with default one (sourcing ROS / ROS 2 workspaces), confirm [Y/n] ')
-    if res not in ('n','N'):
-        import shutil
-        shutil.copy(f'{base_path}/skel/{distro}/.bashrc', os.environ['HOME'])
-        print('   done.')
-    else:
-        print('   skipping copy of .bashrc')
 
 # after 4 years finally some custom hacks are needed
 if using_vm:
