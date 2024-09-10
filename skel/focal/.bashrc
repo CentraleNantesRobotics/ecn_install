@@ -119,34 +119,6 @@ fi
 # RViz display bug
 export LC_NUMERIC="en_US.UTF-8"
 
-rosdl() {
-ros1ws
-mkdir -p ~/ros/src
-cd ~/ros/src
-echo "https://github.com/oKermorgant/$1.git"
-git clone "https://github.com/oKermorgant/$1.git"
-cd ..
-catkin build
-cd src/$1
-if [ -f CMakeLists.txt ]; then
-    gqt
-fi
-}
-
-ros2dl() {
-ros2ws
-mkdir -p ~/ros2/src
-cd ~/ros2/src
-echo "https://github.com/oKermorgant/$1.git"
-git clone "https://github.com/oKermorgant/$1.git"
-cd ..
-colbuild
-cd src/$1
-if [ -f CMakeLists.txt ]; then
-    gqt
-fi
-}
-
 # shorter prompt
 export PS1="\[\e[1;34m\]\w\[\e[0m\]$ "
 # no logs
@@ -158,8 +130,8 @@ export IGNITION_VERSION=fortress
 export GZ_VERSION=fortress
 
 if [[ -d /opt/ecn/ros_management_tools ]]; then
-  # activate ROS 1 by default
-  source /opt/ecn/ros_management_tools/ros_management.bash -p -k -ros1 -lo
+
+  source /opt/ecn/ros_management_tools/ros_management.bash -p -k -lo
 
   # QtCreator configure shortcut
   alias gqt='python3 /opt/ecn/ros_management_tools/qtcreator/qtcreator_gen_config.py'	# old style

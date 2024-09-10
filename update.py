@@ -16,6 +16,7 @@ parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFo
 parser.description = 'Updater for ECN / ROS virtual machine.'
 
 parser.add_argument('-u', metavar='module', type=str, nargs='+', help='Which modules to upgrade (all installed, if empty)', default=())
+parser.add_argument('-b', '--bashrc', action='store_true', default=False, help='Synchronize ~/.bashrc with default one')
 parser.add_argument('-n', '--no_upgrade', action='store_true', default=False, help='Does not perform apt upgrade')
 parser.add_argument('-t', '--test', action='store_true', default=False, help='Run in interactive mode (from a Python console)')
 parser.add_argument('-a', '--all', action='store_true', default=False, help='Install all available modules')
@@ -128,11 +129,20 @@ GZ = 'IGNITION' if gz == 'fortress' else 'GZ'
 using_vm = os.uname()[1] in ('ecn-focal', 'ecn-jammy', 'ecn-noble')
 
 
+if args.bashrc:
+    res = input('Will override your .bashrc with default one (sourcing ROS / ROS 2 workspaces), confirm [Y/n] ')
+    if res not in ('n','N'):
+        import shutil
+        shutil.copy(f'{base_path}/skel/{distro}/.bashrc', os.environ['HOME'])
+        print('   done.')
+    else:
+        print('   skipping copy of .bashrc')
+
 # after 4 years finally some custom hacks are needed
 if using_vm:
     if run('grep foxy .bashrc', cwd=os.environ['HOME']):
         args.force_compile = True
-    run(f'{base_path}/vm_update.sh')
+    run(f'{base_path}/scripts/vm_update.sh')
 
 
 class Sudo:
@@ -229,9 +239,9 @@ class Sudo:
     def deb_install(self, url):
         dst = os.path.basename(url).split('=')[-1]
         run(f'wget "{url}" -O /tmp/{dst}')
-        #self.run(f'dpkg -i /tmp/{dst}')
         self.run(f'apt install /tmp/{dst}')
-        
+
+
 poweroff = False
 
 if args.poweroff:
@@ -255,7 +265,7 @@ class Enum(object):
 
 
 Action = Enum('Remove', 'Keep', 'Install')
-Source = Enum(*([src_type(src,dst) for src in ('apt','pip','deb','git') for dst in ('', 'ros', 'ros2')]))
+Source = Enum(*([src_type(src,dst) for src in ('apt','pip','deb','git') for dst in ('', 'ros', 'ros2')] + ['script']))
 Status = Enum('Absent', 'Old', 'Installed')
 
 actions = {Action.REMOVE: 'Remove', Action.KEEP: 'Keep as it is', Action.INSTALL: 'Install / update'}
@@ -318,6 +328,11 @@ class Depend:
                 pkg = f'https://github.com/{owner}/{repo}'
         elif src == Source.DEB:
             pkg = pkg.replace('[]', f'[{distro}]')
+        elif src == Source.SCRIPT:
+            for cand in (pkg, f'scripts/{pkg}', f'scripts/{pkg}.bash'):
+                if os.path.exists(get_file(cand)):
+                    pkg = get_file(cand)
+                    break
         return pkg, src
         
     def matches(self, pkg, src):
@@ -386,6 +401,11 @@ class Depend:
             if pkg in Depend.packages:
                 return Status.INSTALLED if Depend.packages[pkg] >= ver else Status.OLD
             return Status.ABSENT
+
+        if self.src == Source.SCRIPT:
+            # delegate to script
+            result = run(self.pkg + ' -c')[0]
+            return getattr(Status, result.upper())
         
         base_dir = self.abs_folder()
                 
@@ -420,6 +440,9 @@ class Depend:
         if self.src == Source.DEB:
             sudo.deb_install(self.pkg)
             return self.src
+
+        if self.src == Source.SCRIPT:
+            sudo.run(self.pkg + ' -i')
         
         # git-based, may also be inside ros1 or ros2 local ws
         root = self.parent_folder()
@@ -443,7 +466,7 @@ class Depend:
             
             # update repo
             Display.msg('Refreshing repo ' + base_dir,True)
-            run('git pull',cwd=base_dir,show=False)
+            run('git pull --recurse-submodules', cwd=base_dir,show=False)
         else:
             # clone
             if self.pkg.count(':') == 2:
@@ -451,9 +474,9 @@ class Depend:
                 url,branch = self.pkg.rsplit(':',1)
                 # branch may be ros-specific
                 branch = branch.replace('<distro>', distro)
-                run(f'git clone {url} -b {branch}', cwd=root,show=True)
+                run(f'git clone --recursive {url} -b {branch}', cwd=root,show=True)
             else:
-                run('git clone ' + self.pkg, cwd=root,show=True)
+                run('git clone --recursive ' + self.pkg, cwd=root,show=True)
             
         # install if not ROS
         if self.src == Source.GIT and os.path.exists(base_dir + '/CMakeLists.txt'):
@@ -471,6 +494,10 @@ class Depend:
         
         base_dir = self.abs_folder()
         pkgs = []
+
+        if self.src == Source.SCRIPT:
+            sudo.run(self.pkg + ' -r')
+            return pkgs
         
         def remove_if_here(path):
             if os.path.exists(path):
@@ -671,6 +698,15 @@ class Module:
 
 with open(get_file(f'modules-{distro}.yaml')) as f:
     info = yaml.safe_load(f)
+
+# keys with comma are double-keys
+keys = list(info.keys())
+for key in keys:
+    if ',' not in key:
+        continue
+    detail = info.pop(key)
+    for mod in key.split(','):
+        info[mod.strip()] = detail
 
 # erase disabled modules
 disable = []
