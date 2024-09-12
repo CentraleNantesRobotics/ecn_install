@@ -30,6 +30,12 @@ if '-u' in sys.argv:
 
 args = parser.parse_args()
 
+# check we do not run as root
+if os.geteuid() == 0 or 'SUDO_UID' in os.environ:
+    print('\n   Do not run this script as root or sudo')
+    import sys
+    sys.exit(0)
+
 
 class Display:
     
@@ -455,7 +461,7 @@ class Depend:
             self.uninstall()
             
             # update repo
-            Display.msg('Refreshing repo ' + base_dir,True)
+            Display.msg('Refreshing repo ' + base_dir)
             run('git pull --recurse-submodules', cwd=base_dir,show=False)
         else:
             # clone
