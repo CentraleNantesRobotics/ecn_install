@@ -71,16 +71,16 @@ class Display:
     def blit():
         
         animations = ['◜◝◞◟','◣◤◥◢','▤▥▦▧▨▩', '▲►▼◄', '/-\\|']
-        done_smb = '✓'
+        done_smb = '..done'  # '✓'
         
-        #animation = choice(animations)
+        #  animation = choice(animations)
         animation = animations[-1]
         idx = 0
         prev_cmd = ''
         while Display.running: 
             if prev_cmd != Display.cmd and prev_cmd != '':
                 print(prev_cmd, done_smb)
-                #animation = choice(animations)
+                #  animation = choice(animations)
                 idx = 0
                 
             if type(Display.cmd) == list:
@@ -131,7 +131,7 @@ ros2 = run(f'grep ros2_workspaces skel/{distro}/.bashrc', cwd=base_path)[0]
 ros2 = ros2.replace('/',' ').split()[3]
 gz = run(f'grep GZ_VERSION skel/{distro}/.bashrc', cwd=base_path)[0].split('=')[1].strip()
 GZ = 'IGNITION' if gz == 'fortress' else 'GZ'
-using_vm = os.uname()[1] in ('ecn-focal', 'ecn-jammy', 'ecn-noble')
+using_vm = 'VirtualBox' in check_output('lspci')
 
 
 # after 4 years finally some custom hacks are needed
