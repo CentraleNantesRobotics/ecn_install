@@ -131,7 +131,7 @@ ros2 = run(f'grep ros2_workspaces skel/{distro}/.bashrc', cwd=base_path)[0]
 ros2 = ros2.replace('/',' ').split()[3]
 gz = run(f'grep GZ_VERSION skel/{distro}/.bashrc', cwd=base_path)[0].split('=')[1].strip()
 GZ = 'IGNITION' if gz == 'fortress' else 'GZ'
-using_vm = 'VirtualBox' in check_output('lspci')
+using_vm = 'VirtualBox' in check_output('lspci').decode('utf-8')
 
 
 # after 4 years finally some custom hacks are needed
@@ -622,7 +622,10 @@ class Module:
         
         if name in special_modules:
             self.configure(special_modules[name])
-        
+
+    def is_default(self):
+        return 'description' in self.config and self.status != Status.ABSENT
+
     def check_status(self, pending = False):
 
         if len(self.all_deps()) == 0:
@@ -769,6 +772,7 @@ def perform_update(action = None, poweroff=False):
     '''
     Final action
     '''
+
     if action is not None:
         for m in modules.values():
             if 'description' in m.config:
@@ -877,7 +881,7 @@ if type(args.u) == list:
 
     if len(to_update) == 0:
         # update all existing ones
-        to_update = [mod for mod in modules if modules[mod].status != Status.ABSENT]
+        to_update = [mod for mod in modules if modules[mod].is_default()]
                 
     for mod in to_update:
         modules[mod].configure(Action.INSTALL)
