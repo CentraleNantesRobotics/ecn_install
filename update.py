@@ -131,11 +131,11 @@ ros2 = run(f'grep ros2_workspaces skel/{distro}/.bashrc', cwd=base_path)[0]
 ros2 = ros2.replace('/',' ').split()[3]
 gz = run(f'grep GZ_VERSION skel/{distro}/.bashrc', cwd=base_path)[0].split('=')[1].strip()
 GZ = 'IGNITION' if gz == 'fortress' else 'GZ'
-using_vm = 'VirtualBox' in check_output('lspci').decode('utf-8')
+using_ecn_vm = os.uname().nodename == 'ecn-'+distro
 
 
 # after 4 years finally some custom hacks are needed
-if using_vm:
+if using_ecn_vm:
     if run('grep foxy .bashrc', cwd=os.environ['HOME']):
         args.force_compile = True
     run(f'{base_path}/scripts/vm_update.sh')
@@ -144,7 +144,7 @@ if using_vm:
 class Sudo:
     def __init__(self,gui=False):
         print('Retrieving system state...')
-        if using_vm:
+        if using_ecn_vm:
             self.passwd = 'ecn'.encode()
         else:
             self.passwd = None
@@ -722,7 +722,7 @@ for mod in disable:
         if mod in info[group]:
             info[group].pop(mod)
 
-ignore = info['vm_ignore'] if 'vm_ignore' in info and using_vm else []
+ignore = info['vm_ignore'] if 'vm_ignore' in info and using_ecn_vm else []
     
 Depend.init_folders(info['lib_folder'] if 'lib_folder' in info else '/opt/ecn')
 modules = dict((name, Module(name, config)) for name, config in info.items() if isinstance(config, dict))
