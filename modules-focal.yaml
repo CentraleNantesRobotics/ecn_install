@@ -99,8 +99,6 @@ arpro:
 manip:
     description: Robot modeling and control
     mod: [visp_ros2, ros2]
-    ros2:
-        [
     apt: [python-is-python3]
 
 planif:
