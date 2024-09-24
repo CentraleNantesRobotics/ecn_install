@@ -22,6 +22,7 @@ parser.add_argument('-a', '--all', action='store_true', default=False, help='Ins
 parser.add_argument('-c', '--clean', action='store_true', default=False, help='Clean listed modules that are not required')
 parser.add_argument('-f', '--force_compile', action='store_true', default=False, help='Force recompilation of ROS workspaces')
 parser.add_argument('-g', '--force_git', action='store_true', default=False, help='Force git pull on suitable folders')
+parser.add_argument('--nopip', action='store_true', default=False, help='Ignore pip dependencies')
 parser.add_argument('-p', '--poweroff', action='store_true', default=False, help='Poweroff after installation / upgrade')
 
 # add empty space after -u if no modules
@@ -77,7 +78,7 @@ class Display:
         animation = animations[-1]
         idx = 0
         prev_cmd = ''
-        while Display.running: 
+        while Display.running:
             if prev_cmd != Display.cmd and prev_cmd != '':
                 print(prev_cmd, done_smb)
                 #  animation = choice(animations)
@@ -617,6 +618,10 @@ class Module:
                 config['mod'].append(dep)
         
         self.config = config
+
+        if 'pip' in config and args.nopip:
+            config.pop('pip')
+            print(' ignoring pip dependencies')
 
         self.parse_depends()
         

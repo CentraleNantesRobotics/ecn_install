@@ -21,7 +21,7 @@ ros:
 
 ros2:
     ros2:
-        apt: [desktop,slider-publisher,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2, urdfdom-py]
+        apt: [desktop,slider-publisher,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2,urdfdom-py]
         git: [oKermorgant:simple_launch]
     apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat,python3-rospkg]
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ecn-ros2_1.1.3.deb']
@@ -58,8 +58,8 @@ pycharm:
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=pycharm_2024.1.1.deb']
 
 # generic MPC stack
-mpc:
-    pip: [do_mpc, casadi]
+#mpc:
+    #pip: [do_mpc, casadi]
     #script: [acados]
 
 # special module that always wants it dependencies to be installed
