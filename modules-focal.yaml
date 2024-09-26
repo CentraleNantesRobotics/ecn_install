@@ -64,7 +64,7 @@ pycharm:
 
 # special module that always wants it dependencies to be installed
 base:
-    apt: [curl, geany, git, qtcreator, libclang-common-8-dev, openssh-server, ipython3, python3-numpy, python3-matplotlib, python3-scipy, python3-sympy, build-essential, cmake, python3-pip, screen]
+    apt: [curl, geany, git, qtcreator, libclang-common-8-dev, openssh-server, ipython3, python3-numpy, python3-matplotlib, python3-scipy, python3-sympy, build-essential, cmake, python3-pip, screen, cmake-curses-gui]
 
 # special module that always wants its dependencies to be removed
 # will be removed unless required by other modules

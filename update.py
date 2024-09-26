@@ -64,7 +64,7 @@ class Display:
     @staticmethod
     def msg(cmd, sudo = False):
         if type(cmd) == list:
-            Display.cmd = [Display.to_msg(cmd[0],sudo), Display.to_msg(' ↪ ' + cmd[1],sudo)]
+            Display.cmd = [Display.to_msg(cmd[0],sudo), Display.to_msg(' -> ' + cmd[1],sudo)]
         else:
             Display.cmd = Display.to_msg(cmd, sudo)
         
