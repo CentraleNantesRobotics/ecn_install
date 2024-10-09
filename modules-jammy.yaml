@@ -32,7 +32,7 @@ gazebo:
 
 ros2:
     ros2:
-        apt: [desktop,slider-publisher,simple-launch,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-transport-plugins,ament-cmake,urdfdom-py]
+        apt: [desktop,slider-publisher,simple-launch,robot-localization,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-transport-plugins,ament-cmake,urdfdom-py]
         git: [oKermorgant:simple_launch]
     apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat,python3-rospkg]
     git: [oKermorgant:ros_management_tools]
@@ -100,7 +100,7 @@ integ:
 
 auve:
     description: Autonomous vehicles (AUVE)
-    apt: [ignition-fortress,jupyter,jupyter-notebook,python3-opencv,python3-networkx,python3-osmnx]
+    apt: [jupyter,jupyter-notebook,python3-opencv,python3-networkx,python3-osmnx]
     pip: [open3d,einops,pyquaternion]
 
 tbc:
