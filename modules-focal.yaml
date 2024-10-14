@@ -1,14 +1,4 @@
-# student groups
-OD Robotique: [arpro, rasom, midwa, planif,covis,integ,ropah]
-M1 CORO: [arpro,sofar,manip,covis]
-M2 CORO-IMARO: [tbc,amoro,auve]
-
-# where git-based packages will be downloaded
-# ros packages will be in lib_folder/ros1 and lib_folder/ros2
-lib_folder: /opt/ecn
-
-# CMake packages that should be ignored (not compiled) in the VM
-vm_ignore: [baxter_bridge]
+OD Robotique: [planif]
 
 # hidden modules (without description) others may depend on
 
@@ -19,19 +9,10 @@ ros:
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ecn-ros_1.1.3.deb']
     git: [oKermorgant:ros_management_tools]
 
-ros2:
-    ros2:
-        apt: [desktop,slider-publisher,robot-localization,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2,urdfdom-py]
-        git: [oKermorgant:simple_launch]
-    apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat,python3-rospkg]
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ecn-ros2_1.1.3.deb']
-    git: [oKermorgant:ros_management_tools]
-
-visp_ros1:
+# ViSP not packaged in Focal, use ROS packages
+visp:
     ros:
         apt: [visp]
-
-visp_ros2:
     ros2:
         apt: [visp]
 
@@ -41,114 +22,24 @@ coppeliasim:
         apt: [cv-bridge]
         git: [oKermorgant:coppeliasim_ros_launcher, oKermorgant:ecn_common]
 
-log2plot:
-    git: [oKermorgant:log2plot]
-    apt: [python3-matplotlib, texlive-latex-extra, texlive-fonts-recommended, dvipng]
-    mod: [visp_ros1,visp_ros2]
-
-mapsim:
-    ros2:
-        git: [oKermorgant:map_simulator:ros2,oKermorgant:pose_to_tf]
-
-duels:
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=duels[]_6.0.2.deb']
-    apt: [python3-pygame, libzmq3-dev, python3-zmq,libyaml-cpp-dev, python3-yaml]
-
-pycharm:
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=pycharm_2024.1.1.deb']
-
-# generic MPC stack
-#mpc:
-    #pip: [do_mpc, casadi]
-    #script: [acados]
-
-# special module that always wants it dependencies to be installed
-base:
-    apt: [curl, geany, git, qtcreator, libclang-common-8-dev, openssh-server, ipython3, python3-numpy, python3-matplotlib, python3-scipy, python3-sympy, build-essential, cmake, python3-pip, screen, cmake-curses-gui]
-
-# special module that always wants its dependencies to be removed
-# will be removed unless required by other modules
-cleanup:
-    git: [lagadic:visp]
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=log2plot_1.0.0.deb','https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=libvisp-dev_3.4.1-1_amd64.deb']
-    ros:
-        git: [CentraleNantesRobotics:baxter_simple_sim,CentraleNantesRobotics:baxter_common,CentraleNantesRobotics:baxter_interface,CentraleNantesRobotics:baxter_tools]
-    ros2:
-        git: [oKermorgant:anchor_msgs]
-
-baxter:
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ros-baxter[]_1.3.1.deb']
-    ros2:
-        git: [CentraleNantesRobotics:baxter_common_ros2,CentraleNantesRobotics:baxter_simple_sim:ros2]
-
-turtlebot:
-    ros2:
-        apt: [image-transport-plugins, turtlebot3_description]
-        git: [CentraleNantesRobotics:turtlebot3_xacro]
-
 gazebo:
     apt: [libgflags-dev,ignition-fortress]
     ros2:
-        git: [gazebosim:ros_gz:galactic,oKermorgant:pose_to_tf]
+        git: [gazebosim:ros_gz:galactic]
 
 # main module definitions
-arpro:
-    description: 'Advanced programming / C++'
-    mod: [duels]
-
-manip:
-    description: Robot modeling and control
-    mod: [visp_ros2, ros2]
-    apt: [python-is-python3]
-
 planif:
     description: Robot planning and control
-    mod: [visp_ros1, coppeliasim]
+    mod: [visp, coppeliasim]
 
-midwa,sofar:
-    description: Middleware / ROS 2
-    mod: [mapsim,baxter,turtlebot]
-
-#rasom:
-    #description: Underwater robotics
-    #apt: [libopenscenegraph-dev, libfftw3-dev, libxml++2.6-dev]
-    #ros:
-        #apt: [control-toolbox]
-        #git: [oKermorgant:underwater_simulation, freefloating-gazebo:freefloating_gazebo]
-
-rasom,drones:
-    description: Underwater robotics
-    #apt: [libopenscenegraph-dev, libfftw3-dev, libxml++2.6-dev]
-    mod: [gazebo]
-    ros2:
-        git: [CentraleNantesROV:floatgen, CentraleNantesROV:auv_control, CentraleNantesROV:thruster_manager, CentraleNantesROV:bluerov2]
-
+# TBC uses CoppeliaSim in Focal
 tbc:
     description: Task-based control
-    mod: [coppeliasim,log2plot,baxter]
+    mod: [coppeliasim]
 
+# AMORO uses Gazebo classic in Focal
 amoro:
     description: Advanced Modeling of Robots
     ros2:
         apt: [ros2-control,ros2-controllers,gazebo-ros2-control,gazebo-ros-pkgs]
     apt: [gummi, python3-pyqtgraph]    # tex editor for reports?
-
-avg:
-    description: 'Advanced Visual Geometry'
-    mod: [pycharm]
-    apt: [python3-opencv]
-    #pip: [open3d]
-
-covis:
-    description: Computer Vision
-    mod: [pycharm]
-
-auve:
-    description: Autonomous vehicles (AUV)
-    apt: [ignition-fortress,jupyter,jupyter-notebook,python3-opencv,python3-networkx,python3-osmnx]
-    #pip: [open3d,einops,pyquaternion]
-
-ropah:
-    description: Medical robotics
-    ros2:
-        apt: [hardware-interface, controller-interface, moveit-servo, moveit-common, gazebo-ros, controller-manager, ros2-control, ros2-controllers, gazebo-ros2-control, gazebo-ros-pkgs]

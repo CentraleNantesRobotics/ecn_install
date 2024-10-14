@@ -38,6 +38,25 @@ if os.geteuid() == 0 or 'SUDO_UID' in os.environ:
     sys.exit(0)
 
 
+def fuse(src1: dict, src2: dict, prev = []):
+    keys = set(src1.keys()).union(src2.keys())
+    dst = {}
+
+    for key in keys:
+        if key not in src2:
+            dst[key] = src1[key]
+        elif key not in src1:
+            dst[key] = src2[key]
+        elif isinstance(src1[key], str):
+            dst[key] = src1[key]
+        elif isinstance(src1[key], list):
+            dst[key] = src1[key] + src2[key]
+        else:
+            dst[key] = fuse(src1[key], src2[key], prev + [key])
+
+    return dst
+
+
 class Display:
     
     user = os.environ['USER']
@@ -700,8 +719,9 @@ class Module:
             dep.configure(self.name, action)
             
 
-with open(get_file(f'modules-{distro}.yaml')) as f:
-    info = yaml.safe_load(f)
+# read global + distro-specific modules
+info = fuse(yaml.safe_load(get_file('modules.yaml')),
+            yaml.safe_load(get_file(f'modules-{distro}.yaml')))
 
 # keys with comma are double-keys
 keys = list(info.keys())
