@@ -668,11 +668,19 @@ class Module:
         
     def sync_depends(self, modules):
                 
-        if 'mod' in self.config:
-            for name in self.config.pop('mod'):
-                for level,deps in modules[name].sync_depends(modules).items():
-                    self.add_depends(deps, level+1)
-            self.check_status()
+        try:
+            if 'mod' in self.config:
+                for name in self.config.pop('mod'):
+                    for level,deps in modules[name].sync_depends(modules).items():
+                        self.add_depends(deps, level+1)
+                self.check_status()
+        except KeyError as err:
+            if self.name == 'cleanup':
+                print('Would cleanup invalid dependency: ', err)
+            else:
+                print('While parsing dependencies of',self.name)
+                raise(err)
+
         return self.deps
     
     def all_deps(self):
@@ -922,11 +930,14 @@ if args.all:
 
 sys._excepthook = sys.excepthook
 
+
 def exception_hook(exctype, value, traceback):
     print(exctype, value, traceback)
-    sys._excepthook(exctype, value, traceback) 
-    sys.exit(1) 
-sys.excepthook = exception_hook 
+    sys._excepthook(exctype, value, traceback)
+    sys.exit(1)
+
+
+sys.excepthook = exception_hook
 
 Display.endl()
 
@@ -936,6 +947,7 @@ Display.endl()
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout,QHBoxLayout,QGridLayout, QLabel, QPushButton, QCheckBox, QComboBox, QSpacerItem, QSizePolicy, QInputDialog, QLineEdit
 from PyQt5.QtCore import pyqtSignal as Signal
 from PyQt5.QtGui import QFont, QIcon
+
 
 def Font(size = 10):
     return QFont("Helvetica", size, QFont.Bold)
@@ -973,30 +985,32 @@ class UpdaterGUI(QWidget):
         
         mod_layout = QGridLayout()
         spacer = QSpacerItem(10, 20, QSizePolicy.Minimum, QSizePolicy.Expanding)
-        for i,module in enumerate(modules.values()):
-            if 'description' in module.config:
-                mod_layout.addItem(spacer, i, 0)
-                label = QLabel(module.description(), self)
-                label.setFont(font)
-                mod_layout.addWidget(label, i, 1)
-                mod_layout.addItem(spacer, i, 2)
-                
-                label = QLabel(status[module.status], self)
-                label.setFont(font)
-                mod_layout.addWidget(label, i, 3)
-                
-                module.menu = QComboBox(self)
-                for choice in actions.values():
-                    module.menu.addItem(choice)
-                if module.status == Status.OLD:
-                    module.menu.setCurrentIndex(Action.INSTALL)
-                else:
-                    module.menu.setCurrentIndex(Action.KEEP)
-                module.menu.currentIndexChanged.connect(module.configure)
-                    
-                module.menu.setFont(font)
-                mod_layout.addWidget(module.menu, i, 4)
-                mod_layout.addItem(spacer, i, 5)
+
+        valid = sorted([m for m in modules.values() if 'description' in m.config],
+                       key = lambda m: m.name)
+        for i,module in enumerate(valid):
+            mod_layout.addItem(spacer, i, 0)
+            label = QLabel(module.description(), self)
+            label.setFont(font)
+            mod_layout.addWidget(label, i, 1)
+            mod_layout.addItem(spacer, i, 2)
+
+            label = QLabel(status[module.status], self)
+            label.setFont(font)
+            mod_layout.addWidget(label, i, 3)
+
+            module.menu = QComboBox(self)
+            for choice in actions.values():
+                module.menu.addItem(choice)
+            if module.status == Status.OLD:
+                module.menu.setCurrentIndex(Action.INSTALL)
+            else:
+                module.menu.setCurrentIndex(Action.KEEP)
+            module.menu.currentIndexChanged.connect(module.configure)
+
+            module.menu.setFont(font)
+            mod_layout.addWidget(module.menu, i, 4)
+            mod_layout.addItem(spacer, i, 5)
                 
         for group in groups.values():
             if all(modules[name].status != Status.ABSENT for name in group['modules']):
