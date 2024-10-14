@@ -38,7 +38,7 @@ if os.geteuid() == 0 or 'SUDO_UID' in os.environ:
     sys.exit(0)
 
 
-def fuse(src1: dict, src2: dict, prev = []):
+def fuse(src1: dict, src2: dict):
     keys = set(src1.keys()).union(src2.keys())
     dst = {}
 
@@ -52,7 +52,7 @@ def fuse(src1: dict, src2: dict, prev = []):
         elif isinstance(src1[key], list):
             dst[key] = src1[key] + src2[key]
         else:
-            dst[key] = fuse(src1[key], src2[key], prev + [key])
+            dst[key] = fuse(src1[key], src2[key])
 
     return dst
 
@@ -399,7 +399,7 @@ class Depend:
         if self.src == Source.PIP:
             try:
                 out = run('pip3 show ' + self.pkg)
-                return Status.INSTALLED
+                return Status.INSTALLED if out else Status.ABSENT
             except CalledProcessError:
                 return Status.ABSENT
             except FileNotFoundError:

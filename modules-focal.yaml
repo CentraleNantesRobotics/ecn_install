@@ -32,13 +32,17 @@ planif:
     description: Robot planning and control
     mod: [visp, coppeliasim]
 
+# only through pip
 auve:
     description: Autonomous vehicles (AUVE)
     pip: [einops,pyquaternion,open3d]
 
+# Open3d only through pip
+avg:
+    pip: [open3d]
+
 # TBC uses CoppeliaSim in Focal
 tbc:
-    description: Task-based control
     mod: [coppeliasim]
 
 # AMORO uses Gazebo classic in Focal
