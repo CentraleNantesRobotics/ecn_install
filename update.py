@@ -720,8 +720,8 @@ class Module:
             
 
 # read global + distro-specific modules
-info = fuse(yaml.safe_load(get_file('modules.yaml')),
-            yaml.safe_load(get_file(f'modules-{distro}.yaml')))
+info = fuse(yaml.safe_load(open(get_file('modules.yaml'))),
+            yaml.safe_load(open(get_file(f'modules-{distro}.yaml'))))
 
 # keys with comma are double-keys
 keys = list(info.keys())
