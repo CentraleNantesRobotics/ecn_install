@@ -34,8 +34,7 @@ planif:
 
 auve:
     description: Autonomous vehicles (AUVE)
-    apt: [python3-open3d]
-    pip: [einops,pyquaternion]
+    pip: [einops,pyquaternion,open3d]
 
 # TBC uses CoppeliaSim in Focal
 tbc:
