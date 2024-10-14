@@ -267,7 +267,7 @@ if args.poweroff:
         
 sudo = Sudo()
 
-                    
+
 def src_type(src, dst):
     return '_'.join([src,dst]).upper().strip('_')
 
@@ -676,7 +676,7 @@ class Module:
                 self.check_status()
         except KeyError as err:
             if self.name == 'cleanup':
-                print('Would cleanup invalid dependency: ', err)
+                print('Invalid dependency in cleanup: ', err)
             else:
                 print('While parsing dependencies of',self.name)
                 raise(err)
