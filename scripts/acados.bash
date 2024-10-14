@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-ACADOS_VERSION=v0.3.2
+ACADOS_VERSION=v0.4.0
 ACADOS_ROOT=/opt/acados
 ACADOS_SRC=${ACADOS_ROOT}/src
 ACADOS_BUILD=${ACADOS_ROOT}/build
 ACADOS_INSTALL=${ACADOS_ROOT}/install
+TERA_RENDERER=0.0.34
 
 
 if [[ "$*" == *"-c"* ]]; then
@@ -34,7 +35,7 @@ if [[ "$*" == *"-i"* ]]; then
     mkdir -p $ACADOS_BUILD
     cd $ACADOS_ROOT
     if [[ -e ${ACADOS_SRC} ]];then
-        (cd ${ACADOS_SRC}; git checkout ${ACADOS_VERSION})
+        (cd ${ACADOS_SRC}; git pull; git checkout ${ACADOS_VERSION})
     else
         git clone --recursive https://github.com/acados/acados.git -b ${ACADOS_VERSION} src
     fi
@@ -52,7 +53,7 @@ if [[ "$*" == *"-i"* ]]; then
     pip3 install -e ${ACADOS_SRC}/interfaces/acados_template
 
     mkdir -p ${ACADOS_INSTALL}/bin
-    wget https://github.com/acados/tera_renderer/releases/download/v0.0.34/t_renderer-v0.0.34-linux \
+    wget https://github.com/acados/tera_renderer/releases/download/v${TERA_RENDERER}/t_renderer-v${TERA_RENDERER}-linux \
         -O ${ACADOS_INSTALL}/bin/t_renderer
     chmod +x ${ACADOS_INSTALL}/bin/t_renderer
 
