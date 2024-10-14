@@ -32,6 +32,11 @@ planif:
     description: Robot planning and control
     mod: [visp, coppeliasim]
 
+auve:
+    description: Autonomous vehicles (AUVE)
+    apt: [python3-open3d]
+    pip: [einops,pyquaternion]
+
 # TBC uses CoppeliaSim in Focal
 tbc:
     description: Task-based control

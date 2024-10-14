@@ -21,8 +21,8 @@ avg:
 
 auve:
     description: Autonomous vehicles (AUVE)
-    apt: [jupyter,jupyter-notebook,python3-opencv,python3-networkx,python3-osmnx]
-    pip: [open3d,einops,pyquaternion]
+    apt: [python3-open3d]
+    pip: [einops,pyquaternion]
 
 # TBC uses Gazebo in Jammy+
 tbc:
