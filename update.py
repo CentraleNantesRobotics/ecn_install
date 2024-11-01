@@ -22,6 +22,7 @@ parser.add_argument('-a', '--all', action='store_true', default=False, help='Ins
 parser.add_argument('-c', '--clean', action='store_true', default=False, help='Clean listed modules that are not required')
 parser.add_argument('-f', '--force_compile', action='store_true', default=False, help='Force recompilation of ROS workspaces')
 parser.add_argument('-g', '--force_git', action='store_true', default=False, help='Force git pull on suitable folders')
+parser.add_argument('--nosrc', action='store_true', default=False, help='Ignore source dependencies')
 parser.add_argument('--nopip', action='store_true', default=False, help='Ignore pip dependencies')
 parser.add_argument('-p', '--poweroff', action='store_true', default=False, help='Poweroff after installation / upgrade')
 
@@ -82,7 +83,7 @@ class Display:
                 
     @staticmethod
     def msg(cmd, sudo = False):
-        if type(cmd) == list:
+        if isinstance(cmd, list):
             Display.cmd = [Display.to_msg(cmd[0],sudo), Display.to_msg(' -> ' + cmd[1],sudo)]
         else:
             Display.cmd = Display.to_msg(cmd, sudo)
@@ -103,7 +104,7 @@ class Display:
                 #  animation = choice(animations)
                 idx = 0
                 
-            if type(Display.cmd) == list:
+            if isinstance(Display.cmd, list):
                 print(Display.cmd[0])
                 Display.cmd = Display.cmd[1]
             if Display.cmd != '':
@@ -136,7 +137,7 @@ def get_file(name):
 def run(cmd, cwd=None,show=False):
     if show:
         Display.msg(cmd)
-    if type(cmd) == list:
+    if isinstance(cmd, list):
         cmd = cmd[0]
     try:
         return check_output(shlex.split(cmd), stderr=PIPE, cwd=cwd).decode('utf-8').splitlines()
@@ -184,7 +185,7 @@ class Sudo:
         
         if show:
             Display.msg(cmd, True)
-        if type(cmd) == list:
+        if isinstance(cmd, list):
             cmd = cmd[0]
         proc = Popen(['sudo','-S'] + shlex.split(cmd), stdin=PIPE, stderr=PIPE, stdout=PIPE if show else DEVNULL,cwd=cwd)
         proc.communicate(self.passwd)
@@ -358,8 +359,8 @@ class Depend:
     def configure(self, module, action):
         self.pending[module] = action
         self.result = max(self.pending.values())
-        #print(f'{module} wants {self.pkg} to be: {actions[action]} -> {actions[self.result]}')
-        #print('', self.pending)
+        # print(f'{module} wants {self.pkg} to be: {actions[action]} -> {actions[self.result]}')
+        # print('', self.pending)
         
     def pending_status(self):
         if self.result == Action.INSTALL:
@@ -422,6 +423,9 @@ class Depend:
             # delegate to script
             result = run(self.pkg + ' -c')[0]
             return getattr(Status, result.upper())
+
+        if args.nosrc:
+            return Status.INSTALLED
         
         base_dir = self.abs_folder()
                 
@@ -679,7 +683,7 @@ class Module:
                 print('Invalid dependency in cleanup: ', err)
             else:
                 print('While parsing dependencies of',self.name)
-                raise(err)
+                raise err
 
         return self.deps
     
@@ -868,9 +872,11 @@ def perform_update(action = None, poweroff=False):
                 if os.path.exists(f'{Depend.folders[Source.GIT_ROS]}/{folder}'):
                     rmtree(f'{Depend.folders[Source.GIT_ROS]}/{folder}')
                     
-            run(f'catkin config --init --extend /opt/ros/{ros1} --install -DCATKIN_ENABLE_TESTING=False --make-args -Wno-dev --cmake-args -DCMAKE_BUILD_TYPE=Release', cwd=Depend.folders[Source.GIT_ROS])
+            run(f'catkin config --init --extend /opt/ros/{ros1} --install -DCATKIN_ENABLE_TESTING=False --make-args -Wno-dev --cmake-args -DCMAKE_BUILD_TYPE=Release',
+                cwd=Depend.folders[Source.GIT_ROS])
         setup_ignored(Depend.folders[Source.GIT_ROS], 1)
-        run([f'catkin build  --continue-on-failure', f'Compiling ROS 1 auxiliary workspace @ {Depend.folders[Source.GIT_ROS]}'], cwd=Depend.folders[Source.GIT_ROS], show=True)
+        run(['catkin build  --continue-on-failure', f'Compiling ROS 1 auxiliary workspace @ {Depend.folders[Source.GIT_ROS]}'],
+            cwd=Depend.folders[Source.GIT_ROS], show=True)
         need_chmod = True
 
     # recompile ros2ws
@@ -908,7 +914,7 @@ if args.test:
     # to test things
     Display.stop()
 
-if type(args.u) == list:
+if isinstance(args.u, list):
     # '-u' was given
     to_update = [mod for mod in modules if mod in args.u]
 
@@ -944,8 +950,7 @@ Display.endl()
 
 # GUI part
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout,QHBoxLayout,QGridLayout, QLabel, QPushButton, QCheckBox, QComboBox, QSpacerItem, QSizePolicy, QInputDialog, QLineEdit
-from PyQt5.QtCore import pyqtSignal as Signal
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout,QHBoxLayout,QGridLayout, QLabel, QPushButton, QCheckBox, QComboBox, QSpacerItem, QSizePolicy
 from PyQt5.QtGui import QFont, QIcon
 
 
@@ -1038,13 +1043,10 @@ class UpdaterGUI(QWidget):
         
     def group_update(self, clicked):
         module_checked = dict((name,False) for group in groups.values() for name in group['modules'])
-        #print([(m, c) for m,c in module_checked.items()])
         for name,group in groups.items():
             
             for module in group['modules']:
                 module_checked[module] = module_checked[module] or group['cb'].isChecked()
-            #print(name, group['cb'].isChecked())
-            #print(module_checked)
         
         for name,checked in module_checked.items():
             module = modules[name]
@@ -1052,6 +1054,7 @@ class UpdaterGUI(QWidget):
                 module.menu.setCurrentIndex(Action.INSTALL)
             else:
                 module.menu.setCurrentIndex(Action.KEEP)
+
 
 app = QApplication(sys.argv)
 gui = UpdaterGUI()

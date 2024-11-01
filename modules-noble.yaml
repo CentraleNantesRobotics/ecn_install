@@ -1,11 +1,14 @@
 # hidden modules (without description) others may depend on
 
 # special module that always wants it dependencies to be installed
+# from Noble+ we use Kubuntu
 base:
-    apt: [geany, libclang-common-8-dev]
+    apt: [kate]
 
 gazebo:
-    apt: [gz-garden,ros-humble-ros-gzgarden]
+    apt: [gz-harmonic]
+    ros2:
+        apt: [ros-gz-bridge]
 
 visp:
     apt: [libvisp-dev]

@@ -2,6 +2,10 @@ OD Robotique: [planif]
 
 # hidden modules (without description) others may depend on
 
+# special module that always wants it dependencies to be installed
+base:
+    apt: [geany, libclang-common-8-dev]
+
 ros:
     ros:
         apt: [desktop, joint-state-publisher,robot-localization,vision-opencv,gazebo-ros-pkgs,image-view,compressed-image-transport,amcl,control-toolbox,kdl-parser-py,slider-publisher]

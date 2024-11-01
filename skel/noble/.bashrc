@@ -124,7 +124,7 @@ export ROS_LOG_DIR="/tmp"
 
 ros1_workspaces="/opt/ros/obese"
 ros2_workspaces="/opt/ros/jazzy /opt/ecn/ros2 ~/ros2"
-export GZ_VERSION=harmomic
+export GZ_VERSION=harmonic
 
 # activate ROS 2 by default
 if [[ -f /opt/ecn/ros_management_tools/ros_management.bash ]]; then
