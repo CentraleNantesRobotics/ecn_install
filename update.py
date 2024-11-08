@@ -256,7 +256,7 @@ class Sudo:
     def deb_install(self, url):
         dst = os.path.basename(url).split('=')[-1]
         run(f'wget "{url}" -O /tmp/{dst}')
-        self.run(f'apt install /tmp/{dst}')
+        self.run(f'apt install -qy /tmp/{dst}')
 
 
 poweroff = False
