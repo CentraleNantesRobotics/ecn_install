@@ -889,9 +889,13 @@ def perform_update(action = None, poweroff=False):
             run(f'rm -rf {root}/build {root}/install {root}/log')
 
         setup_ignored(Depend.folders[Source.GIT_ROS2], 2)
-        run([f'bash -c -i "source /opt/ros/{ros2}/setup.bash && {GZ}_VERSION={gz} colcon build --symlink-install --continue-on-error"',
+        out = run([f'bash -c -i "source /opt/ros/{ros2}/setup.bash && {GZ}_VERSION={gz} colcon build --symlink-install --continue-on-error"',
              f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]}'],
             cwd=Depend.folders[Source.GIT_ROS2], show=True)
+
+        for line in out:
+            if 'failed:' in out:
+                print(line)
         need_chmod = True
     
     if need_chmod:
