@@ -870,8 +870,12 @@ def perform_update(action = None, poweroff=False):
                 if os.path.exists(f'{Depend.folders[Source.GIT_ROS]}/{folder}'):
                     rmtree(f'{Depend.folders[Source.GIT_ROS]}/{folder}')
                     
-            run(f'catkin config --init --extend /opt/ros/{ros1} --install -DCATKIN_ENABLE_TESTING=False --make-args -Wno-dev --cmake-args -DCMAKE_BUILD_TYPE=Release',
+            out = run(f'catkin config --init --extend /opt/ros/{ros1} --install -DCATKIN_ENABLE_TESTING=False --make-args -Wno-dev --cmake-args -DCMAKE_BUILD_TYPE=Release',
                 cwd=Depend.folders[Source.GIT_ROS])
+
+            for line in out:
+                if 'failed:' in out:
+                    print(line)
         setup_ignored(Depend.folders[Source.GIT_ROS], 1)
         run(['catkin build  --continue-on-failure', f'Compiling ROS 1 auxiliary workspace @ {Depend.folders[Source.GIT_ROS]}'],
             cwd=Depend.folders[Source.GIT_ROS], show=True)
