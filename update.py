@@ -616,7 +616,7 @@ class Module:
     
     depends = []
     
-    def add_depend(self, pkg, src):
+    def build_depend(self, pkg, src):
         
         for dep in Module.depends:
             if dep.matches(pkg, src):
@@ -625,7 +625,7 @@ class Module:
             dep = Depend(pkg, src)
             Module.depends.append(dep)
         
-        self.add_depends(dep)
+        self.add_depend(dep)
         if 'description' in self.config:
             dep.configure(self.name, Action.KEEP)
         if 'cmake' in self.config:
@@ -637,8 +637,9 @@ class Module:
         for dep in ('ros','ros2'):
             if name != dep and dep in config:
                 if 'mod' not in config:
-                    config['mod'] = []
-                config['mod'].append(dep)
+                    config['mod'] = [dep]
+                elif dep not in config['mod']:
+                    config['mod'].append(dep)
         
         self.config = config
 
@@ -656,15 +657,15 @@ class Module:
 
     def check_status(self, pending = False):
 
-        if len(self.all_deps()) == 0:
+        if len(self.deps) == 0:
             self.status = Status.INSTALLED
             if pending:
                 return self.status
         elif pending:
-            self.status = min(dep.pending_status() for dep in self.all_deps())
+            self.status = min(dep.pending_status() for dep in self.deps)
             return self.status
         else:
-            self.status = min(dep.status for dep in self.all_deps())
+            self.status = min(dep.status for dep in self.deps)
         
         if 'description' in self.config:
             # auto clean deps if module is not here
@@ -675,8 +676,8 @@ class Module:
         try:
             if 'mod' in self.config:
                 for name in self.config.pop('mod'):
-                    for level,deps in modules[name].sync_depends(modules).items():
-                        self.add_depends(deps, level+1)
+                    deps = modules[name].sync_depends(modules)
+                    self.add_depends(deps)
                 self.check_status()
         except KeyError as err:
             if self.name == 'cleanup':
@@ -687,22 +688,19 @@ class Module:
 
         return self.deps
     
-    def all_deps(self):
-        return [dep for deps in self.deps.values() for dep in deps]
+    # def all_deps(self):
+    #     return [dep for deps in self.deps.values() for dep in deps]
 
-    def add_depends(self, deps, level = 0):
-        
-        if level not in self.deps:
-            self.deps[level] = set()
-        if isinstance(deps, set):
-            for dep in deps:
-                self.deps[level].add(dep)
-        else:
-            self.deps[level].add(deps)
+    def add_depend(self, dep):
+        self.deps.add(dep)
+
+    def add_depends(self, deps):
+        for dep in deps:
+            self.deps.add(dep)
         
     def parse_depends(self):
         
-        self.deps = {}
+        self.deps = set()
         
         for key in Source.__dict__:
             src = key.lower().split('_')
@@ -719,7 +717,7 @@ class Module:
                 continue
             
             for pkg in sub[src]:
-                self.add_depend(pkg, getattr(Source, key))
+                self.build_depend(pkg, getattr(Source, key))
         
     def description(self):
         return self.name.upper() + ' (' + self.config['description'] + ')'
@@ -727,7 +725,7 @@ class Module:
     def configure(self, action):
         if self.name in special_modules:
             action = special_modules[self.name]
-        for dep in self.all_deps():
+        for dep in self.deps:
             dep.configure(self.name, action)
             
 
@@ -742,7 +740,7 @@ for key in keys:
         continue
     detail = info.pop(key)
     for mod in key.split(','):
-        info[mod.strip()] = detail
+        info[mod.strip()] = dict(detail)
 
 # erase disabled modules
 disable = []
