@@ -62,7 +62,7 @@ baxter:
 
 turtlebot:
     ros2:
-        apt: [image-transport-plugins, turtlebot3_description]
+        apt: [image-transport-plugins, turtlebot3-description]
         git: [CentraleNantesRobotics:turtlebot3_xacro]
 
 
