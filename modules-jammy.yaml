@@ -10,6 +10,10 @@ gazebo:
 visp:
     apt: [libvisp-dev]
 
+turtlebot:
+    ros2:
+        apt: [turtlebot3-description]
+
 # main module definitions
 
 avg:

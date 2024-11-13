@@ -31,6 +31,10 @@ gazebo:
     ros2:
         git: [gazebosim:ros_gz:galactic]
 
+turtlebot:
+    ros2:
+        apt: [turtlebot3-description]
+
 # main module definitions
 planif:
     description: Robot planning and control
