@@ -892,9 +892,6 @@ def perform_update(action = None, poweroff=False):
              f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]}'],
             cwd=Depend.folders[Source.GIT_ROS2], show=True)
 
-        for line in out:
-            if 'failed:' in out:
-                print(line)
         need_chmod = True
     
     if need_chmod:
