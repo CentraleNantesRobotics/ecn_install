@@ -250,8 +250,7 @@ class Sudo:
                 actually_removed.append(pkg)
         
         if len(actually_removed):
-            self.run(['apt purge -qy ' + ' '.join(actually_removed), 'Removing packages'])
-            self.run('apt autoremove --purge -qy')
+            self.run(['apt purge -qy --autoremove ' + ' '.join(actually_removed), 'Removing packages'])
         
     def deb_install(self, url):
         dst = os.path.basename(url).split('=')[-1]
