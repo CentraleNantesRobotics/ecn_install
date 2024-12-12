@@ -855,6 +855,7 @@ def perform_update(action = None, poweroff=False):
         dep.update()
             
     # git-based
+    need_chmod = len(to_install[Source.GIT]) > 0
     for dep in to_install[Source.GIT]:
         dep.update()
         
@@ -877,6 +878,7 @@ def perform_update(action = None, poweroff=False):
         setup_ignored(Depend.folders[Source.GIT_ROS], 1)
         run(['catkin build  --continue-on-failure', f'Compiling ROS 1 auxiliary workspace @ {Depend.folders[Source.GIT_ROS]}'],
             cwd=Depend.folders[Source.GIT_ROS], show=True)
+        need_chmod = True
 
     # recompile ros2ws
     if Source.GIT_ROS2 in updated or (args.force_compile and os.path.exists(Depend.folders[Source.GIT_ROS2])):
@@ -889,8 +891,11 @@ def perform_update(action = None, poweroff=False):
         out = run([f'bash -c -i "source /opt/ros/{ros2}/setup.bash && {GZ}_VERSION={gz} colcon build --symlink-install --continue-on-error"',
              f'Compiling ROS 2 auxiliary workspace @ {Depend.folders[Source.GIT_ROS2]}'],
             cwd=Depend.folders[Source.GIT_ROS2], show=True)
+
+        need_chmod = True
     
-    sudo.run([f'chmod a+rX {Depend.folders[Source.GIT]} -R', 'Setting permissions'])
+    if need_chmod:
+        sudo.run([f'chmod a+rX {Depend.folders[Source.GIT]} -R', 'Setting permissions'])
     
     # check chmod for these ones
     if os.path.exists('/opt/coppeliaSim'):
