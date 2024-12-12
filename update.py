@@ -22,6 +22,7 @@ parser.add_argument('-a', '--all', action='store_true', default=False, help='Ins
 parser.add_argument('-c', '--clean', action='store_true', default=False, help='Clean listed modules that are not required')
 parser.add_argument('-f', '--force_compile', action='store_true', default=False, help='Force recompilation of ROS workspaces')
 parser.add_argument('-g', '--force_git', action='store_true', default=False, help='Force git pull on suitable folders')
+parser.add_argument('--chmod', action='store_true', default=False, help='Force chmod on installed folder')
 parser.add_argument('--nosrc', action='store_true', default=False, help='Ignore source dependencies')
 parser.add_argument('--nopip', action='store_true', default=False, help='Ignore pip dependencies')
 parser.add_argument('-p', '--poweroff', action='store_true', default=False, help='Poweroff after installation / upgrade')
@@ -855,7 +856,7 @@ def perform_update(action = None, poweroff=False):
         dep.update()
             
     # git-based
-    need_chmod = len(to_install[Source.GIT]) > 0
+    need_chmod = args.chmod or (len(to_install[Source.GIT]) > 0)
     for dep in to_install[Source.GIT]:
         dep.update()
         
