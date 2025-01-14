@@ -65,6 +65,11 @@ turtlebot:
         apt: [image-transport-plugins]
         git: [CentraleNantesRobotics:turtlebot3_xacro]
 
+aquabot:
+    mod: [gazebo]
+    ros2:
+        git: [oKermorgant:aquabot]
+
 
 # main module definitions
 arpro,proav:
