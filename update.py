@@ -244,6 +244,7 @@ class Sudo:
             
             if not os.path.exists(repo.lst_file):
                 self.run(f"sh -c 'echo \"{repo.lst_content()}\" > {repo.lst_file}'")
+                Display.msg(f'Adding new repo: {repo.url}', True)
                 self.run(f'chmod 664 {repo.lst_file}')
                 refresh_src = True
                                         
