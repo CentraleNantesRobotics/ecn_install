@@ -196,35 +196,55 @@ class Sudo:
         
         if not len(pkgs):
             return
-        
+
+        class ExternalRepo:
+            def __init__(self, prefix, key_url, lst_file, url, branch = 'main'):
+                self.prefix = prefix
+                self.key_url = key_url
+                self.key_file = '/etc/apt/trusted.gpg.d/' + os.path.basename(key_url)
+                self.lst_file = '/etc/apt/sources.list.d/' + lst_file
+                self.url = url
+                self.branch = branch
+
+            def needed_for(self, pkgs):
+                return [any(pkg.startswith(self.prefix) for pkg in pkgs)]
+
+            def lst_content(self):
+                return f'deb [arch=$(dpkg --print-architecture) signed-by={self.key_file}] {self.url} {distro} {self.branch}'
+
         # enable OSRF repos if needed
-        ros1_specs = (f'ros-{ros1}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros-latest.list', 'http://packages.ros.org/ros/ubuntu')
-        ros2_specs = (f'ros-{ros2}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key', 'ros2-latest.list', 'http://packages.ros.org/ros2/ubuntu')
-        ign_specs = ('ignition-', 'https://packages.osrfoundation.org/gazebo.gpg', 'gazebo-latest.list', 'http://packages.osrfoundation.org/gazebo/ubuntu-stable')
-        gz_specs = ('gz-', 'https://packages.osrfoundation.org/gazebo.gpg', 'gazebo-latest.list', 'http://packages.osrfoundation.org/gazebo/ubuntu-stable')
-        
+        repos = [
+            ExternalRepo(f'ros-{ros1}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key',
+                         'ros-latest.list', 'http://packages.ros.org/ros/ubuntu'),
+            ExternalRepo(f'ros-{ros2}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key',
+                         'ros2-latest.list', 'http://packages.ros.org/ros2/ubuntu'),
+            ExternalRepo('ignition-', 'https://packages.osrfoundation.org/gazebo.gpg',
+                         'gazebo-latest.list', 'http://packages.osrfoundation.org/gazebo/ubuntu-stable'),
+            ExternalRepo('gz-', 'https://packages.osrfoundation.org/gazebo.gpg',
+                         'gazebo-latest.list', 'http://packages.osrfoundation.org/gazebo/ubuntu-stable'),
+            ExternalRepo('robotpkg-', 'http://robotpkg.openrobots.org/packages/debian/robotpkg.asc',
+                         'robotpkg.list', 'http://robotpkg.openrobots.org/packages/debian/pub',
+                         'robotpkg')]
+
         refresh_src = False
-        
-        for start, key_url, repo_file, repo_url in (ros1_specs, ros2_specs, ign_specs, gz_specs):
-            
-            if not any(pkg.startswith(start) for pkg in pkgs):
+
+        for repo in repos:
+
+            if not repo.needed_for(pkgs):
                 continue
-            
-            if start == f'ros-{ros1}' and distro > 'focal':
+
+            if repo.prefix == f'ros-{ros1}' and distro > 'focal':
                 # trying to install ROS 1 packages on 22.04+
-                print('ROS 1 is not available on Ubuntu 22.04 or later, current install needs ' + ' '.join(pkg for pkg in pkgs if pkg.startswith(start)))
+                print('ROS 1 is not available on Ubuntu 22.04 or later, current install needs ' + ' '.join(pkg for pkg in pkgs if pkg.startswith(repo.prefix)))
                 sys.exit(0)
-            
-            key_file = '/etc/apt/trusted.gpg.d/' + os.path.basename(key_url)
-            if not os.path.exists(key_file):
-                self.run(f'wget {key_url} -O {key_file}')
+
+            if not os.path.exists(repo.key_file):
+                self.run(f'wget {repo.key_url} -O {repo.key_file}')
                 refresh_src = True
             
-            repo_file = '/etc/apt/sources.list.d/' + repo_file
-            if not os.path.exists(repo_file):
-                content = f'deb [arch=$(dpkg --print-architecture) signed-by={key_file}] {repo_url} {distro} main'
-                self.run(f"sh -c 'echo \"{content}\" > {repo_file}'")
-                self.run(f'chmod 664 {repo_file}')
+            if not os.path.exists(repo.lst_file):
+                self.run(f"sh -c 'echo \"{repo.lst_content()}\" > {repo.lst_file}'")
+                self.run(f'chmod 664 {repo.lst_file}')
                 refresh_src = True
                                         
         if refresh_src:
