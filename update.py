@@ -207,7 +207,7 @@ class Sudo:
                 self.branch = branch
 
             def needed_for(self, pkgs):
-                return [any(pkg.startswith(self.prefix) for pkg in pkgs)]
+                return any([pkg.startswith(self.prefix) for pkg in pkgs])
 
             def lst_content(self):
                 return f'deb [arch=$(dpkg --print-architecture) signed-by={self.key_file}] {self.url} {distro} {self.branch}'
@@ -234,6 +234,7 @@ class Sudo:
                 continue
 
             if repo.prefix == f'ros-{ros1}' and distro > 'focal':
+
                 # trying to install ROS 1 packages on 22.04+
                 print('ROS 1 is not available on Ubuntu 22.04 or later, current install needs ' + ' '.join(pkg for pkg in pkgs if pkg.startswith(repo.prefix)))
                 sys.exit(0)
