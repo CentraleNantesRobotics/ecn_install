@@ -148,9 +148,9 @@ def run(cmd, cwd=None,show=False):
 
 distro = run('lsb_release -cs')[0]
 ros1 = run(f'grep ros1_workspaces skel/{distro}/.bashrc', cwd=base_path)[0]
-ros1 = ros1.replace('/',' ').split()[3]
+ros1 = ros1.replace('/',' ').split()[3].strip('"')
 ros2 = run(f'grep ros2_workspaces skel/{distro}/.bashrc', cwd=base_path)[0]
-ros2 = ros2.replace('/',' ').split()[3]
+ros2 = ros2.replace('/',' ').split()[3].strip('"')
 gz = run(f'grep GZ_VERSION skel/{distro}/.bashrc', cwd=base_path)[0].split('=')[1].strip()
 GZ = 'IGNITION' if gz == 'fortress' else 'GZ'
 using_ecn_vm = os.uname().nodename == 'ecn-'+distro
