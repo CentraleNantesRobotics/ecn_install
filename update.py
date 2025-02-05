@@ -950,7 +950,8 @@ if isinstance(args.u, list):
     for mod in to_update:
         modules[mod].configure(Action.INSTALL)
         
-    print(f'Will update / install the following modules: {", ".join(to_update)}')
+    s = 's' * min(1, len(to_update))
+    print(f'Will update / install the following module{s}: {", ".join(to_update)}')
             
     perform_update(poweroff=poweroff)
 
