@@ -27,13 +27,16 @@ cleanup:
 
 # hidden modules (without description) others may depend on
 
+rmt:
+    git: [oKermorgant:ros_management_tools]
+
 ros2:
     ros2:
         apt: [desktop,slider-publisher,robot-localization,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2,urdfdom-py]
         git: [oKermorgant:simple_launch]
     apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat,python3-rospkg]
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ecn-ros2_1.1.3.deb']
-    git: [oKermorgant:ros_management_tools]
+    mod: [rmt]
 
 log2plot:
     git: [oKermorgant:log2plot]
