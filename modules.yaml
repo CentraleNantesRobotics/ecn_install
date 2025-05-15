@@ -27,6 +27,9 @@ cleanup:
 
 # hidden modules (without description) others may depend on
 
+code:
+    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=code_1.100.1-1746807090_amd64.deb']
+
 rmt:
     git: [oKermorgant:ros_management_tools]
 
@@ -72,6 +75,9 @@ aquabot:
     mod: [gazebo]
     ros2:
         git: [oKermorgant:aquabot]
+
+acados:
+    script: [acados]
 
 
 # main module definitions

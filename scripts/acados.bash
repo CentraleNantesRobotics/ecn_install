@@ -26,7 +26,7 @@ fi
 
 if [[ "$*" == *"-r"* ]]; then
     # remove
-    pip uninstall acados
+    pip3 uninstall acados
     rm -rf ${ACADOS_ROOT}
 fi
 
