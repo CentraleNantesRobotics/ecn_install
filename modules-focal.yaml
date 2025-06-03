@@ -56,6 +56,7 @@ tbc:
 # AMORO uses Gazebo classic in Focal
 amoro:
     description: Advanced Modeling of Robots
+    mod: [gazebo]
     ros2:
         apt: [ros2-control,ros2-controllers,gazebo-ros2-control,gazebo-ros-pkgs]
     apt: [gummi, python3-pyqtgraph]    # tex editor for reports?
