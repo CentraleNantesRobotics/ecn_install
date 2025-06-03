@@ -456,6 +456,7 @@ class Depend:
             return Status.ABSENT
 
         # check GIT wrt upstream
+        print('Fetching',base_dir)
         run('git fetch',cwd=base_dir)
         git_status = run('git status', cwd=base_dir)
         if git_status is None:
