@@ -227,6 +227,7 @@ class Sudo:
                          'robotpkg')]
 
         refresh_src = False
+        ros_checked = False
 
         for repo in repos:
 
@@ -242,6 +243,16 @@ class Sudo:
             if not os.path.exists(repo.key_file):
                 self.run(f'wget {repo.key_url} -O {repo.key_file}')
                 refresh_src = True
+
+            # need to update ROS key file as of 1 June 2025
+            if repo.prefix.startswith('ros-') and not ros_checked:
+                from datetime import datetime
+                modified = datetime.fromtimestamp(os.path.getmtime(repo.key_file))
+                key_update = datetime(2025, 5, 31)
+                if modified < key_update:
+                    self.run(f'wget {repo.key_url} -O {repo.key_file}')
+                    refresh_src = True
+                ros_checked = True
 
             if not os.path.exists(repo.lst_file):
                 self.run(f"sh -c 'echo \"{repo.lst_content()}\" > {repo.lst_file}'")
