@@ -212,13 +212,19 @@ class Sudo:
                     ask_passwd = False
 
         # need to update ROS GPG key file as of 1 June 2025
-        repo = [repo for repo in additional_repos if repo.prefix.startswith('ros-')][0]
+        ros_repos = [repo for repo in additional_repos if repo.prefix.startswith('ros-')]
+        repo = ros_repos[0]
+
         if os.path.exists(repo.key_file):
             from datetime import datetime
             modified = datetime.fromtimestamp(os.path.getmtime(repo.key_file))
             key_update = datetime(2025, 5, 31)
             if modified < key_update:
                 self.run(f'wget {repo.key_url} -O {repo.key_file}')
+                # also update source files
+                for repo in ros_repos:
+                    self.run(f"sh -c 'echo \"{repo.lst_content()}\" > {repo.lst_file}'")
+                    self.run(f'chmod 664 {repo.lst_file}')
 
         self.run('apt update -qy')
 
