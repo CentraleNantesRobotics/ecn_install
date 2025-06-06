@@ -156,6 +156,37 @@ GZ = 'IGNITION' if gz == 'fortress' else 'GZ'
 using_ecn_vm = os.uname().nodename == 'ecn-'+distro
 
 
+# handle external repositories
+class ExternalRepo:
+    def __init__(self, prefix, key_url, lst_file, url, branch = 'main'):
+        self.prefix = prefix
+        self.key_url = key_url
+        self.key_file = '/etc/apt/trusted.gpg.d/' + os.path.basename(key_url)
+        self.lst_file = '/etc/apt/sources.list.d/' + lst_file
+        self.url = url
+        self.branch = branch
+
+    def needed_for(self, pkgs):
+        return any([pkg.startswith(self.prefix) for pkg in pkgs])
+
+    def lst_content(self):
+        return f'deb [arch=$(dpkg --print-architecture) signed-by={self.key_file}] {self.url} {distro} {self.branch}'
+
+# enable OSRF repos if needed
+additional_repos = [
+    ExternalRepo(f'ros-{ros1}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key',
+                    'ros-latest.list', 'http://packages.ros.org/ros/ubuntu'),
+    ExternalRepo(f'ros-{ros2}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key',
+                    'ros2-latest.list', 'http://packages.ros.org/ros2/ubuntu'),
+    ExternalRepo('ignition-', 'https://packages.osrfoundation.org/gazebo.gpg',
+                    'gazebo-latest.list', 'http://packages.osrfoundation.org/gazebo/ubuntu-stable'),
+    ExternalRepo('gz-', 'https://packages.osrfoundation.org/gazebo.gpg',
+                    'gazebo-latest.list', 'http://packages.osrfoundation.org/gazebo/ubuntu-stable'),
+    ExternalRepo('robotpkg-', 'http://robotpkg.openrobots.org/packages/debian/robotpkg.asc',
+                    'robotpkg.list', 'http://robotpkg.openrobots.org/packages/debian/pub',
+                    'robotpkg')]
+
+
 # after 4 years finally some custom hacks are needed
 if using_ecn_vm:
     if run('grep foxy .bashrc', cwd=os.environ['HOME']):
@@ -180,6 +211,15 @@ class Sudo:
                 if 'incorrect' not in out[1].decode():
                     ask_passwd = False
 
+        # need to update ROS GPG key file as of 1 June 2025
+        repo = [repo for repo in additional_repos if repo.prefix.startswith('ros-')][0]
+        if os.path.exists(repo.key_file):
+            from datetime import datetime
+            modified = datetime.fromtimestamp(os.path.getmtime(repo.key_file))
+            key_update = datetime(2025, 5, 31)
+            if modified < key_update:
+                self.run(f'wget {repo.key_url} -O {repo.key_file}')
+
         self.run('apt update -qy')
 
     def run(self, cmd, cwd=None,show=True):
@@ -197,39 +237,9 @@ class Sudo:
         if not len(pkgs):
             return
 
-        class ExternalRepo:
-            def __init__(self, prefix, key_url, lst_file, url, branch = 'main'):
-                self.prefix = prefix
-                self.key_url = key_url
-                self.key_file = '/etc/apt/trusted.gpg.d/' + os.path.basename(key_url)
-                self.lst_file = '/etc/apt/sources.list.d/' + lst_file
-                self.url = url
-                self.branch = branch
-
-            def needed_for(self, pkgs):
-                return any([pkg.startswith(self.prefix) for pkg in pkgs])
-
-            def lst_content(self):
-                return f'deb [arch=$(dpkg --print-architecture) signed-by={self.key_file}] {self.url} {distro} {self.branch}'
-
-        # enable OSRF repos if needed
-        repos = [
-            ExternalRepo(f'ros-{ros1}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key',
-                         'ros-latest.list', 'http://packages.ros.org/ros/ubuntu'),
-            ExternalRepo(f'ros-{ros2}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key',
-                         'ros2-latest.list', 'http://packages.ros.org/ros2/ubuntu'),
-            ExternalRepo('ignition-', 'https://packages.osrfoundation.org/gazebo.gpg',
-                         'gazebo-latest.list', 'http://packages.osrfoundation.org/gazebo/ubuntu-stable'),
-            ExternalRepo('gz-', 'https://packages.osrfoundation.org/gazebo.gpg',
-                         'gazebo-latest.list', 'http://packages.osrfoundation.org/gazebo/ubuntu-stable'),
-            ExternalRepo('robotpkg-', 'http://robotpkg.openrobots.org/packages/debian/robotpkg.asc',
-                         'robotpkg.list', 'http://robotpkg.openrobots.org/packages/debian/pub',
-                         'robotpkg')]
-
         refresh_src = False
-        ros_checked = False
 
-        for repo in repos:
+        for repo in additional_repos:
 
             if not repo.needed_for(pkgs):
                 continue
@@ -243,16 +253,6 @@ class Sudo:
             if not os.path.exists(repo.key_file):
                 self.run(f'wget {repo.key_url} -O {repo.key_file}')
                 refresh_src = True
-
-            # need to update ROS key file as of 1 June 2025
-            if repo.prefix.startswith('ros-') and not ros_checked:
-                from datetime import datetime
-                modified = datetime.fromtimestamp(os.path.getmtime(repo.key_file))
-                key_update = datetime(2025, 5, 31)
-                if modified < key_update:
-                    self.run(f'wget {repo.key_url} -O {repo.key_file}')
-                    refresh_src = True
-                ros_checked = True
 
             if not os.path.exists(repo.lst_file):
                 self.run(f"sh -c 'echo \"{repo.lst_content()}\" > {repo.lst_file}'")
