@@ -172,10 +172,9 @@ class ExternalRepo:
     def lst_content(self):
         return f'deb [arch=$(dpkg --print-architecture) signed-by={self.key_file}] {self.url} {distro} {self.branch}'
 
+
 # enable OSRF repos if needed
 additional_repos = [
-    ExternalRepo(f'ros-{ros1}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key',
-                    'ros-latest.list', 'http://packages.ros.org/ros/ubuntu'),
     ExternalRepo(f'ros-{ros2}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key',
                     'ros2-latest.list', 'http://packages.ros.org/ros2/ubuntu'),
     ExternalRepo('ignition-', 'https://packages.osrfoundation.org/gazebo.gpg',
@@ -185,6 +184,9 @@ additional_repos = [
     ExternalRepo('robotpkg-', 'http://robotpkg.openrobots.org/packages/debian/robotpkg.asc',
                     'robotpkg.list', 'http://robotpkg.openrobots.org/packages/debian/pub',
                     'robotpkg')]
+if distro <= 'focal':
+    additional_repos.append(ExternalRepo(f'ros-{ros1}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key',
+                            'ros-latest.list', 'http://packages.ros.org/ros/ubuntu'))
 
 
 # after 4 years finally some custom hacks are needed

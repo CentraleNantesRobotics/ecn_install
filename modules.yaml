@@ -36,7 +36,7 @@ rmt:
 ros2:
     ros2:
         apt: [desktop,robot-localization,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2,urdfdom-py]
-        git: [oKermorgant:simple_launch,oKermorgant:slider_publisher]
+        git: [oKermorgant:simple_launch,oKermorgant:slider_publisher:ros2]
     apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat,python3-rospkg]
     deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ecn-ros2_1.1.3.deb']
     mod: [rmt]
