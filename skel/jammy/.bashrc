@@ -128,7 +128,7 @@ export GZ_VERSION=garden
 
 # activate ROS 2 by default
 if [[ -f /opt/ecn/ros_management_tools/ros_management.bash ]]; then
-    source /opt/ecn/ros_management_tools/ros_management.bash -p --ros2 -k -lo
+    source /opt/ecn/ros_management_tools/ros_management.bash -p -k -lo -ros2
   # QtCreator configure shortcut
   alias gqt='python3 /opt/ecn/ros_management_tools/qtcreator/qtcreator_gen_config.py'   # old style
   alias ideconf='python3 /opt/ecn/ros_management_tools/ide/ide_config.py'

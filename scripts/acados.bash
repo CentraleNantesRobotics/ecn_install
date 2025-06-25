@@ -51,6 +51,7 @@ if [[ "$*" == *"-i"* ]]; then
     make -j4 && make install
 
     pip3 install -e ${ACADOS_SRC}/interfaces/acados_template --break-system-packages
+    pip3 install -e ${ACADOS_SRC}/interfaces/acados_template
 
     mkdir -p ${ACADOS_INSTALL}/bin
     wget https://github.com/acados/tera_renderer/releases/download/v${TERA_RENDERER}/t_renderer-v${TERA_RENDERER}-linux \

@@ -131,7 +131,7 @@ export GZ_VERSION=fortress
 
 if [[ -d /opt/ecn/ros_management_tools ]]; then
 
-  source /opt/ecn/ros_management_tools/ros_management.bash -p -k -lo
+  source /opt/ecn/ros_management_tools/ros_management.bash -p -k -lo -ros2
 
   # QtCreator configure shortcut
   alias gqt='python3 /opt/ecn/ros_management_tools/qtcreator/qtcreator_gen_config.py'	# old style
