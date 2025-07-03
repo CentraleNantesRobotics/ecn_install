@@ -18,7 +18,7 @@ base:
 # will be removed unless required by other modules
 cleanup:
     git: [lagadic:visp]
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=log2plot_1.0.0.deb','https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=libvisp-dev_3.4.1-1_amd64.deb']
+    deb: ['log2plot_1.0.0.deb','libvisp-dev_3.4.1-1_amd64.deb']
     ros:
         git: [CentraleNantesRobotics:baxter_simple_sim,CentraleNantesRobotics:baxter_common,CentraleNantesRobotics:baxter_interface,CentraleNantesRobotics:baxter_tools]
     ros2:
@@ -28,7 +28,7 @@ cleanup:
 # hidden modules (without description) others may depend on
 
 code:
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=code_1.100.1-1746807090_amd64.deb']
+    deb: ['code_1.101.2-1750797935_amd64']
 
 rmt:
     git: [oKermorgant:ros_management_tools]
@@ -38,7 +38,7 @@ ros2:
         apt: [desktop,robot-localization,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2,urdfdom-py,pcl-ros,nav2-simple-commander,ackermann-msgs]
         git: [oKermorgant:simple_launch,oKermorgant:slider_publisher:ros2]
     apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat,python3-rospkg]
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ecn-ros2_1.1.3.deb']
+    deb: ['ecn-ros2_1.1.3.deb']
     mod: [rmt]
 
 log2plot:
@@ -51,18 +51,18 @@ mapsim:
         git: [oKermorgant:map_simulator:ros2,oKermorgant:pose_to_tf]
 
 duels:
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=duels[]_6.1.2.deb']
+    deb: ['duels[]_6.1.2.deb']
     apt: [python3-pygame, libzmq3-dev, python3-zmq,libyaml-cpp-dev, python3-yaml]
 
 pycharm:
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=pycharm_2024.1.1.deb']
+    deb: ['pycharm_2024.1.1.deb']
 
 gazebo:
     ros2:
         git: [oKermorgant:pose_to_tf]
 
 baxter:
-    deb: ['https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=ros-baxter[]_1.3.1.deb']
+    deb: ['ros-baxter[]_1.3.1.deb']
     ros2:
         git: [CentraleNantesRobotics:baxter_common_ros2,CentraleNantesRobotics:baxter_simple_sim:ros2]
 

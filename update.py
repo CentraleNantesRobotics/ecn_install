@@ -295,6 +295,10 @@ class Sudo:
             self.run(['apt purge -qy --autoremove ' + ' '.join(actually_removed), 'Removing packages'])
 
     def deb_install(self, url):
+
+        if not url.startswith('http'):
+            url = 'https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=' + url
+
         dst = os.path.basename(url).split('=')[-1]
         run(f'wget "{url}" -O /tmp/{dst}')
         self.run(f'apt install -qy /tmp/{dst}')
