@@ -543,7 +543,7 @@ class Depend:
                 branch = branch.replace('<distro>', distro)
                 run(f'git clone --recursive {url} -b {branch}', cwd=root,show=True)
             else:
-                run('git clone --recursive ' + self.pkg, cwd=root,show=True)
+                run(f'git clone --recursive {self.pkg}', cwd=root,show=True)
 
         # install if not ROS
         if self.src == Source.GIT and os.path.exists(base_dir + '/CMakeLists.txt'):
@@ -552,7 +552,7 @@ class Depend:
                 run(f' rm -rf {build_dir}', show=False)
             Display.msg(f'Compiling + installing {base_dir}')
             run(f'mkdir -p {build_dir}',show=False)
-            run('cmake {} ..'.format(self.cmake),cwd=build_dir,show=False)
+            run(f'cmake {self.cmake} ..',cwd=build_dir,show=False)
             sudo.run('make install -j4', cwd=build_dir, show=False)
 
         return self.src
