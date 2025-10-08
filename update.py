@@ -156,6 +156,11 @@ GZ = 'IGNITION' if gz == 'fortress' else 'GZ'
 using_ecn_vm = os.uname().nodename == 'ecn-'+distro
 
 
+need_ros_ws = {}
+# log2plot needs ViSP, only installed through ROS pkg in focal
+if distro == 'focal':
+    need_ros_ws = {'log2plot': ros1}
+
 # handle external repositories
 class ExternalRepo:
     def __init__(self, prefix, key_url, lst_file, url, branch = 'main'):
@@ -552,8 +557,12 @@ class Depend:
                 run(f' rm -rf {build_dir}', show=False)
             Display.msg(f'Compiling + installing {base_dir}')
             run(f'mkdir -p {build_dir}',show=False)
-            run(f'cmake {self.cmake} ..',cwd=build_dir,show=False)
-            sudo.run('make install -j4', cwd=build_dir, show=False)
+            dep_name = os.path.basename(base_dir)
+            if dep_name in need_ros_ws:
+                run(f'bash -c -i "source /opt/ros/{need_ros_ws[dep_name]}/setup.bash && cmake {self.cmake} .."',cwd=build_dir,show=True)
+            else:
+                run(f'cmake {self.cmake} ..',cwd=build_dir,show=True)
+            sudo.run('make install -j4', cwd=build_dir, show=True)
 
         return self.src
 
