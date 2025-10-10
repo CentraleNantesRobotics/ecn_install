@@ -51,7 +51,7 @@ mapsim:
         git: [oKermorgant:map_simulator:ros2,oKermorgant:pose_to_tf]
 
 duels:
-    deb: ['duels[]_6.1.3.deb']
+    deb: ['duels[]_6.1.4.deb']
     apt: [python3-pygame, libzmq3-dev, python3-zmq,libyaml-cpp-dev, python3-yaml]
 
 pycharm:
