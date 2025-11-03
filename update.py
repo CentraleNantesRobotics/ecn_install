@@ -974,7 +974,7 @@ if args.test:
     Display.stop()
 
 if isinstance(args.u, list):
-    # '-u' was given
+    # '-u' was given, run without gui
     to_update = [mod for mod in modules.keys() if mod in args.u]
 
     if len(to_update) == 0:
