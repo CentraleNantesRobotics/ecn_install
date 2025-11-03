@@ -975,7 +975,7 @@ if args.test:
 
 if isinstance(args.u, list):
     # '-u' was given
-    to_update = [mod for mod in modules if mod in args.u]
+    to_update = [mod for mod in modules.keys() if mod in args.u]
 
     if len(to_update) == 0:
         # update all existing ones
