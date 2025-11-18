@@ -243,6 +243,8 @@ class Sudo:
         if not isinstance(pkgs, list):
             pkgs = [pkgs]
 
+        refresh_src = False
+
         for prefix, repo_file in additional_repos.items():
 
             if not any([pkg.startswith(prefix) for pkg in pkgs]):
