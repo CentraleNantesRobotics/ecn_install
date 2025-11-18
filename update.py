@@ -161,23 +161,6 @@ need_ros_ws = {}
 if distro == 'focal':
     need_ros_ws = {'log2plot': ros1}
 
-# handle external repositories
-class ExternalRepo:
-    def __init__(self, prefix, key_url, lst_file, url, branch = 'main'):
-        self.prefix = prefix
-        self.key_url = key_url
-        self.key_file = '/etc/apt/trusted.gpg.d/' + os.path.basename(key_url)
-        self.lst_file = '/etc/apt/sources.list.d/' + lst_file
-        self.url = url
-        self.branch = branch
-
-    def needed_for(self, pkgs):
-        return any([pkg.startswith(self.prefix) for pkg in pkgs])
-
-    def lst_content(self):
-        return f'deb [arch=$(dpkg --print-architecture) signed-by={self.key_file}] {self.url} {distro} {self.branch}'
-
-
 # enable OSRF repos if needed
 # for each prefix, give the corresponding file in /etc/apt/sources.list.d
 # will be installed by osrf.sh
@@ -238,7 +221,7 @@ class Sudo:
         proc.communicate(self.passwd)
         proc.wait()
 
-    def check_repo(self, pkgs):
+    def ensure_repos(self, pkgs):
 
         if not isinstance(pkgs, list):
             pkgs = [pkgs]
@@ -273,7 +256,7 @@ class Sudo:
         if not len(pkgs):
             return
 
-        self.check_repo(pkgs)
+        self.ensure_repos(pkgs)
 
         self.run(['apt install -qy ' + ' '.join(pkgs), 'Installing packages'])
 
@@ -461,7 +444,7 @@ class Depend:
                 return Status.ABSENT
 
             # pkg is here, make sure the corresponding repo is still active
-            sudo.check_repo(self.pkg)
+            sudo.ensure_repos(self.pkg)
             if self.pkg in Depend.packages_old:
                 return Status.OLD
             return Status.INSTALLED
