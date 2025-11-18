@@ -182,7 +182,7 @@ class ExternalRepo:
 # for each prefix, give the corresponding file in /etc/apt/sources.list.d
 # will be installed by osrf.sh
 additional_repos = {
-    f'ros-{ros2}': 'ros2.source',
+    f'ros-{ros2}': 'ros2.sources',
     'ignition-': 'gazebo-stable.list',
     'gz-': 'gazebo-stable.list',
     'robotpkg-': 'robotpkg.list'
@@ -260,8 +260,8 @@ class Sudo:
 
             if not os.path.exists(repo_abs_file):
 
-                Display.msg(f'Adding APT repository for {prefix}', True)
-                self.run(f'{base_path}/scripts/apt_sources.bash {repo_file}')
+                Display.msg(f'Adding APT repository for {prefix}*', True)
+                self.run(f'{base_path}/scripts/apt_sources.bash {repo_file}', show=False)
                 refresh_src = True
 
         if refresh_src:

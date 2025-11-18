@@ -3,7 +3,7 @@
 
 # a summary of various APT repos from OSRF
 
-if [[ "$1" == "ros2.source" ]]; then
+if [[ "$1" == "ros2.sources" ]]; then
 
     # remove previous lists if still here
     sudo rm -rf /etc/apt/sources.list.d/ros2-*
