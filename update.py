@@ -182,7 +182,7 @@ class ExternalRepo:
 # for each prefix, give the corresponding file in /etc/apt/sources.list.d
 # will be installed by osrf.sh
 additional_repos = {
-    f'ros-{ros2}': 'ros2.sources',
+    f'ros-{ros2}': 'ros2.source',
     'ignition-': 'gazebo-stable.list',
     'gz-': 'gazebo-stable.list',
     'robotpkg-': 'robotpkg.list'
