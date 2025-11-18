@@ -238,12 +238,10 @@ class Sudo:
         proc.communicate(self.passwd)
         proc.wait()
 
-    def apt_install(self, pkgs):
+    def check_repo(self, pkgs):
 
-        if not len(pkgs):
-            return
-
-        refresh_src = False
+        if not isinstance(pkgs, list):
+            pkgs = [pkgs]
 
         for prefix, repo_file in additional_repos.items():
 
@@ -255,6 +253,7 @@ class Sudo:
                 # trying to install ROS 1 packages on 22.04+
                 print('ROS 1 is not available on Ubuntu 22.04 or later, current install needs ' + ' '.join(pkg for pkg in pkgs if pkg.startswith(prefix)))
                 sys.exit(0)
+
             repo_abs_file = '/etc/apt/sources.list.d/' + repo_file
 
             if not os.path.exists(repo_abs_file):
@@ -265,6 +264,14 @@ class Sudo:
 
         if refresh_src:
             self.run('apt update -qy')
+
+
+    def apt_install(self, pkgs):
+
+        if not len(pkgs):
+            return
+
+        self.check_repo(pkgs)
 
         self.run(['apt install -qy ' + ' '.join(pkgs), 'Installing packages'])
 
@@ -450,6 +457,9 @@ class Depend:
         if self.src == Source.APT:
             if self.pkg not in Depend.packages:
                 return Status.ABSENT
+
+            # pkg is here, make sure the corresponding repo is still active
+            sudo.check_repo(self.pkg)
             if self.pkg in Depend.packages_old:
                 return Status.OLD
             return Status.INSTALLED
