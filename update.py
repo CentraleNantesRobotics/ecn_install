@@ -179,20 +179,16 @@ class ExternalRepo:
 
 
 # enable OSRF repos if needed
-additional_repos = [
-    ExternalRepo(f'ros-{ros2}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key',
-                    'ros2-latest.list', 'http://packages.ros.org/ros2/ubuntu'),
-    ExternalRepo('ignition-', 'https://packages.osrfoundation.org/gazebo.gpg',
-                    'gazebo-latest.list', 'http://packages.osrfoundation.org/gazebo/ubuntu-stable'),
-    ExternalRepo('gz-', 'https://packages.osrfoundation.org/gazebo.gpg',
-                    'gazebo-latest.list', 'http://packages.osrfoundation.org/gazebo/ubuntu-stable'),
-    ExternalRepo('robotpkg-', 'http://robotpkg.openrobots.org/packages/debian/robotpkg.asc',
-                    'robotpkg.list', 'http://robotpkg.openrobots.org/packages/debian/pub',
-                    'robotpkg')]
+# for each prefix, give the corresponding file in /etc/apt/sources.list.d
+# will be installed by osrf.sh
+additional_repos = {
+    f'ros-{ros2}': 'ros2.sources',
+    'ignition-': 'gazebo-stable.list',
+    'gz-': 'gazebo-stable.list',
+    'robotpkg-': 'robotpkg.list'
+    }
 if distro <= 'focal':
-    additional_repos.append(ExternalRepo(f'ros-{ros1}', 'https://raw.githubusercontent.com/ros/rosdistro/master/ros.key',
-                            'ros-latest.list', 'http://packages.ros.org/ros/ubuntu'))
-
+    additional_repos[f'ros-{ros1}'] = 'ros-latest.list'
 
 # after 4 years finally some custom hacks are needed
 if using_ecn_vm:
@@ -219,19 +215,16 @@ class Sudo:
                     ask_passwd = False
 
         # need to update ROS GPG key file as of 1 June 2025
-        ros_repos = [repo for repo in additional_repos if repo.prefix.startswith('ros-')]
-        repo = ros_repos[0]
+        ros_repos = [repo for repo in additional_repos if repo.startswith('ros-')]
+        src_file = '/etc/apt/sources.list.d/' + ros_repos[0]
 
-        if os.path.exists(repo.key_file):
+        if os.path.exists(src_file):
             from datetime import datetime
-            modified = datetime.fromtimestamp(os.path.getmtime(repo.key_file))
-            key_update = datetime(2025, 5, 31)
-            if modified < key_update:
-                self.run(f'wget {repo.key_url} -O {repo.key_file}')
-                # also update source files
-                for repo in ros_repos:
-                    self.run(f"sh -c 'echo \"{repo.lst_content()}\" > {repo.lst_file}'")
-                    self.run(f'chmod 664 {repo.lst_file}')
+            modified = datetime.fromtimestamp(os.path.getmtime(src_file))
+            src_update = datetime(2025, 5, 31)
+            if modified < src_update:
+                # remove to have it resintalled later
+                self.run('rm -rf /etc/apt/sources.list.d/ros*')
 
         self.run('apt update -qy')
 
@@ -252,25 +245,22 @@ class Sudo:
 
         refresh_src = False
 
-        for repo in additional_repos:
+        for prefix, repo_file in additional_repos.items():
 
-            if not repo.needed_for(pkgs):
+            if not any([pkg.startswith(prefix) for pkg in pkgs]):
                 continue
 
-            if repo.prefix == f'ros-{ros1}' and distro > 'focal':
+            if prefix == f'ros-{ros1}' and distro > 'focal':
 
                 # trying to install ROS 1 packages on 22.04+
-                print('ROS 1 is not available on Ubuntu 22.04 or later, current install needs ' + ' '.join(pkg for pkg in pkgs if pkg.startswith(repo.prefix)))
+                print('ROS 1 is not available on Ubuntu 22.04 or later, current install needs ' + ' '.join(pkg for pkg in pkgs if pkg.startswith(prefix)))
                 sys.exit(0)
+            repo_abs_file = '/etc/apt/sources.list.d/' + repo_file
 
-            if not os.path.exists(repo.key_file):
-                self.run(f'wget {repo.key_url} -O {repo.key_file}')
-                refresh_src = True
+            if not os.path.exists(repo_abs_file):
 
-            if not os.path.exists(repo.lst_file):
-                self.run(f"sh -c 'echo \"{repo.lst_content()}\" > {repo.lst_file}'")
-                Display.msg(f'Adding new repo: {repo.url}', True)
-                self.run(f'chmod 664 {repo.lst_file}')
+                Display.msg(f'Adding APT repository for {prefix}', True)
+                self.run(f'{base_path}/scripts/apt_sources.bash {repo_file}')
                 refresh_src = True
 
         if refresh_src:
