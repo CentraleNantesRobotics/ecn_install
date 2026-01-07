@@ -15,10 +15,12 @@ ros:
 
 # ViSP not packaged in Focal, use ROS packages
 visp:
-    ros:
-        apt: [visp]
     ros2:
         apt: [visp]
+
+# log2plot needs to be compiled in a ROS 2 sourced terminal
+log2plot:
+    source: ros2
 
 coppeliasim:
     deb: ['coppeliasim_4.3.0.deb']

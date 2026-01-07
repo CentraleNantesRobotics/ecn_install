@@ -13,7 +13,7 @@ import argparse
 base_path = os.path.dirname(os.path.abspath(__file__))
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.description = 'Updater for ECN / ROS virtual machine.'
+parser.description = 'Updater for Ubuntu computer or virtual machine.'
 
 parser.add_argument('-u', metavar='module', type=str, nargs='+', help='Which modules to upgrade (all installed, if empty)', default=())
 parser.add_argument('-n', '--no_upgrade', action='store_true', default=False, help='Does not perform apt upgrade')
@@ -147,44 +147,65 @@ def run(cmd, cwd=None,show=False):
 
 
 distro = run('lsb_release -cs')[0]
-ros1 = run(f'grep ros1_workspaces skel/{distro}/.bashrc', cwd=base_path)[0]
-ros1 = ros1.replace('/',' ').split()[3].strip('"')
+ros1 = run(f'grep ros1_workspaces skel/{distro}/.bashrc', cwd=base_path)
+if ros1:
+    ros1 = ros1[0].replace('/',' ').split()[3].strip('"')
+else:
+    ros1 = 'obese'
 ros2 = run(f'grep ros2_workspaces skel/{distro}/.bashrc', cwd=base_path)[0]
 ros2 = ros2.replace('/',' ').split()[3].strip('"')
 gz = run(f'grep GZ_VERSION skel/{distro}/.bashrc', cwd=base_path)[0].split('=')[1].strip()
 GZ = 'IGNITION' if gz == 'fortress' else 'GZ'
-using_ecn_vm = os.uname().nodename == 'ecn-'+distro
 
 
-need_ros_ws = {}
-# log2plot needs ViSP, only installed through ROS pkg in focal
-if distro == 'focal':
-    need_ros_ws = {'log2plot': ros1}
+# read global + distro-specific modules
+info = fuse(yaml.safe_load(open(get_file('modules.yaml'))),
+            yaml.safe_load(open(get_file(f'modules-{distro}.yaml'))))
 
-# enable OSRF repos if needed
+# pop out vm info
+class VM:
+    def __init__(self, info):
+
+        self.passwd = None
+        self.ignore = []
+
+        if 'vm' not in info:
+            return
+
+        vm = info.pop('vm')
+        in_vm = run('cat /sys/devices/virtual/dmi/id/product_name') == 'VirtualBox'
+
+        # check we are in a known VM
+        if 'name' in vm and 'passwd' in vm:
+            if vm['name'].replace('__distro__', distro) == os.uname().nodename:
+                in_vm = True
+                self.passwd = vm['passwd']
+        if in_vm and 'ignore' in vm:
+            self.ignore = vm['ignore']
+
+    def skip(self, pkg):
+        return pkg in self.ignore
+
+vm = VM()
+
+# enable additional repos if needed
 # for each prefix, give the corresponding file in /etc/apt/sources.list.d
-# will be installed by osrf.sh
+# will be installed by apt_sources.sh
 additional_repos = {
     f'ros-{ros2}': 'ros2.sources',
     'ignition-': 'gazebo-stable.list',
     'gz-': 'gazebo-stable.list',
-    'robotpkg-': 'robotpkg.list'
+    'robotpkg-': 'robotpkg.list',
+    'firefox': 'mozillateam-*'
     }
 if distro <= 'focal':
     additional_repos[f'ros-{ros1}'] = 'ros-latest.list'
 
-# after 4 years finally some custom hacks are needed
-if using_ecn_vm:
-    if run('grep foxy .bashrc', cwd=os.environ['HOME']):
-        args.force_compile = True
-    run(f'{base_path}/scripts/vm_update.sh')
-
-
 class Sudo:
-    def __init__(self,gui=False):
+    def __init__(self, gui=False):
         print('Retrieving system state...')
-        if using_ecn_vm:
-            self.passwd = 'ecn'.encode()
+        if vm.passwd is not None:
+            self.passwd = vm.passwd.encode()
         else:
             self.passwd = None
             ask_passwd = True
@@ -239,6 +260,12 @@ class Sudo:
                 print('ROS 1 is not available on Ubuntu 22.04 or later, current install needs ' + ' '.join(pkg for pkg in pkgs if pkg.startswith(prefix)))
                 sys.exit(0)
 
+            if repo_file[-1] == '*':
+                cand_files = [f for f in os.listdir('/etc/apt/sources.list.d/') if f.startswith(repo_file[:-1])]
+                if cand_files:
+                    repo_file = cand_files[0]
+                else:
+                    repo_file = repo_file[:-1]
             repo_abs_file = '/etc/apt/sources.list.d/' + repo_file
 
             if not os.path.exists(repo_abs_file):
@@ -337,6 +364,7 @@ class Depend:
 
         self.pending = {}
         self.cmake = ''
+        self.rosws = None
 
     def cmake_flag(self, flag):
         if self.cmake == '':
@@ -543,8 +571,8 @@ class Depend:
             Display.msg(f'Compiling + installing {base_dir}')
             run(f'mkdir -p {build_dir}',show=False)
             dep_name = os.path.basename(base_dir)
-            if dep_name in need_ros_ws:
-                run(f'bash -c -i "source /opt/ros/{need_ros_ws[dep_name]}/setup.bash && cmake {self.cmake} .."',cwd=build_dir,show=True)
+            if self.rosws:
+                run(f'bash -c -i "source /opt/ros/{self.rosws}/setup.bash && cmake {self.cmake} .."',cwd=build_dir,show=True)
             else:
                 run(f'cmake {self.cmake} ..',cwd=build_dir,show=True)
             sudo.run('make install -j4', cwd=build_dir, show=True)
@@ -647,7 +675,7 @@ class Depend:
                     if os.path.exists(folder):
                         rmtree(folder)
 
-        # destroy git clone, has to use sudo because of build artifacts during install
+        # destroy git clone base dir, has to use sudo because of build artifacts during install
         sudo.run(f'rm -rf {base_dir}',show=False)
 
         return None
@@ -671,6 +699,8 @@ class Module:
             dep.configure(self.name, Action.KEEP)
         if 'cmake' in self.config:
             dep.cmake_flag(self.config['cmake'])
+        if 'source' in self.config:
+            dep.rosws = ros2 if self.config['source'] == 'ros2' else ros1
 
     def __init__(self, name, config):
         self.name = name
@@ -770,11 +800,7 @@ class Module:
             dep.configure(self.name, action)
 
 
-# read global + distro-specific modules
-info = fuse(yaml.safe_load(open(get_file('modules.yaml'))),
-            yaml.safe_load(open(get_file(f'modules-{distro}.yaml'))))
-
-# keys with comma are double-keys
+# expand keys with comma as they are two modules with the same dependencies
 keys = list(info.keys())
 for key in keys:
     if ',' not in key:
@@ -789,6 +815,7 @@ if 'disable' in info:
     disabled = info['disable']
     info.pop('disable')
 
+# student groups have list as value
 groups = [key for key in info if isinstance(info[key], list) and 'ignore' not in key]
 
 for mod in disable:
@@ -797,8 +824,6 @@ for mod in disable:
     for group in groups:
         if mod in info[group]:
             info[group].pop(mod)
-
-ignore = info['vm_ignore'] if 'vm_ignore' in info and using_ecn_vm else []
 
 Depend.init_folders(info['lib_folder'] if 'lib_folder' in info else '/opt/ecn')
 modules = dict((name, Module(name, config)) for name, config in info.items() if isinstance(config, dict))
@@ -840,7 +865,7 @@ def setup_ignored(root, ros):
     projects = extract_cmake_names(root+'/src')
     ignore_file = 'CATKIN_IGNORE' if ros == 1 else 'COLCON_IGNORE'
     for name in projects:
-        if name in ignore:
+        if vm.skip(name):
             run(f'touch {projects[name]}/{ignore_file}')
 
 
