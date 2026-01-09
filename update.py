@@ -197,18 +197,6 @@ class Sudo:
                 if 'incorrect' not in out[1].decode():
                     ask_passwd = False
 
-        # need to update ROS GPG key file as of 1 June 2025
-        ros_repos = [repo for repo in additional_repos if repo.startswith('ros-')]
-        src_file = '/etc/apt/sources.list.d/' + ros_repos[0]
-
-        if os.path.exists(src_file):
-            from datetime import datetime
-            modified = datetime.fromtimestamp(os.path.getmtime(src_file))
-            src_update = datetime(2025, 5, 31)
-            if modified < src_update:
-                # remove to have it resintalled later
-                self.run('rm -rf /etc/apt/sources.list.d/ros*')
-
         self.run('apt update -qy')
 
     def run(self, cmd, cwd=None,show=True):
