@@ -195,7 +195,7 @@ vm = VM()
 additional_repos = {
     f'ros-{ros2}': 'ros2.sources',
     'robotpkg-': 'robotpkg.list',
-    'firefox': 'mozillateam-*'
+    'firefox': 'mozilla.list'
     }
 
 class Sudo:
@@ -214,18 +214,6 @@ class Sudo:
                 out = proc.communicate(self.passwd)
                 if 'incorrect' not in out[1].decode():
                     ask_passwd = False
-
-        # need to update ROS GPG key file as of 1 June 2025
-        ros_repos = [repo for repo in additional_repos if repo.startswith('ros-')]
-        src_file = '/etc/apt/sources.list.d/' + ros_repos[0]
-
-        if os.path.exists(src_file):
-            from datetime import datetime
-            modified = datetime.fromtimestamp(os.path.getmtime(src_file))
-            src_update = datetime(2025, 5, 31)
-            if modified < src_update:
-                # remove to have it resintalled later
-                self.run('rm -rf /etc/apt/sources.list.d/ros*')
 
         self.run('apt update -qy')
 
@@ -257,12 +245,6 @@ class Sudo:
                 print('ROS 1 is not available on Ubuntu 22.04 or later, current install needs ' + ' '.join(pkg for pkg in pkgs if pkg.startswith(prefix)))
                 sys.exit(0)
 
-            if repo_file[-1] == '*':
-                cand_files = [f for f in os.listdir('/etc/apt/sources.list.d/') if f.startswith(repo_file[:-1])]
-                if cand_files:
-                    repo_file = cand_files[0]
-                else:
-                    repo_file = repo_file[:-1]
             repo_abs_file = '/etc/apt/sources.list.d/' + repo_file
 
             if not os.path.exists(repo_abs_file):

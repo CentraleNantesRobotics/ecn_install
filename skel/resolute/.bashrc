@@ -116,6 +116,23 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# shorter prompt
+export PS1="\[\e[1;34m\]\w\[\e[0m\]$ "
 
+# no logs
+export ROS_LOG_DIR="/tmp"
 
-alias ideconf=~/ros_management_tools/ide/ide_config.py
+ros1_workspaces="/opt/ros/obese"
+ros2_workspaces="/opt/ros/jazzy /opt/ecn/ros2 ~/ros2"
+export GZ_VERSION=jetty
+
+# activate ROS 2 by default
+if [[ -f /opt/ecn/ros_management_tools/ros_management.bash ]]; then
+    source /opt/ecn/ros_management_tools/ros_management.bash -p -k -lo -ros2
+  # QtCreator configure shortcut
+  alias ideconf='python3 /opt/ecn/ros_management_tools/ide/ide_config.py'
+fi
+
+# RViz2 display bug
+export LC_NUMERIC="en_US.UTF-8"
+

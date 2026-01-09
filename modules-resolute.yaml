@@ -1,6 +1,0 @@
-# hidden modules (without description) others may depend on
-
-gazebo:
-    apt: [gz-jetty]
-    ros2:
-        apt: [ros-gz-bridge]

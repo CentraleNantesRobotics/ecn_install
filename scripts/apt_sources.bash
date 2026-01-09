@@ -31,13 +31,14 @@ if [[ "$1" == "robotpkg.list" ]]; then
 fi
 
 
-if [[ "$1" == "mozillateam-" ]]; then
+if [[ "$1" == "mozilla.list" ]]; then
     if snap >/dev/null 2>&1
     then
         sudo snap remove firefox
         sudo apt remove firefox
     fi
-    sudo add-apt-repository ppa:mozillateam/ppa -y
+    sudo wget https://packages.mozilla.org/apt/repo-signing-key.gpg -O   /etc/apt/keyrings/packages.mozilla.org.asc
+    sudo echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" > /etc/apt/sources.list.d/mozilla.list
     echo '
 Package: *
 Pin: origin packages.mozilla.org
