@@ -116,24 +116,6 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# RViz display bug
-export LC_NUMERIC="en_US.UTF-8"
 
-# shorter prompt
-export PS1="\[\e[1;34m\]\w\[\e[0m\]$ "
-# no logs
-export ROS_LOG_DIR="/tmp"
 
-ros1_workspaces="/opt/ros/noetic /opt/ecn/ros1 ~/ros"
-ros2_workspaces="/opt/ros/galactic /opt/ecn/ros2 ~/ros2"
-export IGNITION_VERSION=fortress
-export GZ_VERSION=fortress
-
-if [[ -d /opt/ecn/ros_management_tools ]]; then
-
-  source /opt/ecn/ros_management_tools/ros_management.bash -p -k -lo -ros2
-
-  # QtCreator configure shortcut
-  alias gqt='python3 /opt/ecn/ros_management_tools/qtcreator/qtcreator_gen_config.py'	# old style
-  alias ideconf='python3 /opt/ecn/ros_management_tools/ide/ide_config.py'
-fi
+alias ideconf=~/ros_management_tools/ide/ide_config.py

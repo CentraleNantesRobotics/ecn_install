@@ -158,9 +158,10 @@ gz = run(f'grep GZ_VERSION skel/{distro}/.bashrc', cwd=base_path)[0].split('=')[
 GZ = 'IGNITION' if gz == 'fortress' else 'GZ'
 
 
-# read global + distro-specific modules
-info = fuse(yaml.safe_load(open(get_file('modules.yaml'))),
-            yaml.safe_load(open(get_file(f'modules-{distro}.yaml'))))
+# read global + distro-specific modules, if any
+info = yaml.safe_load(open(get_file('modules.yaml')))
+if os.path.exists(get_file(f'modules-{distro}.yaml')):
+    info = fuse(info, yaml.safe_load(open(get_file(f'modules-{distro}.yaml'))))
 
 # pop out vm info
 class VM:
@@ -193,13 +194,9 @@ vm = VM()
 # will be installed by apt_sources.sh
 additional_repos = {
     f'ros-{ros2}': 'ros2.sources',
-    'ignition-': 'gazebo-stable.list',
-    'gz-': 'gazebo-stable.list',
     'robotpkg-': 'robotpkg.list',
     'firefox': 'mozillateam-*'
     }
-if distro <= 'focal':
-    additional_repos[f'ros-{ros1}'] = 'ros-latest.list'
 
 class Sudo:
     def __init__(self, gui=False):

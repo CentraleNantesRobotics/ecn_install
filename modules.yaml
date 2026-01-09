@@ -1,5 +1,5 @@
 # student groups
-OD Robotique: [proav, rasom, midwa, covis, integ, ropah]
+OD Robotique: [proav, rasom, midwa, covis, integ, pasme]
 M1 CORO: [arpro,sofar,manip,covis]
 M2 CORO-IMARO: [tbc,amoro,auve,drones]
 
@@ -16,17 +16,13 @@ vm:
 
 # special module that always wants it dependencies to be installed
 base:
-    apt: [kate, konsole, curl, git, qtcreator, openssh-server, ipython3, python3-numpy, python3-matplotlib, python3-scipy, python3-sympy, build-essential, cmake, python3-pip, screen, cmake-curses-gui, xclip]
+    apt: [kate, konsole, curl, qtcreator, openssh-server, ipython3, python3-numpy, python3-matplotlib, python3-scipy, python3-sympy, build-essential, cmake, python3-pip, screen, cmake-curses-gui, xclip, python3-pylsp]
 
 # special module that always wants its dependencies to be removed
 # will be removed unless required by other modules
 cleanup:
-    git: [lagadic:visp]
-    deb: ['log2plot_1.0.0.deb','libvisp-dev_3.4.1-1_amd64.deb']
-    ros:
-        git: [CentraleNantesRobotics:baxter_simple_sim,CentraleNantesRobotics:baxter_common,CentraleNantesRobotics:baxter_interface,CentraleNantesRobotics:baxter_tools]
-    ros2:
-        git: [oKermorgant:anchor_msgs]
+    git: []
+    deb: []
 
 
 # hidden modules (without description) others may depend on
@@ -50,6 +46,9 @@ log2plot:
     apt: [python3-matplotlib, texlive-latex-extra, texlive-fonts-recommended, dvipng]
     mod: [visp]
 
+visp:
+    apt: [libvisp-dev]
+
 mapsim:
     ros2:
         git: [oKermorgant:map_simulator:ros2,oKermorgant:pose_to_tf]
@@ -58,11 +57,9 @@ duels:
     deb: ['duels[]_6.2.3.deb']
     apt: [python3-pygame, libzmq3-dev, python3-zmq,libyaml-cpp-dev, python3-yaml]
 
-pycharm:
-    deb: ['pycharm_2024.1.1.deb']
-
 gazebo:
     ros2:
+        apt: [ros-gz,ros-gz-bridge]
         git: [oKermorgant:pose_to_tf]
 
 baxter:
@@ -85,54 +82,57 @@ acados:
 
 
 # main module definitions
+
+amoro:
+    description: Advanced Modeling of Robots
+    # ros2:
+    #     apt: [ros2-control,ros2-controllers,gazebo-ros2-control,gazebo-ros-pkgs]
+    apt: [gummi, python3-pyqtgraph]    # tex editor for reports?
+    mod: [gazebo]
+
 arpro,proav:
     description: 'Advanced programming / C++'
     mod: [duels]
+
+auve:
+    description: Autonomous vehicles
+    apt: [jupyter,jupyter-notebook,python3-opencv,python3-networkx,python3-osmnx,python3-open3d]
+    pip: [einops,pyquaternion]
+
+avg:
+    description: 'Advanced Visual Geometry'
+    apt: [python3-opencv]
+
+covis:
+    description: Computer Vision
+    mod: [python3-opencv]
+
+integ:
+    description: Integration project
+    mod: [gazebo]
 
 manip:
     description: Robot modeling and control
     mod: [visp, ros2]
     apt: [python-is-python3]
 
-integ:
-    description: Integration project
-    mod: [gazebo]
-
 midwa,sofar:
     description: Middleware / ROS 2
     mod: [mapsim,baxter,turtlebot]
+
+# TODO
+# pasme:
+#     description: Medical robotics
+#     ros2:
+#         apt: [hardware-interface, controller-interface, moveit-servo, moveit-common, gazebo-ros, controller-manager, ros2-control, ros2-controllers, gazebo-ros2-control, gazebo-ros-pkgs]
 
 rasom,drones:
     description: Underwater robotics
     mod: [gazebo]
     ros2:
         git: [CentraleNantesROV:floatgen, CentraleNantesROV:auv_control, CentraleNantesROV:thruster_manager, CentraleNantesROV:bluerov2]
-
 tbc:
     description: Task-based control
-    mod: [log2plot,baxter]
+    mod: [log2plot,baxter,gazebo]
 
-amoro:
-    description: Advanced Modeling of Robots
-    ros2:
-        apt: [ros2-control,ros2-controllers,gazebo-ros2-control,gazebo-ros-pkgs]
-    apt: [gummi, python3-pyqtgraph]    # tex editor for reports?
 
-avg:
-    description: 'Advanced Visual Geometry'
-    mod: [pycharm]
-    apt: [python3-opencv]
-
-covis:
-    description: Computer Vision
-    mod: [pycharm]
-
-auve:
-    description: Autonomous vehicles (AUV)
-    mod: [gazebo]
-    apt: [jupyter,jupyter-notebook,python3-opencv,python3-networkx,python3-osmnx]
-
-ropah:
-    description: Medical robotics
-    ros2:
-        apt: [hardware-interface, controller-interface, moveit-servo, moveit-common, gazebo-ros, controller-manager, ros2-control, ros2-controllers, gazebo-ros2-control, gazebo-ros-pkgs]

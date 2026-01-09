@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-# a summary of various APT repos from OSRF
+# a summary of various APT repos from OSRF and others
 
 if [[ "$1" == "ros2.sources" ]]; then
 
@@ -22,11 +22,6 @@ if [[ "$1" == "gazebo-stable.list" ]]; then
     sudo apt update && sudo apt install curl -y
     sudo curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] https://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
-fi
-
-if [[ "$1" == "ros-latest.list" ]]; then
-    sudo wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O /etc/apt/trusted.gpg.d/ros.key
-    sudo bash -c 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d/ros.key] http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 fi
 
 

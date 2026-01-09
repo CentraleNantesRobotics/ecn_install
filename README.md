@@ -1,4 +1,4 @@
-# Some scripts to easily setup Ubuntu / ROS 1 / ROS 2
+# Some scripts to easily setup Ubuntu / ROS 2
 
 A meta-package manager for Ubuntu (apt + git + deb + pip), used at Centrale Nantes to keep the computers up-to-date.
 
