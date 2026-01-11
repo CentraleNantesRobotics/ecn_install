@@ -187,7 +187,7 @@ class VM:
     def skip(self, pkg):
         return pkg in self.ignore
 
-vm = VM()
+vm = VM(info)
 
 # enable additional repos if needed
 # for each prefix, give the corresponding file in /etc/apt/sources.list.d
