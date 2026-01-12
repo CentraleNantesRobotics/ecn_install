@@ -1,0 +1,10 @@
+[Added Associations]
+inode/directory=org.kde.dolphin.desktop;code.desktop;org.kde.kate.desktop;
+text/x-cmake=org.kde.kate.desktop;org.qt-project.qtcreator.desktop;
+
+[Default Applications]
+inode/directory=org.kde.dolphin.desktop;
+text/x-cmake=org.kde.kate.desktop;
+
+[Removed Associations]
+inode/directory=org.kde.gwenview.desktop;

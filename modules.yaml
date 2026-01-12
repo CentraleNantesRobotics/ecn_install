@@ -16,7 +16,7 @@ vm:
 
 # special module that always wants it dependencies to be installed
 base:
-    apt: [kate, konsole, curl, qtcreator, openssh-server, ipython3, python3-numpy, python3-matplotlib, python3-scipy, python3-sympy, build-essential, cmake, python3-pip, screen, cmake-curses-gui, xclip, python3-pylsp]
+    apt: [kate, konsole, curl, qtcreator, openssh-server, ipython3, python3-numpy, python3-matplotlib, python3-scipy, python3-sympy, build-essential, cmake, python3-pip, screen, cmake-curses-gui, xclip, python3-pylsp, libyaml-cpp-dev, okular]
 
 # special module that always wants its dependencies to be removed
 # will be removed unless required by other modules

@@ -18,6 +18,8 @@ SetEditor=false
 
 [MainWindow]
 1280x800 screen: Window-Maximized=true
+1920x969 screen: Window-Maximized=true
+1920x999 screen: Window-Maximized=true
 
 [filetree]
 editShade=183,220,246
@@ -31,7 +33,7 @@ sortRole=0
 viewShade=211,190,222
 
 [lspclient]
-AllowedServerCommandLines=/usr/bin/pylsp --check-parent-process
+AllowedServerCommandLines=/usr/bin/clangd -log=error --background-index --limit-results=500 --completion-style=bundled,/usr/bin/pylsp --check-parent-process
 AutoHover=true
 AutoImport=true
 BlockedServerCommandLines=
