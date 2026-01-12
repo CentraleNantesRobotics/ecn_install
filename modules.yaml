@@ -105,7 +105,7 @@ avg:
 
 covis:
     description: Computer Vision
-    mod: [python3-opencv]
+    apt: [python3-opencv]
 
 integ:
     description: Integration project
