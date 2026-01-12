@@ -872,7 +872,7 @@ def perform_update(action = None, poweroff=False):
             copytree(skel + '/', os.environ['HOME'], dirs_exist_ok = True)
 
     # wallpaper
-    wp = [f for f in os.listdir(base_path + '/images/') if ros2 in f][0]
+    wp = [f for f in os.listdir(base_path + '/images/') if distro in f][0]
     if not os.path.exists(f'{Depend.folders[Source.GIT]}/{wp}'):
         sudo.run(f'cp {base_path}/images/{wp} {Depend.folders[Source.GIT]}')
 
