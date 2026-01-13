@@ -223,6 +223,8 @@ class Sudo:
             Display.msg(cmd, True)
         if isinstance(cmd, list):
             cmd = cmd[0]
+        if cmd.startswith('apt install'):
+            cmd = 'DEBIAN_FRONTEND=noninteractive ' + cmd
         proc = Popen(['sudo','-S'] + shlex.split(cmd), stdin=PIPE, stderr=PIPE, stdout=PIPE if show else DEVNULL,cwd=cwd)
         proc.communicate(self.passwd)
         proc.wait()

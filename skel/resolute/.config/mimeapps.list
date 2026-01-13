@@ -1,10 +1,30 @@
 [Added Associations]
 inode/directory=org.kde.dolphin.desktop;code.desktop;org.kde.kate.desktop;
 text/x-cmake=org.kde.kate.desktop;org.qt-project.qtcreator.desktop;
+x-scheme-handler/http=userapp-Firefox-AQHXI3.desktop;userapp-Firefox-5JFWI3.desktop;
+x-scheme-handler/https=userapp-Firefox-AQHXI3.desktop;userapp-Firefox-5JFWI3.desktop;
+x-scheme-handler/chrome=userapp-Firefox-AQHXI3.desktop;userapp-Firefox-5JFWI3.desktop;
+text/html=userapp-Firefox-5JFWI3.desktop;userapp-Firefox-AQHXI3.desktop;
+application/x-extension-htm=userapp-Firefox-5JFWI3.desktop;userapp-Firefox-AQHXI3.desktop;
+application/x-extension-html=userapp-Firefox-5JFWI3.desktop;userapp-Firefox-AQHXI3.desktop;
+application/x-extension-shtml=userapp-Firefox-5JFWI3.desktop;userapp-Firefox-AQHXI3.desktop;
+application/xhtml+xml=userapp-Firefox-5JFWI3.desktop;userapp-Firefox-AQHXI3.desktop;
+application/x-extension-xhtml=userapp-Firefox-5JFWI3.desktop;userapp-Firefox-AQHXI3.desktop;
+application/x-extension-xht=userapp-Firefox-5JFWI3.desktop;userapp-Firefox-AQHXI3.desktop;
 
 [Default Applications]
 inode/directory=org.kde.dolphin.desktop;
 text/x-cmake=org.kde.kate.desktop;
+x-scheme-handler/http=userapp-Firefox-AQHXI3.desktop
+x-scheme-handler/https=userapp-Firefox-AQHXI3.desktop
+x-scheme-handler/chrome=userapp-Firefox-AQHXI3.desktop
+text/html=userapp-Firefox-AQHXI3.desktop
+application/x-extension-htm=userapp-Firefox-AQHXI3.desktop
+application/x-extension-html=userapp-Firefox-AQHXI3.desktop
+application/x-extension-shtml=userapp-Firefox-AQHXI3.desktop
+application/xhtml+xml=userapp-Firefox-AQHXI3.desktop
+application/x-extension-xhtml=userapp-Firefox-AQHXI3.desktop
+application/x-extension-xht=userapp-Firefox-AQHXI3.desktop
 
 [Removed Associations]
 inode/directory=org.kde.gwenview.desktop;
