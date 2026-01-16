@@ -2,7 +2,7 @@
 
 base_dir=$(dirname $(realpath $0))
 
-echo "Refreshing patches..."
+echo "Refreshing modules..."
 (cd $base_dir && git pull)
 
 # run explicitely in bash terminal for ROS pkgs

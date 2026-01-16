@@ -1,9 +1,8 @@
 # Some scripts to easily setup Ubuntu / ROS 2
 
-A meta-package manager for Ubuntu (apt + git + deb + pip), used at Centrale Nantes to keep the computers up-to-date.
+A meta-package manager for Ubuntu (apt + git + deb + pip), used at Centrale Nantes to keep the lab computers up-to-date. This tool was built during the COVID lockdown so that students could easily manage their virtual machine and spend time learning robotics instead of Ubuntu / ROS 2 packaging.
 
 # Entry point
-
 
 The `update.py` is to be run it without arguments or by specifying which module you want to update:
 
@@ -28,3 +27,7 @@ The two files will be merged into a single dependency graph.
 
   - `lib_folder`: where git-based packages are installed. ROS / ROS 2 are installed under  `{lib_folder}/ros1` and  `{lib_folder}/ros2`
   - `vm`: if specific packages are not to be installed in a given virtual machine, also give the VM hostname to identify it
+
+# Refreshing the whole directory
+
+The `update.sh` script will first run `git pull` before running the update, in order to keep the dependency list up-to-date as well.
