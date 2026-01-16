@@ -6,9 +6,8 @@ base:
     apt: [kate]
 
 gazebo:
-    apt: [gz-harmonic]
     ros2:
-        apt: [ros-gz-bridge]
+        apt: [ros-gz-bridge, ros-gz]
 
 visp:
     apt: [libvisp-dev]
