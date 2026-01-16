@@ -39,8 +39,8 @@ fi
 if [[ "$1" == "mozillateam-" ]]; then
     if snap >/dev/null 2>&1
     then
-        sudo snap remove firefox
-        sudo apt remove firefox
+        sudo snap remove firefox --purge
+        sudo apt autopurge firefox
     fi
     sudo add-apt-repository ppa:mozillateam/ppa -y
     echo '
