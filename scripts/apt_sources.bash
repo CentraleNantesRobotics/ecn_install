@@ -35,7 +35,7 @@ if [[ "$1" == "mozilla.list" ]]; then
     if snap >/dev/null 2>&1
     then
         sudo snap remove firefox --purge
-        sudo apt remove firefox
+        sudo apt -qy remove firefox
     fi
     sudo wget https://packages.mozilla.org/apt/repo-signing-key.gpg -O   /etc/apt/keyrings/packages.mozilla.org.asc
     sudo echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" > /etc/apt/sources.list.d/mozilla.list
