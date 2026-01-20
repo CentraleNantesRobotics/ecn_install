@@ -1,0 +1,25 @@
+[Desktop Entry]
+Categories=Development;IDE;Qt;
+Comment[en_GB]=
+Comment=
+Comment[en_US]=
+Exec=bash -i -c 'qtcreator %F'
+GenericName[en_GB]=C++ IDE for developing Qt applications
+GenericName=C++ IDE for developing Qt applications
+GenericName[en_US]=C++ IDE for developing Qt applications
+Icon=QtProject-qtcreator
+MimeType=text/x-c++src;text/x-c++hdr;application/x-designer;
+Name[en_GB]=Qt Creator
+Name=Qt Creator
+Name[en_US]=Qt Creator
+Path=
+StartupNotify=true
+StartupWMClass=qtcreator
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-StartupNotify=true
+X-KDE-SubstituteUID=false
+X-KDE-Username=
