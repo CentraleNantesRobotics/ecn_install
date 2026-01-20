@@ -18,7 +18,7 @@ base:
 # will be removed unless required by other modules
 cleanup:
     git: [lagadic:visp]
-    deb: ['log2plot_1.0.0.deb','libvisp-dev_3.4.1-1_amd64.deb']
+    deb: ['log2plot_1.0.0.deb','libvisp-dev_3.4.1-1_amd64.deb', 'ecn-ros2_1.1.3.deb']
     ros:
         git: [CentraleNantesRobotics:baxter_simple_sim,CentraleNantesRobotics:baxter_common,CentraleNantesRobotics:baxter_interface,CentraleNantesRobotics:baxter_tools]
     ros2:
@@ -38,7 +38,6 @@ ros2:
         apt: [desktop,robot-localization,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2,urdfdom-py,pcl-ros,nav2-simple-commander,ackermann-msgs]
         git: [oKermorgant:simple_launch,oKermorgant:slider_publisher:ros2, CentraleNantesRobotics:ecn_common]
     apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat,python3-rospkg]
-    deb: ['ecn-ros2_1.1.3.deb']
     mod: [rmt]
 
 log2plot:
