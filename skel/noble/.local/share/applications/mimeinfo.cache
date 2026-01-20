@@ -1,0 +1,10 @@
+[MIME Cache]
+application/vnd.qt.qmakeprofile=org.qt-project.qtcreator.desktop;
+application/vnd.qt.xml.resource=org.qt-project.qtcreator.desktop;
+application/x-code-workspace=code.desktop;
+application/x-designer=org.qt-project.qtcreator.desktop;
+inode/directory=org.kde.kate.desktop;
+text/plain=org.kde.kate.desktop;
+text/x-c++hdr=org.qt-project.qtcreator.desktop;
+text/x-c++src=org.qt-project.qtcreator.desktop;
+text/x-xsrc=org.qt-project.qtcreator.desktop;

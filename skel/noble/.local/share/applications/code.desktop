@@ -1,0 +1,25 @@
+[Desktop Entry]
+Actions=new-empty-window;
+Categories=TextEditor;Development;IDE;
+Comment=Code Editing. Redefined.
+Exec=bash -i -c 'ros2ws - && code %F'
+GenericName=Text Editor
+Icon=vscode
+Keywords=vscode;
+MimeType=application/x-code-workspace;
+Name=Visual Studio Code
+NoDisplay=false
+Path=
+PrefersNonDefaultGPU=false
+StartupNotify=false
+StartupWMClass=Code
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=
+
+[Desktop Action new-empty-window]
+Exec=/usr/bin/code --new-window %F
+Icon=vscode
+Name=New Empty Window
