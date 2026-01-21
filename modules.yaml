@@ -18,6 +18,7 @@ base:
 # special module that always wants its dependencies to be removed
 # will be removed unless required by other modules
 cleanup:
+    apt: [geany]
     git: [lagadic:visp]
     deb: ['log2plot_1.0.0.deb','libvisp-dev_3.4.1-1_amd64.deb']
     ros:

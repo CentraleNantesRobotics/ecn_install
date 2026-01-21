@@ -4,7 +4,7 @@ OD Robotique: [planif]
 
 # special module that always wants it dependencies to be installed
 base:
-    apt: [geany, libclang-common-8-dev]
+    apt: [libclang-common-8-dev]
 
 ros:
     ros:
