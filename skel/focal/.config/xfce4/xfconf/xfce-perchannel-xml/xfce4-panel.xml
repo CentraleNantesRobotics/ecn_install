@@ -108,12 +108,6 @@
         <value type="string" value="15919923321.desktop"/>
       </property>
     </property>
-    <property name="plugin-15" type="string" value="launcher">
-      <!-- Kate -->
-      <property name="items" type="array">
-        <value type="string" value="org.kde.kate.desktop"/>
-      </property>
-    </property>
     <property name="plugin-16" type="string" value="launcher">
       <!-- File manager -->
       <property name="items" type="array">
