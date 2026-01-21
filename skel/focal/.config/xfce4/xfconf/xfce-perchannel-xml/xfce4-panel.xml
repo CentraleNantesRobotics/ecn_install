@@ -129,12 +129,6 @@
         <value type="string" value="15924700421.desktop"/>
       </property>
     </property>
-    <property name="plugin-17" type="string" value="launcher">
-      <!-- Qt Creator -->
-      <property name="items" type="array">
-        <value type="string" value="org.qt-project.qtcreator.desktop"/>
-      </property>
-    </property>
   </property>
   <property name="configver" type="int" value="2"/>
 </channel>

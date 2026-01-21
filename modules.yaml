@@ -13,12 +13,13 @@ vm_ignore: [baxter_bridge]
 # special module that always wants it dependencies to be installed
 base:
     apt: [kate, konsole, curl, git, qtcreator, openssh-server, ipython3, python3-numpy, python3-matplotlib, python3-scipy, python3-sympy, build-essential, cmake, python3-pip, screen, cmake-curses-gui, xclip]
+    deb: ['ecn-ros_1.1.4.deb']
 
 # special module that always wants its dependencies to be removed
 # will be removed unless required by other modules
 cleanup:
     git: [lagadic:visp]
-    deb: ['log2plot_1.0.0.deb','libvisp-dev_3.4.1-1_amd64.deb', 'ecn-ros2_1.1.3.deb']
+    deb: ['log2plot_1.0.0.deb','libvisp-dev_3.4.1-1_amd64.deb']
     ros:
         git: [CentraleNantesRobotics:baxter_simple_sim,CentraleNantesRobotics:baxter_common,CentraleNantesRobotics:baxter_interface,CentraleNantesRobotics:baxter_tools]
     ros2:

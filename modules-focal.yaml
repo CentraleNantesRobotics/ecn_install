@@ -10,7 +10,6 @@ ros:
     ros:
         apt: [desktop, joint-state-publisher,robot-localization,vision-opencv,gazebo-ros-pkgs,image-view,compressed-image-transport,amcl,control-toolbox,kdl-parser-py,slider-publisher]
     apt: [python3-catkin-tools,python3-rospkg]
-    deb: ['ecn-ros_1.1.3.deb']
     mod: [rmt]
 
 # ViSP not packaged in Focal, use ROS packages
