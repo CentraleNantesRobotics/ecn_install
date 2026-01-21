@@ -1,7 +1,7 @@
 [Desktop Entry]
 Categories=Qt;KDE;Utility;TextEditor;Development;
 Comment=KDE Advanced Text Editor
-Exec=/opt/ecn/ros_management_tools/ide/open_ide kate %F
+Exec=bash -ic '/opt/ecn/ros_management_tools/ide/open_ide kate %F'
 GenericName=Advanced Text Editor
 Icon=kate
 InitialPreference=9
