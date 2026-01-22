@@ -13,7 +13,6 @@ vm_ignore: [baxter_bridge]
 # special module that always wants it dependencies to be installed
 base:
     apt: [kate, konsole, curl, git, qtcreator, openssh-server, ipython3, python3-numpy, python3-matplotlib, python3-scipy, python3-sympy, build-essential, cmake, python3-pip, screen, cmake-curses-gui, xclip]
-    deb: ['ecn-ros_1.1.4.deb']
 
 # special module that always wants its dependencies to be removed
 # will be removed unless required by other modules
@@ -41,6 +40,7 @@ ros2:
         git: [oKermorgant:simple_launch,oKermorgant:slider_publisher:ros2, CentraleNantesRobotics:ecn_common]
     apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat,python3-rospkg]
     mod: [rmt]
+    deb: ['ecn-ros_1.1.4.deb']
 
 log2plot:
     git: [oKermorgant:log2plot]
