@@ -39,7 +39,7 @@ ros2:
         apt: [desktop,robot-localization,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2,urdfdom-py,pcl-ros,nav2-simple-commander,ackermann-msgs, simple-launch, slider-publisher]
         git: [CentraleNantesRobotics:ecn_common]
     apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat,python3-rospkg]
-    deb: ['ecn-ros_2.0.0.deb']
+    deb: ['ecn-ros_2.0.1.deb']
     mod: [rmt]
 
 log2plot:
