@@ -50,6 +50,8 @@
       <property name="square-icons" type="bool" value="true"/>
       <property name="size-max" type="uint" value="22"/>
       <property name="names-ordered" type="array">
+        <value type="string" value="network"/>
+        <value type="string" value="networkmanager applet"/>
         <value type="string" value="thunar"/>
       </property>
     </property>
@@ -100,13 +102,11 @@
       </property>
     </property>
     <property name="plugin-14" type="string" value="launcher">
-      <!-- terminal -->
       <property name="items" type="array">
         <value type="string" value="15919923321.desktop"/>
       </property>
     </property>
     <property name="plugin-16" type="string" value="launcher">
-      <!-- File manager -->
       <property name="items" type="array">
         <value type="string" value="15922148052.desktop"/>
       </property>
@@ -115,7 +115,6 @@
       <property name="group-policy" type="uint" value="0"/>
     </property>
     <property name="plugin-6" type="string" value="launcher">
-      <!-- Firefox -->
       <property name="items" type="array">
         <value type="string" value="15924700421.desktop"/>
       </property>
