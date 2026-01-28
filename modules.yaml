@@ -33,6 +33,7 @@ code:
 
 rmt:
     git: [oKermorgant:ros_management_tools]
+    deb: ['ecn-ros_1.1.6.deb']
 
 ros2:
     ros2:
@@ -40,7 +41,6 @@ ros2:
         git: [oKermorgant:simple_launch,oKermorgant:slider_publisher:ros2, CentraleNantesRobotics:ecn_common]
     apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat,python3-rospkg]
     mod: [rmt]
-    deb: ['ecn-ros_1.1.6.deb']
 
 log2plot:
     git: [oKermorgant:log2plot]
