@@ -21,7 +21,7 @@ base:
 # special module that always wants its dependencies to be removed
 # will be removed unless required by other modules
 cleanup:
-    apt: [snapd]
+    apt: [snapd, kamera, smbclient, qrca]
     git: []
     deb: []
 
