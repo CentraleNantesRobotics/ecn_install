@@ -51,6 +51,7 @@ if git_status(base_path) == Status.OLD:
     # re-run this script with same arguments
     run(' '.join(sys.argv))
     sys.exit(0)
+print('ecn_install up to date')
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.description = 'Updater for Ubuntu computer or virtual machine.'
