@@ -38,9 +38,7 @@ def git_status(dirname, force_git = False):
     git_status = run('git status', cwd=dirname)
     if git_status is None:
         return Status.OLD
-
     git_status = '\n'.join(git_status)
-
     if 'behind' not in git_status and 'retard' not in git_status and not force_git:
         return Status.INSTALLED
     return Status.OLD
