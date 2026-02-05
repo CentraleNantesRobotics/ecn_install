@@ -33,7 +33,7 @@ code:
 
 rmt:
     git: [oKermorgant:ros_management_tools]
-    deb: ['ecn-ros_2.0.2.deb']
+    deb: ['ecn-ros_2.0.3.deb']
 
 ros2:
     ros2:

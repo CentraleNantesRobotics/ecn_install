@@ -12,6 +12,46 @@ import argparse
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 
+
+def run(cmd, cwd=None,show=False):
+    if show:
+        Display.msg(cmd)
+    if isinstance(cmd, list):
+        cmd = cmd[0]
+    try:
+        return check_output(shlex.split(cmd), stderr=PIPE, cwd=cwd).decode('utf-8').splitlines()
+    except CalledProcessError:
+        return None
+
+
+class Enum(object):
+    def __init__(self, *keys):
+        self.__dict__.update(dict([(key.upper(), i) for i,key in enumerate(keys)]))
+
+    def values(self):
+        return self.__dict__.values()
+Status = Enum('Absent', 'Old', 'Installed')
+
+
+def git_status(dirname, force_git = False):
+    run('git fetch',cwd=dirname)
+    git_status = run('git status', cwd=dirname)
+    if git_status is None:
+        return Status.OLD
+
+    if 'behind' not in git_status[1] and not force_git:
+        return Status.INSTALLED
+    return Status.OLD
+
+
+# first check any updates
+if git_status(base_path) == Status.OLD:
+    print('Refreshing ecn_install package')
+    run('git pull --recurse-submodules', cwd=base_path,show=False)
+    # re-run this script with same arguments
+    run(' '.join(sys.argv))
+    sys.exit(0)
+
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.description = 'Updater for Ubuntu computer or virtual machine.'
 
@@ -38,6 +78,13 @@ if os.geteuid() == 0 or 'SUDO_UID' in os.environ:
     print('\n   Do not run this script as root or sudo')
     import sys
     sys.exit(0)
+
+
+def get_file(name):
+    '''
+    Retrieve a file wrt base dir
+    '''
+    return base_path + '/' + name
 
 
 def fuse(src1: dict, src2: dict):
@@ -129,21 +176,6 @@ class Display:
 
 
 Display.init()
-
-
-def get_file(name):
-    return base_path + '/' + name
-
-
-def run(cmd, cwd=None,show=False):
-    if show:
-        Display.msg(cmd)
-    if isinstance(cmd, list):
-        cmd = cmd[0]
-    try:
-        return check_output(shlex.split(cmd), stderr=PIPE, cwd=cwd).decode('utf-8').splitlines()
-    except CalledProcessError:
-        return None
 
 
 distro = run('lsb_release -cs')[0]
@@ -316,18 +348,8 @@ def src_type(src, dst):
     return '_'.join([src,dst]).upper().strip('_')
 
 
-class Enum(object):
-    def __init__(self, *keys):
-        self.__dict__.update(dict([(key.upper(), i) for i,key in enumerate(keys)]))
-
-    def values(self):
-        return self.__dict__.values()
-
-
 Action = Enum('Remove', 'Keep', 'Install')
 Source = Enum(*([src_type(src,dst) for src in ('apt','pip','deb','git') for dst in ('', 'ros', 'ros2')] + ['script']))
-Status = Enum('Absent', 'Old', 'Installed')
-
 actions = {Action.REMOVE: 'Remove', Action.KEEP: 'Keep as it is', Action.INSTALL: 'Install / update'}
 status = {Status.ABSENT: 'Not installed', Status.OLD: 'Needs update', Status.INSTALLED: 'Up-to-date'}
 
@@ -481,14 +503,7 @@ class Depend:
             return Status.ABSENT
 
         # check GIT wrt upstream
-        run('git fetch',cwd=base_dir)
-        git_status = run('git status', cwd=base_dir)
-        if git_status is None:
-            return Status.OLD
-
-        if 'behind' not in git_status[1] and not args.force_git:
-            return Status.INSTALLED
-        return Status.OLD
+        return git_status(base_dir, args.force_git)
 
     def update(self):
 
