@@ -4,11 +4,11 @@ A meta-package manager for Ubuntu (apt + git + deb + pip), used at Centrale Nant
 
 # Entry point
 
-The `update.py` is to be run it without arguments or by specifying which module you want to update:
+The `install_deps.py` is to be run it without arguments or by specifying which module you want to update:
 
-  - `update.py -u` will update all installed modules
-  - `update.py -u arpro` will only update arpro
-  - `update.py -a` will install all dependencies for all modules
+  - `install_deps.py -u` will update all installed modules
+  - `install_deps.py -u arpro` will only update arpro
+  - `install_deps.py -a` will install all dependencies for all modules
   - adding `-n` will skip the `apt upgrade` step, which may save some time
 
 In the lab dependencies, system-wide ROS overlays are installed at `/opt/ecn/ros1` and `/opt/ecn/ros2`. They should be sourced in your `.bashrc` if you use this system on a native Ubuntu OS.
@@ -30,4 +30,4 @@ The two files will be merged into a single dependency graph.
 
 # Refreshing the whole directory
 
-The `update.sh` script will first run `git pull` before running the update, in order to keep the dependency list up-to-date as well.
+The `update.sh` script will first run `git pull` before running the Python script, in order to keep the dependency list (and various files) up-to-date as well.
