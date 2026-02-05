@@ -485,8 +485,9 @@ class Depend:
         git_status = run('git status', cwd=base_dir)
         if git_status is None:
             return Status.OLD
+        git_status = '\n'.join(git_status)
 
-        if 'behind' not in git_status[1] and not args.force_git:
+        if 'behind' not in git_status and 'retard' not in git_status and not args.force_git:
             return Status.INSTALLED
         return Status.OLD
 
