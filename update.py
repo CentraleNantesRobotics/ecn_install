@@ -271,6 +271,9 @@ class Sudo:
 
     def deb_install(self, url):
 
+        if not url.endswith('.deb'):
+            url += '.deb'
+
         if not url.startswith('http'):
             url = 'https://box.ec-nantes.fr/index.php/s/s7rbFwAeTqwoe6e/download?path=%2F&files=' + url
 
