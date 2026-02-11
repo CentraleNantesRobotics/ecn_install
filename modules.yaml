@@ -29,7 +29,7 @@ cleanup:
 # hidden modules (without description) others may depend on
 
 code:
-    deb: ['code_1.109.0-1770171879_amd64']
+    deb: ['code_1.109.2-1770755809_amd64']
 
 rmt:
     git: [oKermorgant:ros_management_tools]
