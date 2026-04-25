@@ -27,6 +27,8 @@ cleanup:
 
 
 # hidden modules (without description) others may depend on
+firefox:
+    apt: [firefox]
 
 code:
     deb: ['code_1.109.2-1770755809_amd64']
