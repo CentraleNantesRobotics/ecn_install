@@ -873,6 +873,7 @@ def perform_update(action = None, poweroff=False):
     with open(bashrc) as f:
         if 'ros_management_tools' not in f.read():
             copytree(skel + '/', os.environ['HOME'], dirs_exist_ok = True)
+            sudo.run(f'rsync -avr {skel}/ /etc/skel/')
 
     sudo.run(f'mkdir -p {Depend.folders[Source.GIT]}')
 
