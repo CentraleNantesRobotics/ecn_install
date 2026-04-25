@@ -4,27 +4,6 @@ RightButton;NoModifier=org.kde.contextmenu
 [ActionPlugins][1]
 RightButton;NoModifier=org.kde.contextmenu
 
-[Containments][1]
-ItemGeometries-1280x800=
-ItemGeometries-1920x969=
-ItemGeometries-1920x999=
-ItemGeometriesHorizontal=
-activityId=79a16d85-b37a-4f44-b279-2d616267575c
-formfactor=0
-immutability=1
-lastScreen=0
-location=0
-plugin=org.kde.plasma.folder
-wallpaperplugin=org.kde.image
-
-[Containments][1][ConfigDialog]
-DialogHeight=711
-DialogWidth=1036
-
-[Containments][1][Wallpaper][org.kde.image][General]
-Image=file:///opt/ecn/resolute-lyrical.jpg
-SlidePaths=/usr/share/wallpapers/
-
 [Containments][2]
 activityId=
 formfactor=2
@@ -58,6 +37,7 @@ DialogHeight=630
 DialogWidth=810
 
 [Containments][2][Applets][25][Configuration][General]
+actionsOrder=lockScreen,switchUser,requestShutDown,requestReboot,requestLogout,requestLogoutScreen,suspendToRam,suspendToDisk
 show_lockScreen=false
 
 [Containments][2][Applets][3]
@@ -65,7 +45,6 @@ immutability=1
 plugin=org.kde.plasma.kickoff
 
 [Containments][2][Applets][3][Configuration]
-PreloadWeight=100
 popupHeight=509
 popupWidth=647
 
@@ -128,9 +107,6 @@ PreloadWeight=42
 immutability=1
 plugin=org.kde.plasma.devicenotifier
 
-[Containments][2][Applets][7][Applets][15][Configuration]
-PreloadWeight=65
-
 [Containments][2][Applets][7][Applets][16][Configuration]
 PreloadWeight=42
 
@@ -156,9 +132,6 @@ PreloadWeight=42
 immutability=1
 plugin=org.kde.plasma.battery
 
-[Containments][2][Applets][7][Applets][24][Configuration]
-PreloadWeight=42
-
 [Containments][2][Applets][7][Applets][8]
 immutability=1
 plugin=org.kde.plasma.keyboardlayout
@@ -178,6 +151,25 @@ knownItems=org.kde.plasma.keyboardlayout,org.kde.plasma.clipboard,org.kde.plasma
 
 [Containments][2][General]
 AppletOrder=3;4;5;6;7;21;22;25
+
+[Containments][26]
+ItemGeometries-1280x800=
+ItemGeometriesHorizontal=
+activityId=83561ba5-3e37-4216-a7ca-c23c86feafa1
+formfactor=0
+immutability=1
+lastScreen=0
+location=0
+plugin=org.kde.plasma.folder
+wallpaperplugin=org.kde.image
+
+[Containments][26][ConfigDialog]
+DialogHeight=630
+DialogWidth=810
+
+[Containments][26][Wallpaper][org.kde.image][General]
+Image=file:///opt/ecn/resolute-lyrical.jpg
+SlidePaths=/usr/share/wallpapers/
 
 [ScreenMapping]
 itemsOnDisabledScreens=
