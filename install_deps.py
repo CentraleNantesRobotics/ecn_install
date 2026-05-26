@@ -351,8 +351,19 @@ class Depend:
         self.rosws = None
 
     def cmake_flag(self, flag):
-        if self.cmake == '':
+        if self.cmake != '':
+            return
+        if isinstance(flag, str):
             self.cmake = flag
+            return
+        if not isinstance(flag, dict):
+            print(f'[{self.pkg}] cmake flag should be string or True / False dictionary')
+            return
+
+        for key in True, False:
+            if key in flag:
+                for kw in flag[key]:
+                    self.cmake += f' -D{kw}={key}'
 
     def need_install(self):
         return self.result == Action.INSTALL and self.status != Status.INSTALLED
@@ -560,7 +571,9 @@ class Depend:
                 run(f'bash -c -i "source /opt/ros/{self.rosws}/setup.bash && cmake {self.cmake} .."',cwd=build_dir,show=True)
             else:
                 run(f'cmake {self.cmake} ..',cwd=build_dir,show=True)
-            sudo.run('make install -j4', cwd=build_dir, show=True)
+            from multiprocessing import cpu_count
+
+            sudo.run(f'make install -j{cpu_count()}', cwd=build_dir, show=True)
 
         return self.src
 

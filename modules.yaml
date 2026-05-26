@@ -50,7 +50,10 @@ log2plot:
     mod: [visp]
 
 visp:
-    apt: [libvisp-dev]
+    git: [lagadic:visp]
+    cmake:
+        false: [BUILD_MODULE_visp_ar, BUILD_MODULE_visp_mbt, BUILD_COVERAGE, BUILD_DEMOS, BUILD_JAVA, BUILD_EXAMPLES, BUILD_MODULE_visp_java_binding, BUILD_TESTS, BUILD_TUTORIALS]
+    apt: [libopencv-dev]
 
 mapsim:
     ros2:
