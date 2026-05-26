@@ -493,6 +493,7 @@ class Depend:
             return Status.ABSENT
 
         if not self.fetch and not args.force_git:
+            print('Skipping auto-fetch for',base_dir)
             return Status.INSTALLED
 
         # check GIT wrt upstream
