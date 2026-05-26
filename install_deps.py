@@ -339,7 +339,9 @@ class Depend:
     packages = {}
     packages_old = []
 
-    def __init__(self, pkg, src):
+    def __init__(self, pkg, src, fetch = True):
+
+        self.fetch = fetch
 
         self.pkg, self.src = Depend.resolve(pkg, src)
 
@@ -348,7 +350,7 @@ class Depend:
 
         self.pending = {}
         self.cmake = ''
-        self.fetch = True
+
         self.rosws = None
 
     def cmake_flag(self, flag):
@@ -690,11 +692,13 @@ class Module:
 
     def build_depend(self, pkg, src):
 
+        fetch = self.config['fetch'] if 'fetch' in self.config else True
+
         for dep in Module.depends:
             if dep.matches(pkg, src):
                 break
         else:
-            dep = Depend(pkg, src)
+            dep = Depend(pkg, src, fetch)
             Module.depends.append(dep)
 
         self.add_depend(dep)
@@ -702,8 +706,6 @@ class Module:
             dep.configure(self.name, Action.KEEP)
         if 'cmake' in self.config:
             dep.cmake_flag(self.config['cmake'])
-        if 'fetch' in self.config:
-            dep.fetch = self.config['fetch']
         if 'source' in self.config:
             dep.rosws = ros2 if self.config['source'] == 'ros2' else ros1
 
