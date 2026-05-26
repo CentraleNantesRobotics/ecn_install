@@ -52,7 +52,7 @@ log2plot:
 visp:
     git: [lagadic:visp]
     cmake:
-        false: [BUILD_MODULE_visp_ar, BUILD_MODULE_visp_mbt, BUILD_COVERAGE, BUILD_DEMOS, BUILD_JAVA, BUILD_EXAMPLES, BUILD_MODULE_visp_java_binding, BUILD_TESTS, BUILD_TUTORIALS]
+        false: [BUILD_MODULE_visp_ar, BUILD_MODULE_visp_mbt, BUILD_COVERAGE, BUILD_DEMOS, BUILD_JAVA, BUILD_EXAMPLES, BUILD_MODULE_visp_java_binding, BUILD_TESTS, BUILD_TUTORIALS, USE_COIN3D]
     apt: [libopencv-dev]
 
 mapsim:

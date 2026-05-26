@@ -888,7 +888,8 @@ def perform_update(action = None, poweroff=False):
             copytree(skel + '/', os.environ['HOME'], dirs_exist_ok = True)
             sudo.run(f'rsync -avr {skel}/ /etc/skel/')
 
-    sudo.run(f'mkdir -p {Depend.folders[Source.GIT]}')
+    if not os.path.exists(Depend.folders[Source.GIT]):
+        sudo.run(f'mkdir -p {Depend.folders[Source.GIT]}')
 
     # wallpaper
     wp = [f for f in os.listdir(base_path + '/images/') if distro in f][0]
