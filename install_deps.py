@@ -348,6 +348,7 @@ class Depend:
 
         self.pending = {}
         self.cmake = ''
+        self.fetch = True
         self.rosws = None
 
     def cmake_flag(self, flag):
@@ -490,6 +491,9 @@ class Depend:
 
         if not os.path.exists(base_dir):
             return Status.ABSENT
+
+        if not self.fetch and not args.force_git:
+            return Status.INSTALLED
 
         # check GIT wrt upstream
         run('git fetch',cwd=base_dir)
@@ -697,6 +701,8 @@ class Module:
             dep.configure(self.name, Action.KEEP)
         if 'cmake' in self.config:
             dep.cmake_flag(self.config['cmake'])
+        if 'fetch' in self.config:
+            dep.fetch = self.config['fetch']
         if 'source' in self.config:
             dep.rosws = ros2 if self.config['source'] == 'ros2' else ros1
 
