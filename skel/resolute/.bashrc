@@ -133,7 +133,7 @@ export GZ_VERSION=jetty
 
 # define ROS workspaces, activate ROS 2 by default
 ros1_workspaces="/opt/ros/obese"
-ros2_workspaces="/opt/ros/rolling /opt/ecn/ros2 ~/ros2"
+ros2_workspaces="/opt/ros/lyrical /opt/ecn/ros2 ~/ros2"
 
 if [[ -f /opt/ecn/ros_management_tools/ros_management.bash ]]; then
     source /opt/ecn/ros_management_tools/ros_management.bash -p -k -lo -ros2
