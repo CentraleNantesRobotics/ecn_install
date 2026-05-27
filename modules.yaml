@@ -35,11 +35,11 @@ code:
 
 rmt:
     git: [oKermorgant:ros_management_tools]
-    deb: ['ecn-ros_2.1.0.deb']
+    deb: ['ecn-ros_2.2.0.deb']
 
 ros2:
     ros2:
-        apt: [desktop,robot-localization,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2,urdfdom-py,pcl-ros,nav2-simple-commander,ackermann-msgs, simple-launch, slider-publisher]
+        apt: [desktop,robot-localization,vision-opencv,xacro,joint-state-publisher,joint-state-publisher-gui,image-view,compressed-image-transport,ament-cmake,navigation2,urdfdom-py,pcl-ros,nav2-simple-commander,ackermann-msgs, simple-launch, slider-publisher,urdfdom-py]
         git: [CentraleNantesRobotics:ecn_common]
     apt: [python3-colcon-core,python3-colcon-common-extensions,graphicsmagick-libmagick-dev-compat,python3-rospkg]
     mod: [rmt]
