@@ -152,25 +152,27 @@ knownItems=org.kde.plasma.keyboardlayout,org.kde.plasma.clipboard,org.kde.plasma
 [Containments][2][General]
 AppletOrder=3;4;5;6;7;21;22;25
 
-[Containments][26]
+[Containments][27]
 ItemGeometries-1280x800=
+ItemGeometries-1920x969=
+ItemGeometries-640x480=
 ItemGeometriesHorizontal=
 activityId=83561ba5-3e37-4216-a7ca-c23c86feafa1
 formfactor=0
 immutability=1
 lastScreen=0
 location=0
-plugin=org.kde.plasma.folder
+plugin=org.kde.desktopcontainment
 wallpaperplugin=org.kde.image
 
-[Containments][26][ConfigDialog]
+[Containments][27][ConfigDialog]
 DialogHeight=630
 DialogWidth=810
 
-[Containments][26][Wallpaper][org.kde.image][General]
+[Containments][27][Wallpaper][org.kde.image][General]
 Image=file:///opt/ecn/resolute-lyrical.jpg
 SlidePaths=/usr/share/wallpapers/
 
 [ScreenMapping]
-itemsOnDisabledScreens=
+itemsOnDisabledScreens=0,83561ba5-3e37-4216-a7ca-c23c86feafa1,4,desktop:/Desktop,desktop:/Documents,desktop:/Downloads,desktop:/update.sh
 screenMapping=
