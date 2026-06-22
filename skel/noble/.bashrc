@@ -131,6 +131,7 @@ export CMAKE_EXPORT_COMPILE_COMMANDS=1
 
 # activate ROS 2 by default
 if [[ -f /opt/ecn/ros_management_tools/ros_management.bash ]]; then
+    source /opt/ecn/ros_management_tools/rmt_ecn_aliases.bash
     source /opt/ecn/ros_management_tools/ros_management.bash -p -k -lo -ros2
   # QtCreator configure shortcut
   alias ideconf='python3 /opt/ecn/ros_management_tools/ide/ide_config.py'
