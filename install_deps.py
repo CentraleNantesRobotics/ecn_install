@@ -1038,6 +1038,12 @@ from python_qt_binding import QT_BINDING_VERSION
 qt5 = QT_BINDING_VERSION.startswith('5.')
 
 
+def getQtProp(Base, mid: str, final: str):
+    if not qt5:
+        Base = getattr(Base, mid)
+    return getattr(Base, final)
+
+
 def Font(size = 10):
     font = QFont("Helvetica", size)
     font.setBold(True)
@@ -1075,7 +1081,9 @@ class UpdaterGUI(QWidget):
         layout.addSpacing(10)
 
         mod_layout = QGridLayout()
-        spacer = QSpacerItem(10, 20, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        spacer = QSpacerItem(10, 20,
+                             getQtProp(QSizePolicy, 'Policy', 'Minimum'),
+                             getQtProp(QSizePolicy, 'Policy', 'Expanding'))
 
         valid = sorted([m for m in modules.values() if 'description' in m.config],
                        key = lambda m: m.name)
