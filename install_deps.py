@@ -1031,12 +1031,17 @@ Display.endl()
 
 # GUI part
 
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout,QHBoxLayout,QGridLayout, QLabel, QPushButton, QCheckBox, QComboBox, QSpacerItem, QSizePolicy
-from PyQt5.QtGui import QFont, QIcon
+from python_qt_binding.QtWidgets import QApplication, QWidget, QVBoxLayout,QHBoxLayout,QGridLayout, QLabel, QPushButton, QCheckBox, QComboBox, QSpacerItem, QSizePolicy
+from python_qt_binding.QtGui import QFont, QIcon
+from python_qt_binding import QT_BINDING_VERSION
+
+qt5 = QT_BINDING_VERSION.startswith('5.')
 
 
 def Font(size = 10):
-    return QFont("Helvetica", size, QFont.Bold)
+    font = QFont("Helvetica", size)
+    font.setBold(True)
+    return font
 
 
 class UpdaterGUI(QWidget):
@@ -1140,5 +1145,9 @@ class UpdaterGUI(QWidget):
 app = QApplication(sys.argv)
 gui = UpdaterGUI()
 
-app.exec_()
+if qt5:
+    app.exec_()
+else:
+    app.exec()
+
 Display.stop()
