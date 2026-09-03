@@ -1,5 +1,5 @@
 [Layout]
-DisplayNames=,int,
-LayoutList=us,us,fr
+DisplayNames=,,int
+LayoutList=fr,us,us
 Use=true
-VariantList=,intl,
+VariantList=,,intl
