@@ -333,6 +333,9 @@ status = {Status.ABSENT: 'Not installed', Status.OLD: 'Needs update', Status.INS
 
 special_modules = {'cleanup': Action.REMOVE, 'base': Action.INSTALL}
 
+if vm.passwd is None:
+    special_modules['desktop'] = Action.INSTALL
+
 
 class Depend:
 

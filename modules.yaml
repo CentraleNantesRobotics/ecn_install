@@ -12,11 +12,15 @@ lib_folder: /opt/ecn
 vm:
     name: ecn-__distro__
     passwd: ecn
-    ignore: [baxter_bridge, openssh-server, screen]
+    ignore: [baxter_bridge]
+
+# packages that should only be installed on a desktop (not a VM)
+desktop:
+    apt: [openssh-server, screen]
 
 # special module that always wants it dependencies to be installed
 base:
-    apt: [kate, konsole, curl, qtcreator, openssh-server, ipython3, python3-numpy, python3-matplotlib, python3-scipy, python3-sympy, build-essential, lldb, cmake, python3-pip, screen, cmake-curses-gui, xclip, python3-pylsp, libyaml-cpp-dev, okular,ncdu]
+    apt: [kate, konsole, curl, qtcreator, openssh-server, ipython3, python3-numpy, python3-matplotlib, python3-scipy, python3-sympy, build-essential, lldb, cmake, python3-pip, screen, cmake-curses-gui, xclip, python3-pylsp, libyaml-cpp-dev, okular,ncdu, net-tools]
 
 # special module that always wants its dependencies to be removed
 # will be removed unless required by other modules

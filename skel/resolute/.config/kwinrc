@@ -1,0 +1,15 @@
+[Desktops]
+Id_1=f88db085-5c83-45bc-b79e-e85b5a2b9219
+Number=1
+Rows=1
+
+[Plugins]
+blurEnabled=false
+wobblywindowsEnabled[$d]
+
+[Tiling][f88db085-5c83-45bc-b79e-e85b5a2b9219][6d2fdc1d-ef54-436d-b8aa-5bb703fcfd9e]
+padding=4
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Xwayland]
+Scale=1
