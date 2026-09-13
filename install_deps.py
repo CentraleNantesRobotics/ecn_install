@@ -336,7 +336,6 @@ special_modules = {'cleanup': Action.REMOVE, 'base': Action.INSTALL}
 if vm.passwd is None:
     special_modules['desktop'] = Action.INSTALL
 
-
 class Depend:
 
     packages = {}
@@ -896,7 +895,8 @@ def perform_update(action = None, poweroff=False):
     skel = f'{base_path}/skel/{distro}'
     bashrc = os.environ['HOME'] + '/.bashrc'
     with open(bashrc) as f:
-        if 'ros_management_tools' not in f.read() or 'rmt_ecn_aliases' not in f.read():
+        content = f.read()
+        if 'ros_management_tools' not in content or 'rmt_ecn_aliases' not in content:
             copytree(skel + '/', os.environ['HOME'], dirs_exist_ok = True)
             sudo.run(f'rsync -avr {skel}/ /etc/skel/')
 
