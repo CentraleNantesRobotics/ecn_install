@@ -43,6 +43,7 @@ planif:
 auve:
     description: Autonomous vehicles (AUVE)
     pip: [einops,pyquaternion,open3d]
+    apt: [python3-venv]
 
 # Open3d only through pip
 avg:
