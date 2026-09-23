@@ -65,7 +65,7 @@ gazebo:
 baxter:
     deb: ['ros-baxter[]_1.3.1.deb']
     ros2:
-        git: [CentraleNantesRobotics:baxter_common_ros2,CentraleNantesRobotics:baxter_simple_sim:ros2]
+        git: [CentraleNantesRobotics:baxter_common_ros2,CentraleNantesRobotics:baxter_simple_sim:ros2, CentraleNantesRobotics:baxter_gz]
 
 turtlebot:
     ros2:
