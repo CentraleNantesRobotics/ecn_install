@@ -163,6 +163,7 @@ info = yaml.safe_load(open(get_file('modules.yaml')))
 if os.path.exists(get_file(f'modules-{distro}.yaml')):
     info = fuse(info, yaml.safe_load(open(get_file(f'modules-{distro}.yaml'))))
 
+
 # pop out vm info
 class VM:
     def __init__(self, info):
@@ -197,6 +198,7 @@ additional_repos = {
     'robotpkg-': 'robotpkg.list',
     'firefox': 'mozilla.list'
     }
+
 
 class Sudo:
     def __init__(self, gui=False):
