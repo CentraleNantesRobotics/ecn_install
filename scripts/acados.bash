@@ -46,7 +46,8 @@ if [[ "$*" == *"-i"* ]]; then
              -DACADOS_WITH_QPOASES=ON \
              -DACADOS_WITH_HPMPC=OFF \
              -DBLASFEO_EXAMPLES=OFF \
-             -DACADOS_INSTALL_DIR=${ACADOS_INSTALL}
+             -DACADOS_INSTALL_DIR=${ACADOS_INSTALL} \
+             -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
     make -j4 && make install
 
