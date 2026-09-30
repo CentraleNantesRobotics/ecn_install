@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ACADOS_VERSION=v0.4.0
+# ACADOS_VERSION=v0.4.0
 ACADOS_ROOT=/opt/acados
 ACADOS_SRC=${ACADOS_ROOT}/src
 ACADOS_BUILD=${ACADOS_ROOT}/build
@@ -35,15 +35,15 @@ if [[ "$*" == *"-i"* ]]; then
     mkdir -p $ACADOS_BUILD
     cd $ACADOS_ROOT
     if [[ -e ${ACADOS_SRC} ]];then
-        (cd ${ACADOS_SRC}; git pull --recurse-submodules; git checkout ${ACADOS_VERSION})
+        (cd ${ACADOS_SRC}; git pull --recurse-submodules)
     else
-        git clone --recursive https://github.com/acados/acados.git -b ${ACADOS_VERSION} src
+        git clone --recursive https://github.com/acados/acados.git src
     fi
 
     cd ${ACADOS_BUILD}
     cmake ../src -DACADOS_WITH_OPENMP=ON \
-             -DACADOS_WITH_OSQP=ON \
-             -DACADOS_WITH_QPOASES=ON \
+             -DACADOS_WITH_DAQP=ON \
+             -DACADOS_WITH_QPOASES=OFF \
              -DACADOS_WITH_HPMPC=OFF \
              -DBLASFEO_EXAMPLES=OFF \
              -DACADOS_INSTALL_DIR=${ACADOS_INSTALL} \
@@ -52,7 +52,7 @@ if [[ "$*" == *"-i"* ]]; then
     make -j4 && make install
 
     pip3 install -e ${ACADOS_SRC}/interfaces/acados_template --break-system-packages
-    pip3 install -e ${ACADOS_SRC}/interfaces/acados_template
+    # pip3 install -e ${ACADOS_SRC}/interfaces/acados_template
 
     mkdir -p ${ACADOS_INSTALL}/bin
     wget https://github.com/acados/tera_renderer/releases/download/v${TERA_RENDERER}/t_renderer-v${TERA_RENDERER}-linux \
