@@ -188,7 +188,9 @@ class VM:
     def skip(self, pkg):
         return pkg in self.ignore
 
+
 vm = VM(info)
+
 
 # enable additional repos if needed
 # for each prefix, give the corresponding file in /etc/apt/sources.list.d
@@ -259,7 +261,6 @@ class Sudo:
 
         if refresh_src:
             self.run('apt update -qy')
-
 
     def apt_install(self, pkgs):
 
@@ -880,6 +881,34 @@ def setup_ignored(root, ros):
             run(f'touch {projects[name]}/{ignore_file}')
 
 
+def check_first_run():
+
+    # test first run with e.g. my .bashrc
+    bashrc = '\n'.join(run(f"cat {os.environ['HOME']}/.bashrc"))
+    if 'ros_management_tools' in bashrc and 'rmt_ecn_aliases' in bashrc:
+        return
+
+    if not os.path.exists(Depend.folders[Source.GIT]):
+        sudo.run(f'mkdir -p {Depend.folders[Source.GIT]}')
+
+    # wallpaper
+    wp = [f for f in os.listdir(base_path + '/images/') if distro in f][0]
+    if not os.path.exists(f'{Depend.folders[Source.GIT]}/{wp}'):
+        sudo.run(f'cp {base_path}/images/{wp} {Depend.folders[Source.GIT]}')
+
+    # sddm login
+    sddm_conf = '/etc/sddm.conf.d/avatars.conf'
+    if not os.path.exists(sddm_conf):
+        sudo.run(f'cp {base_path}/skel/avatars.conf {sddm_conf}')
+
+    # sync skel
+    skel = f'{base_path}/skel/{distro}'
+    # to my profile
+    copytree(skel + '/', os.environ['HOME'], dirs_exist_ok = True)
+    # to global
+    sudo.run(f'rsync -avr {skel}/ /etc/skel/')
+
+
 def perform_update(action = None, poweroff=False):
     '''
     Final action
@@ -893,22 +922,7 @@ def perform_update(action = None, poweroff=False):
     if sudo.passwd is None:
         return
 
-    # install skeleton if ros_management does not appear in bashrc (first run)
-    skel = f'{base_path}/skel/{distro}'
-    bashrc = os.environ['HOME'] + '/.bashrc'
-    with open(bashrc) as f:
-        content = f.read()
-        if 'ros_management_tools' not in content or 'rmt_ecn_aliases' not in content:
-            copytree(skel + '/', os.environ['HOME'], dirs_exist_ok = True)
-            sudo.run(f'rsync -avr {skel}/ /etc/skel/')
-
-    if not os.path.exists(Depend.folders[Source.GIT]):
-        sudo.run(f'mkdir -p {Depend.folders[Source.GIT]}')
-
-    # wallpaper
-    wp = [f for f in os.listdir(base_path + '/images/') if distro in f][0]
-    if not os.path.exists(f'{Depend.folders[Source.GIT]}/{wp}'):
-        sudo.run(f'cp {base_path}/images/{wp} {Depend.folders[Source.GIT]}')
+    check_first_run()
 
     # remove old ones
     pkgs = [dep.remove() for dep in Module.depends]
