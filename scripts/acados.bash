@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # ACADOS_VERSION=v0.4.0
-ACADOS_ROOT=/opt/acados
+ACADOS_ROOT=/opt/ecn/acados
 ACADOS_SRC=${ACADOS_ROOT}/src
 ACADOS_BUILD=${ACADOS_ROOT}/build
 ACADOS_INSTALL=${ACADOS_ROOT}/install

@@ -16,7 +16,7 @@ vm:
 
 # packages that should only be installed on a desktop (not a VM)
 desktop:
-    apt: [openssh-server, screen, libreoffice]
+    apt: [openssh-server, screen, libreoffice, firefox]
 
 # special module that always wants it dependencies to be installed
 base:
