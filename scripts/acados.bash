@@ -61,7 +61,7 @@ if [[ "$*" == *"-i"* ]]; then
 
     # add ACADOS path
     if [[ $(grep -c ACADOS /etc/bash.bashrc) -eq 0 ]]; then
-        sudo echo "export ACADOS_SOURCE_DIR=${ACADOS_INSTALL}" >> /etc/bash.bashrc
-        sudo echo "export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:\${ACADOS_SOURCE_DIR}/lib" >> /etc/bash.bashrc
+        echo "export ACADOS_SOURCE_DIR=${ACADOS_INSTALL}" | sudo tee -a /etc/bash.bashrc > /dev/null
+        echo "export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:\${ACADOS_SOURCE_DIR}/lib" | sudo tee -a /etc/bash.bashrc > /dev/null
     fi
 fi

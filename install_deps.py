@@ -900,6 +900,7 @@ def check_first_run():
     sddm_conf = '/etc/sddm.conf.d/avatars.conf'
     if not os.path.exists(sddm_conf):
         sudo.run(f'cp {base_path}/skel/avatars.conf {sddm_conf}')
+        sudo.run(f'chmod a+r {sddm_conf}')
 
     # sync skel
     skel = f'{base_path}/skel/{distro}'
@@ -1028,11 +1029,12 @@ if isinstance(args.u, list):
     print(f'Will update / install the following module{s}: {", ".join(to_update)}')
 
     perform_update(poweroff=poweroff)
-
+    sys.exit(0)
 
 if args.all:
     # install / update all modules
     perform_update(Action.INSTALL,poweroff=poweroff)
+    sys.exit(0)
 
 sys._excepthook = sys.excepthook
 
